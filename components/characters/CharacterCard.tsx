@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import Feature from "../Feature";
 
 interface CharacterCardProps {
   slug: string;
@@ -37,16 +38,7 @@ export default function CharacterCard({ slug, name, image, features, elementIcon
           {/* Features */}
           <div className="flex flex-wrap justify-center gap-1.5">
             {features.map((feature) => (
-              <span
-                key={feature}
-                className="
-                rounded-full bg-white/5 px-2 py-0.5
-                text-[12px] font-medium text-white/70
-                ring-1 ring-white/10
-              "
-              >
-                {feature}
-              </span>
+              <Feature key={feature} feature={feature} />
             ))}
           </div>
         </div>
