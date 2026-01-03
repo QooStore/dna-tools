@@ -6,6 +6,8 @@ import InfoCard from "@/components/ui/InfoCard";
 import SkillCard from "@/components/ui/SkillCard";
 import StatCard from "@/components/ui/StatCard";
 
+import { STAT_LABELS } from "@/constants/statlabels";
+import { WEAPON_LABELS } from "@/constants/statlabels";
 import { getCharacterDetail } from "@/lib/api/characters";
 
 export default async function CharacterDetailPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -48,8 +50,8 @@ export default async function CharacterDetailPage({ params }: { params: Promise<
       {/* Base Stats */}
       <ContentSection title="기본 스탯">
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {Object.entries(character.baseStats).map(([label, value]) => (
-            <StatCard key={label} label={label} value={value} />
+          {Object.entries(character.baseStats).map(([key, value]) => (
+            <StatCard key={key} label={STAT_LABELS[key] ?? key} value={value} />
           ))}
         </div>
       </ContentSection>
@@ -57,8 +59,8 @@ export default async function CharacterDetailPage({ params }: { params: Promise<
       {character.consonanceWeapon && (
         <ContentSection title="동조 무기">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {Object.entries(character.consonanceWeapon).map(([label, value]) => (
-              <StatCard key={label} label={label} value={value} />
+            {Object.entries(character.consonanceWeapon).map(([key, value]) => (
+              <StatCard key={key} label={WEAPON_LABELS[key]} value={value} />
             ))}
           </div>
         </ContentSection>

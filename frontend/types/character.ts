@@ -16,7 +16,7 @@ export type ConsonanceWeaponStats =
       critRate: number;
       critDamage: number;
       attackSpeed: number;
-      activationRate: number;
+      triggerProbability: number;
     }
   | {
       category: "원거리";
@@ -27,8 +27,12 @@ export type ConsonanceWeaponStats =
       critRate: number;
       critDamage: number;
       attackSpeed: number;
-      activationRate: number;
+      triggerProbability: number;
     };
+
+export type PassiveUpgradeType = "STAT" | "ABILITY" | "COOP";
+
+export type PassiveTargetStat = "ATK" | "SKILL_EFFICIENCY";
 
 export interface BaseStats {
   attack: number;
@@ -44,31 +48,22 @@ export interface Skill {
   name: string;
   type: "대미지" | "버프" | "패시브";
   description: string;
-
-  /** 계산기 확장용 (지금은 안 써도 됨) */
-  damageMultiplier?: number;
-  skillPowerBonus?: number;
-}
-
-export interface PassiveEffect {
-  key: string; // 내부 식별자
-  name: string; // UI 표시용 이름
-  description: string; // 설명
-
-  /** 계산기용 (있을 수도, 없을 수도 있음) */
-  modifiers?: {
-    attackPercent?: number;
-    skillDamagePercent?: number;
-    enemyTakenDamagePercent?: number;
-  };
-
-  /** 발동 조건 (지금은 문자열로 충분) */
-  condition?: "협력 동료";
 }
 
 export interface IntronEffect {
   stage: number; // 1~6
   description: string;
+}
+
+export interface CharacterPassiveUpgrade {
+  upgradeKey: string; // atk_20, afterburn
+  upgradeType: PassiveUpgradeType;
+
+  targetStat?: PassiveTargetStat; // STAT일 때만
+  value?: number; // % 값
+
+  name: string; // 표시용 이름
+  description: string; // 설명
 }
 
 export interface CharacterDetail {
@@ -80,6 +75,7 @@ export interface CharacterDetail {
   name: string;
   element: ElementType;
   image: string;
+  element_image: string;
 
   /** 무기 숙련 */
   meleeProficiency: MeleeWeaponType;
@@ -98,14 +94,7 @@ export interface CharacterDetail {
   skills: Skill[];
 
   /** 패시브 강화 */
-  passiveUpgrade: {
-    stats: {
-      attackPercent?: number;
-      skillEfficiencyPercent?: number;
-    };
-
-    effects: PassiveEffect[];
-  };
+  passiveUpgrade: CharacterPassiveUpgrade[];
 
   /** 근원 */
   intron: IntronEffect[];

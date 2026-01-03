@@ -1,4 +1,3 @@
-// src/config/navigation.ts
 export const NAV_ITEMS = [
   { label: "캐릭터", href: "/characters", image: "/images/home/character_icon.png", section: "database" },
   { label: "무기", href: "/weapons", image: "/images/home/weapons_icon.png", section: "database" },

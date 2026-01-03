@@ -28,7 +28,7 @@ export const BERENICA: CharacterDetail = {
     critRate: 12,
     critDamage: 150,
     attackSpeed: 1,
-    activationRate: 50,
+    triggerProbability: 50,
   },
 
   skills: [
