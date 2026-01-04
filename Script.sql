@@ -6,6 +6,7 @@ CREATE TABLE characters (
   element VARCHAR(10) NOT NULL COMMENT '캐릭터 속성',
   image VARCHAR(255) NOT NULL COMMENT '캐릭터 대표 이미지 경로',
   element_image VARCHAR(255) NOT NULL COMMENT '속성 아이콘 이미지 경로',
+  list_image VARCHAR(255) NOT NULL COMMENT '캐릭터 목록 이미지',
   melee_proficiency VARCHAR(20) NOT NULL COMMENT '근접 무기 숙련 타입',
   ranged_proficiency VARCHAR(20) NOT NULL COMMENT '원거리 무기 숙련 타입',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '캐릭터 데이터 생성 일시'

@@ -6,9 +6,11 @@ import InfoCard from "@/components/ui/InfoCard";
 import SkillCard from "@/components/ui/SkillCard";
 import StatCard from "@/components/ui/StatCard";
 
-import { STAT_LABELS } from "@/constants/statlabels";
-import { WEAPON_LABELS } from "@/constants/statlabels";
+import { STAT_LABELS } from "@/domains/menulabels";
+import { WEAPON_LABELS } from "@/domains/menulabels";
 import { getCharacterDetail } from "@/lib/api/characters";
+import { formatWeaponStat } from "@/lib/utils";
+import { WeaponStatKey } from "@/domains/weapons/type";
 
 export default async function CharacterDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const param = await params;
@@ -59,9 +61,10 @@ export default async function CharacterDetailPage({ params }: { params: Promise<
       {character.consonanceWeapon && (
         <ContentSection title="동조 무기">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {Object.entries(character.consonanceWeapon).map(([key, value]) => (
-              <StatCard key={key} label={WEAPON_LABELS[key]} value={value} />
-            ))}
+            {Object.entries(character.consonanceWeapon).map(([key, value]) => {
+              const statKey = key as WeaponStatKey;
+              return <StatCard key={statKey} label={WEAPON_LABELS[statKey]} value={formatWeaponStat(statKey, value)} />;
+            })}
           </div>
         </ContentSection>
       )}
@@ -76,8 +79,12 @@ export default async function CharacterDetailPage({ params }: { params: Promise<
       {/* Passive Upgrade */}
       <ContentSection title="패시브 강화">
         <div className="space-y-2">
-          {character.passiveUpgrade.effects.map((passiveEffect) => (
-            <InfoCard key={passiveEffect.name} title={passiveEffect.name} description={passiveEffect.description} />
+          {character.passiveUpgrade.map((passiveEffect) => (
+            <InfoCard
+              key={passiveEffect.upgradeKey}
+              title={passiveEffect.name}
+              description={passiveEffect.description}
+            />
           ))}
         </div>
       </ContentSection>

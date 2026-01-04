@@ -1,38 +1,5 @@
-export type ElementType = "불" | "물" | "번개" | "바람" | "빛" | "어둠";
-
-export type WeaponCategory = "근접" | "원거리";
-
-export type MeleeWeaponType = "대검" | "한손검" | "쌍도" | "대도" | "장병기" | "칼날 채찍";
-
-export type RangedWeaponType = "활" | "핸드 캐논" | "쌍권총" | "돌격소총" | "권총" | "산탄총";
-
-export type ConsonanceWeaponStats =
-  | {
-      category: "근접";
-      type: MeleeWeaponType;
-      attackType: "베기" | "관통" | "진동";
-
-      attack: number;
-      critRate: number;
-      critDamage: number;
-      attackSpeed: number;
-      triggerProbability: number;
-    }
-  | {
-      category: "원거리";
-      type: RangedWeaponType;
-      attackType: "베기" | "관통" | "진동";
-
-      attack: number;
-      critRate: number;
-      critDamage: number;
-      attackSpeed: number;
-      triggerProbability: number;
-    };
-
-export type PassiveUpgradeType = "STAT" | "ABILITY" | "COOP";
-
-export type PassiveTargetStat = "ATK" | "SKILL_EFFICIENCY";
+import { ConsonanceWeaponStats, MeleeWeaponType, RangedWeaponType } from "../weapons/type";
+import { ElementType, PassiveTargetStat, PassiveUpgradeType } from "./type";
 
 export interface BaseStats {
   attack: number;
@@ -59,7 +26,7 @@ export interface CharacterPassiveUpgrade {
   upgradeKey: string; // atk_20, afterburn
   upgradeType: PassiveUpgradeType;
 
-  targetStat?: PassiveTargetStat; // STAT일 때만
+  targetStat?: PassiveTargetStat; // STAT, COOP
   value?: number; // % 값
 
   name: string; // 표시용 이름
@@ -76,6 +43,7 @@ export interface CharacterDetail {
   element: ElementType;
   image: string;
   element_image: string;
+  list_image: string;
 
   /** 무기 숙련 */
   meleeProficiency: MeleeWeaponType;
