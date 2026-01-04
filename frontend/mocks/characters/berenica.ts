@@ -1,10 +1,12 @@
-import { CharacterDetail } from "@/types/character";
+import { CharacterDetail } from "@/domains/characters/character";
 
 export const BERENICA: CharacterDetail = {
   slug: "berenica",
   name: "베레니카",
   element: "어둠",
   image: "/images/characters/berenica_v1.png",
+  element_image: "/images/element_icon/umbro.png",
+  list_image: "/images/character_list/berenica.png",
 
   meleeProficiency: "한손검",
   rangedProficiency: "쌍권총",
@@ -50,29 +52,54 @@ export const BERENICA: CharacterDetail = {
     },
   ],
 
-  passiveUpgrade: {
-    stats: {
-      attackPercent: 50,
-      skillEfficiencyPercent: 12.5,
+  passiveUpgrade: [
+    {
+      upgradeKey: "atk_20",
+      upgradeType: "STAT",
+      targetStat: "ATK",
+      value: 20,
+      name: "공격",
+      description: "20%",
     },
-
-    effects: [
-      {
-        key: "afterburn",
-        name: "잔불",
-        description: "[어둠의 불꽃] 시전 후 다음 [잔광]을 시전할 때 정신력을 소모하지 않는다.",
-      },
-      {
-        key: "heart_devourer",
-        name: "심장 포식",
-        description: "[협력 동료로 등장할 때에만 적용] 자신과 팀원의 공격력이 상승한다.",
-        condition: "협력 동료",
-        modifiers: {
-          attackPercent: 40,
-        },
-      },
-    ],
-  },
+    {
+      upgradeKey: "atk_30",
+      upgradeType: "STAT",
+      targetStat: "ATK",
+      value: 30,
+      name: "공격",
+      description: "30%",
+    },
+    {
+      upgradeKey: "skill_efficiency_7_5",
+      upgradeType: "STAT",
+      targetStat: "SKILL_EFFICIENCY",
+      value: 7.5,
+      name: "스킬 효율",
+      description: "7.5%",
+    },
+    {
+      upgradeKey: "skill_efficiency_5",
+      upgradeType: "STAT",
+      targetStat: "SKILL_EFFICIENCY",
+      value: 5,
+      name: "스킬 효율",
+      description: "5%",
+    },
+    {
+      upgradeKey: "afterburn",
+      upgradeType: "ABILITY",
+      name: "잔불",
+      description: "[어둠의 불꽃] 시전 후 다음 [잔광]을 시전할 때 정신력을 소모하지 않는다.",
+    },
+    {
+      upgradeKey: "heart_devourer",
+      upgradeType: "COOP",
+      targetStat: "ATK",
+      value: 40,
+      name: "심장 포식",
+      description: "[협력 동료로 등장할 때에만 적용] 자신과 팀원의 공격력이 상승한다.",
+    },
+  ],
 
   intron: [
     {
@@ -84,5 +111,10 @@ export const BERENICA: CharacterDetail = {
     { stage: 3, description: "[잔광] 레벨+2, [회전] 레벨+1" },
     { stage: 4, description: "자신의 콤보 레벨에 따라 공격이 상승한다. 레벨당 20% 상승." },
     { stage: 5, description: "[어둠의 불꽃] 레벨+2, [회전] 레벨+1" },
+    {
+      stage: 6,
+      description:
+        "[어둠의 불꽃] 사용 후, 검기 발동 시 일정 확률로 1개의 검기를 추가로 생성한다. 확률은 [이미르] 발동 확률 속성치의 25.0%",
+    },
   ],
 };

@@ -1,4 +1,4 @@
-export function calculateDamage(input) {
+export function formulas(input) {
   // 임시 더미 데이터
   return 123456;
 }
