@@ -1,8 +1,13 @@
 package com.dna.tools.domain.character.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "skills")
 public class SkillEntity {
 
@@ -24,9 +29,6 @@ public class SkillEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
-    protected SkillEntity() {
-    }
-
     public SkillEntity(
             CharacterEntity character,
             String name,
@@ -38,23 +40,4 @@ public class SkillEntity {
         this.description = description;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public CharacterEntity getCharacter() {
-        return character;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public String getDescription() {
-        return description;
-    }
 }

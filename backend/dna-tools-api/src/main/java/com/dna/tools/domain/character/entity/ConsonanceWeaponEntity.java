@@ -3,8 +3,13 @@ package com.dna.tools.domain.character.entity;
 import java.math.BigDecimal;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "consonance_weapons")
 public class ConsonanceWeaponEntity {
 
@@ -41,9 +46,6 @@ public class ConsonanceWeaponEntity {
     @Column(name = "trigger_probability", nullable = false, precision = 5, scale = 2)
     private BigDecimal triggerProbability;
 
-    protected ConsonanceWeaponEntity() {
-    }
-
     public ConsonanceWeaponEntity(
             CharacterEntity character,
             String category,
@@ -66,43 +68,4 @@ public class ConsonanceWeaponEntity {
         this.triggerProbability = triggerProbability;
     }
 
-    public Long getCharacterId() {
-        return characterId;
-    }
-
-    public CharacterEntity getCharacter() {
-        return character;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public String getWeaponType() {
-        return weaponType;
-    }
-
-    public String getAttackType() {
-        return attackType;
-    }
-
-    public BigDecimal getAttack() {
-        return attack;
-    }
-
-    public BigDecimal getCritRate() {
-        return critRate;
-    }
-
-    public BigDecimal getCritDamage() {
-        return critDamage;
-    }
-
-    public BigDecimal getAttackSpeed() {
-        return attackSpeed;
-    }
-
-    public BigDecimal getTriggerProbability() {
-        return triggerProbability;
-    }
 }

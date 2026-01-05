@@ -3,8 +3,13 @@ package com.dna.tools.domain.character.entity;
 import java.math.BigDecimal;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "character_stats")
 public class CharacterStatsEntity {
 
@@ -37,9 +42,6 @@ public class CharacterStatsEntity {
     @Column(nullable = false, precision = 5, scale = 2)
     private BigDecimal morale;
 
-    protected CharacterStatsEntity() {
-    }
-
     public CharacterStatsEntity(
             CharacterEntity character,
             int attack,
@@ -58,35 +60,4 @@ public class CharacterStatsEntity {
         this.morale = morale;
     }
 
-    public Long getCharacterId() {
-        return characterId;
-    }
-
-    public CharacterEntity getCharacter() {
-        return character;
-    }
-
-    public int getAttack() {
-        return attack;
-    }
-
-    public int getHp() {
-        return hp;
-    }
-
-    public int getDefense() {
-        return defense;
-    }
-
-    public int getMaxMentality() {
-        return maxMentality;
-    }
-
-    public BigDecimal getResolve() {
-        return resolve;
-    }
-
-    public BigDecimal getMorale() {
-        return morale;
-    }
 }

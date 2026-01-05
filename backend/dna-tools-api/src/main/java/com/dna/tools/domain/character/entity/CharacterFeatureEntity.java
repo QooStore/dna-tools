@@ -1,8 +1,13 @@
 package com.dna.tools.domain.character.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "character_features")
 public class CharacterFeatureEntity {
 
@@ -18,23 +23,9 @@ public class CharacterFeatureEntity {
     @Column(nullable = false, length = 50)
     private String feature;
 
-    protected CharacterFeatureEntity() {
-    }
-
     public CharacterFeatureEntity(CharacterEntity character, String feature) {
         this.character = character;
         this.feature = feature;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public CharacterEntity getCharacter() {
-        return character;
-    }
-
-    public String getFeature() {
-        return feature;
-    }
 }

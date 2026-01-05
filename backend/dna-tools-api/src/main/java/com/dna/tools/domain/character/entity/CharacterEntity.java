@@ -1,11 +1,17 @@
 package com.dna.tools.domain.character.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "characters", uniqueConstraints = {
         @UniqueConstraint(name = "slug", columnNames = "slug")
 })
@@ -63,11 +69,6 @@ public class CharacterEntity {
     @OneToMany(mappedBy = "character", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PassiveUpgradeEntity> passiveUpgrades = new ArrayList<>();
 
-    /** 생성자 */
-    protected CharacterEntity() {
-
-    }
-
     // @PrePersist
     // protected void onCreate() {
     // this.createdAt = LocalDateTime.now();
@@ -100,68 +101,4 @@ public class CharacterEntity {
         this.introns.clear();
     }
 
-    /** getter, setter */
-    public Long getId() {
-        return id;
-    }
-
-    public String getSlug() {
-        return slug;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getElement() {
-        return element;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public String getElementImage() {
-        return elementImage;
-    }
-
-    public String getListImage() {
-        return listImage;
-    }
-
-    public String getMeleeProficiency() {
-        return meleeProficiency;
-    }
-
-    public String getRangedProficiency() {
-        return rangedProficiency;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public CharacterStatsEntity getStats() {
-        return stats;
-    }
-
-    public ConsonanceWeaponEntity getConsonanceWeapon() {
-        return consonanceWeapon;
-    }
-
-    public List<CharacterFeatureEntity> getFeatures() {
-        return features;
-    }
-
-    public List<SkillEntity> getSkills() {
-        return skills;
-    }
-
-    public List<IntronEntity> getIntrons() {
-        return introns;
-    }
-
-    public List<PassiveUpgradeEntity> getPassiveUpgrades() {
-        return passiveUpgrades;
-    }
 }

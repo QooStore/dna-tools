@@ -1,8 +1,13 @@
 package com.dna.tools.domain.character.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "introns")
 public class IntronEntity {
 
@@ -21,9 +26,6 @@ public class IntronEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
-    protected IntronEntity() {
-    }
-
     public IntronEntity(
             CharacterEntity character,
             int stage,
@@ -31,21 +33,5 @@ public class IntronEntity {
         this.character = character;
         this.stage = stage;
         this.description = description;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public CharacterEntity getCharacter() {
-        return character;
-    }
-
-    public int getStage() {
-        return stage;
-    }
-
-    public String getDescription() {
-        return description;
     }
 }

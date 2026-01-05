@@ -1,9 +1,15 @@
 package com.dna.tools.domain.character.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 
 @Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "character_passive_upgrades", uniqueConstraints = {
         @UniqueConstraint(name = "uk_character_upgrade", columnNames = { "character_id", "upgrade_key" }) })
 public class PassiveUpgradeEntity {
@@ -35,9 +41,6 @@ public class PassiveUpgradeEntity {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    protected PassiveUpgradeEntity() {
-    }
-
     public PassiveUpgradeEntity(
             CharacterEntity character,
             String upgradeKey,
@@ -55,36 +58,4 @@ public class PassiveUpgradeEntity {
         this.description = description;
     }
 
-    /** getter, setter */
-    public Long getId() {
-        return id;
-    }
-
-    public CharacterEntity getCharacter() {
-        return character;
-    }
-
-    public String getUpgradeKey() {
-        return upgradeKey;
-    }
-
-    public String getUpgradeType() {
-        return upgradeType;
-    }
-
-    public String getTargetStat() {
-        return targetStat;
-    }
-
-    public BigDecimal getValue() {
-        return value;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
 }
