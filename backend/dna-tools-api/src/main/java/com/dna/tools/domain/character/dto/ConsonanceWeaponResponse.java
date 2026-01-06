@@ -1,4 +1,4 @@
-package com.dna.tools.domain.character.dto.detail;
+package com.dna.tools.domain.character.dto;
 
 import java.math.BigDecimal;
 

@@ -1,5 +1,8 @@
-package com.dna.tools.domain.character.dto.detail;
+package com.dna.tools.domain.character.dto;
 
+import lombok.Getter;
+
+@Getter
 public class IntronResponse {
 
     private final int stage;
@@ -10,11 +13,4 @@ public class IntronResponse {
         this.description = description;
     }
 
-    public int getStage() {
-        return stage;
-    }
-
-    public String getDescription() {
-        return description;
-    }
 }
