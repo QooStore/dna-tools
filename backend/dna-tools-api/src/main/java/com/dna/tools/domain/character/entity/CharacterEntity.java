@@ -6,8 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -57,17 +57,20 @@ public class CharacterEntity {
     private ConsonanceWeaponEntity consonanceWeapon;
 
     @OneToMany(mappedBy = "character", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CharacterFeatureEntity> features = new ArrayList<>();
+    @OrderBy("id ASC")
+    private Set<CharacterFeatureEntity> features = new HashSet<CharacterFeatureEntity>();
 
     @OneToMany(mappedBy = "character", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SkillEntity> skills = new ArrayList<>();
+    @OrderBy("id ASC")
+    private Set<SkillEntity> skills = new HashSet<SkillEntity>();
 
     @OneToMany(mappedBy = "character", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("stage ASC")
-    private List<IntronEntity> introns = new ArrayList<>();
+    private Set<IntronEntity> introns = new HashSet<IntronEntity>();
 
     @OneToMany(mappedBy = "character", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PassiveUpgradeEntity> passiveUpgrades = new ArrayList<>();
+    @OrderBy("id ASC")
+    private Set<PassiveUpgradeEntity> passiveUpgrades = new HashSet<PassiveUpgradeEntity>();
 
     // @PrePersist
     // protected void onCreate() {

@@ -40,9 +40,9 @@ export interface CharacterDetail {
 
   /** 기본 정보 */
   name: string;
-  element: ElementType;
+  elementCode: ElementType;
   image: string;
-  element_image: string;
+  elementImage: string;
   list_image: string;
 
   /** 무기 숙련 */
@@ -50,10 +50,12 @@ export interface CharacterDetail {
   rangedProficiency: RangedWeaponType;
 
   /** 역할 태그 */
-  features: string[];
+  features: {
+    featureCode: string;
+  }[];
 
   /** 기본 스탯 (캐릭터 고정값) */
-  baseStats: BaseStats;
+  stats: BaseStats;
 
   /** 동조 무기 (없을 수도 있음) */
   consonanceWeapon?: ConsonanceWeaponStats;
@@ -62,8 +64,8 @@ export interface CharacterDetail {
   skills: Skill[];
 
   /** 패시브 강화 */
-  passiveUpgrade: CharacterPassiveUpgrade[];
+  passiveUpgrades: CharacterPassiveUpgrade[];
 
   /** 근원 */
-  intron: IntronEffect[];
+  introns: IntronEffect[];
 }

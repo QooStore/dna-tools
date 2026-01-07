@@ -11,10 +11,11 @@ import { WEAPON_LABELS } from "@/domains/menulabels";
 import { getCharacterDetail } from "@/lib/api/characters";
 import { formatWeaponStat } from "@/lib/utils";
 import { WeaponStatKey } from "@/domains/weapons/type";
+import { CharacterDetail } from "@/domains/characters/character";
 
 export default async function CharacterDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const param = await params;
-  const character = await getCharacterDetail(param.slug);
+  const character: CharacterDetail = await getCharacterDetail(param.slug);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 space-y-16">
@@ -42,7 +43,7 @@ export default async function CharacterDetailPage({ params }: { params: Promise<
 
             <div className="flex flex-wrap gap-2 pt-2">
               {character.features.map((feature) => (
-                <Feature key={feature} feature={feature} />
+                <Feature key={feature.featureCode} feature={feature.featureCode} />
               ))}
             </div>
           </div>
@@ -52,7 +53,7 @@ export default async function CharacterDetailPage({ params }: { params: Promise<
       {/* Base Stats */}
       <ContentSection title="기본 스탯">
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {Object.entries(character.baseStats).map(([key, value]) => (
+          {Object.entries(character.stats).map(([key, value]) => (
             <StatCard key={key} label={STAT_LABELS[key] ?? key} value={value} />
           ))}
         </div>
@@ -79,7 +80,7 @@ export default async function CharacterDetailPage({ params }: { params: Promise<
       {/* Passive Upgrade */}
       <ContentSection title="패시브 강화">
         <div className="space-y-2">
-          {character.passiveUpgrade.map((passiveEffect) => (
+          {character.passiveUpgrades.map((passiveEffect) => (
             <InfoCard
               key={passiveEffect.upgradeKey}
               title={passiveEffect.name}
@@ -91,7 +92,7 @@ export default async function CharacterDetailPage({ params }: { params: Promise<
       {/* Intron */}
       <ContentSection title="근원">
         <div className="space-y-2">
-          {character.intron.map((intron) => (
+          {character.introns.map((intron) => (
             <InfoCard key={intron.stage} title={`제${intron.stage}근원`} description={intron.description} />
           ))}
         </div>

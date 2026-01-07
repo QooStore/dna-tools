@@ -8,16 +8,13 @@ import lombok.Getter;
 public class PassiveUpgradeResponse {
 
     private final String upgradeKey;
-    private final String targetStat;
-    private final BigDecimal value;
+    private final String name;
+    private final String description;
 
-    public PassiveUpgradeResponse(
-            String upgradeKey,
-            String targetStat,
-            BigDecimal value) {
+    public PassiveUpgradeResponse(String upgradeKey, String name, String description) {
         this.upgradeKey = upgradeKey;
-        this.targetStat = targetStat;
-        this.value = value;
+        this.name = name;
+        this.description = description;
     }
 
 }
