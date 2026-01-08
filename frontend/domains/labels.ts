@@ -17,3 +17,12 @@ export const WEAPON_LABELS: Record<string, string> = {
   attackSpeed: "공격 속도",
   triggerProbability: "발동 확률",
 };
+
+export const ELEMENT_LABELS: Record<string, string> = {
+  umbro: "어둠",
+  hydro: "물",
+  anemo: "바람",
+  lumino: "빛",
+  pyro: "불",
+  electro: "번개",
+};

@@ -1,4 +1,4 @@
-export type ElementType = "불" | "물" | "번개" | "바람" | "빛" | "어둠";
+export type ElementType = "pyro" | "hydro" | "electro" | "anemo" | "lumino" | "umbro";
 
 export type PassiveUpgradeType = "STAT" | "ABILITY" | "COOP";
 

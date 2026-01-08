@@ -1,11 +1,11 @@
 import Link from "next/link";
 
-interface HomeCardProps {
+type HomeCardProps = {
   title: string;
   href: string;
   image: string;
   highlight?: boolean;
-}
+};
 
 export default function HomeCard({ title, href, image, highlight = false }: HomeCardProps) {
   return (

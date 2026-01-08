@@ -1,7 +1,5 @@
 package com.dna.tools.domain.character.dto;
 
-import java.math.BigDecimal;
-
 import lombok.Getter;
 
 @Getter

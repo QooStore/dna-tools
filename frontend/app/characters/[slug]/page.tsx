@@ -6,23 +6,27 @@ import InfoCard from "@/components/ui/InfoCard";
 import SkillCard from "@/components/ui/SkillCard";
 import StatCard from "@/components/ui/StatCard";
 
-import { STAT_LABELS } from "@/domains/menulabels";
-import { WEAPON_LABELS } from "@/domains/menulabels";
+import { STAT_LABELS, WEAPON_LABELS } from "@/domains/labels";
 import { getCharacterDetail } from "@/lib/api/characters";
 import { formatWeaponStat } from "@/lib/utils";
 import { WeaponStatKey } from "@/domains/weapons/type";
 import { CharacterDetail } from "@/domains/characters/character";
+import { ELEMENT_GLOW_STYLES } from "@/domains/elementStyles";
 
 export default async function CharacterDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const param = await params;
   const character: CharacterDetail = await getCharacterDetail(param.slug);
+  const elementStyle = ELEMENT_GLOW_STYLES[character.elementCode as keyof typeof ELEMENT_GLOW_STYLES];
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 space-y-16">
       {/* ================= HERO ================= */}
       <section className="relative overflow-hidden rounded-2xl bg-[#060a18]">
         {/* Element Glow */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_40%,rgba(255,80,80,0.25),transparent_60%)]" />
+        <div
+          className={`absolute inset-0`}
+          style={{ backgroundImage: `radial-gradient(circle at 70% 40%, ${elementStyle.glowColor}, transparent 60%)` }}
+        />
 
         {/* Image */}
         <div className="absolute inset-0">

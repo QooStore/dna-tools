@@ -1,4 +1,4 @@
-import { WEAPON_LABELS } from "../menulabels";
+import { WEAPON_LABELS } from "../labels";
 
 export type WeaponCategory = "근접" | "원거리";
 
