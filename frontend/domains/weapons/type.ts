@@ -1,16 +1,16 @@
 import { WEAPON_LABELS } from "../labels";
 
-export type WeaponCategory = "근접" | "원거리";
+export type WeaponCategory = "melee" | "ranged";
 
-export type MeleeWeaponType = "대검" | "한손검" | "쌍도" | "대도" | "장병기" | "칼날 채찍";
+export type MeleeWeaponType = "greatsword" | "sword" | "dualBlades" | "katana" | "polearm" | "whipsword";
 
-export type RangedWeaponType = "활" | "핸드 캐논" | "쌍권총" | "돌격소총" | "권총" | "산탄총";
+export type RangedWeaponType = "bow" | "grenadeLauncher" | "dualPistols" | "assaultRifle" | "pistol" | "shotgun";
 
 export type WeaponStatKey = keyof typeof WEAPON_LABELS;
 
 export type ConsonanceWeaponStats =
   | {
-      category: "근접";
+      category: "melee";
       type: MeleeWeaponType;
       attackType: "베기" | "관통" | "진동";
 
@@ -21,7 +21,7 @@ export type ConsonanceWeaponStats =
       triggerProbability: number;
     }
   | {
-      category: "원거리";
+      category: "ranged";
       type: RangedWeaponType;
       attackType: "베기" | "관통" | "진동";
 

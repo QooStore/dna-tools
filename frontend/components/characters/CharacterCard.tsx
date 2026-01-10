@@ -1,16 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
+
 import Feature from "../Feature";
 
-interface CharacterCardProps {
-  slug: string;
-  name: string;
-  image: string;
-  features: string[];
-  elementIcon?: string;
-}
+import { CharacterListItem } from "@/domains/characters/character";
 
-export default function CharacterCard({ slug, name, image, features, elementIcon }: CharacterCardProps) {
+type CharacterCardProps = Pick<CharacterListItem, "slug" | "name" | "listImage" | "features" | "elementImage">;
+
+export default function CharacterCard({ slug, name, listImage, features, elementImage }: CharacterCardProps) {
   return (
     <Link href={`/characters/${slug}`} className="block">
       <div className="group mx-auto w-full max-w-60 overflow-hidden rounded-xl border bg-[#0b1020]/80 transition  border-white/10 hover:border-cyan-400/50">
@@ -18,14 +15,14 @@ export default function CharacterCard({ slug, name, image, features, elementIcon
         <div className="relative aspect-3/4 overflow-hidden">
           <div
             className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-105"
-            style={{ backgroundImage: `url(${image})` }}
+            style={{ backgroundImage: `url(${listImage})` }}
           />
 
           <div className="absolute inset-0 bg-black/20" />
           {/* 🔥 속성 아이콘 */}
-          {elementIcon && (
+          {elementImage && (
             <div className="absolute right-2 top-2 z-10 rounded-md bg-black/60 p-1 backdrop-blur">
-              <Image src={elementIcon} alt="" width={30} height={30} />
+              <Image src={elementImage} alt="" width={30} height={30} />
             </div>
           )}
         </div>
@@ -38,7 +35,7 @@ export default function CharacterCard({ slug, name, image, features, elementIcon
           {/* Features */}
           <div className="flex flex-wrap justify-center gap-1.5">
             {features.map((feature) => (
-              <Feature key={feature} feature={feature} />
+              <Feature key={feature.featureCode} feature={feature.featureCode} />
             ))}
           </div>
         </div>

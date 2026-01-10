@@ -1,61 +1,86 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+
+import { FEATURE_LABELS, WEAPON_CATEGORY_LABELS, ELEMENT_LABELS, WORD_LABELS } from "@/domains/labels";
 import type { FilterGroup } from "@/config/characterFilters";
 
 type CharacterFilterBarProps = {
   characterFilters: FilterGroup[];
 };
 
+const LABEL_MAP = {
+  ...FEATURE_LABELS,
+  ...WEAPON_CATEGORY_LABELS,
+  ...ELEMENT_LABELS,
+};
+
 export default function CharacterFilterBar({ characterFilters }: CharacterFilterBarProps) {
-  /* 필터 상태 초기값 생성.
-  filters = {
-              element: "All",
-              role: "All",
-              proficiency: "All",
-              feature: ["All"],
-            }
-   */
-  const [filters, setFilters] = useState<Record<string, string | string[]>>(
-    Object.fromEntries(characterFilters.map((f) => [f.key, f.key === "feature" ? ["All"] : "All"]))
-  );
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const handleClick = (groupKey: string, option: string) => {
-    setFilters((prev) => {
-      // 1) feature: 다중 선택
-      if (groupKey === "feature") {
-        const current = prev[groupKey] as string[];
+  // 현재 URL을 기반으로 active 여부 판단
+  const isActive = (groupKey: string, option: string) => {
+    // feature: 다중 선택
+    if (groupKey === "feature") {
+      const values = searchParams.getAll(groupKey);
 
-        // (a) All 클릭 → 무조건 All만
-        if (option === "All") {
-          return { ...prev, [groupKey]: ["All"] };
-        }
-
-        // (b) All 제거 후 토글
-        const withoutAll = current.filter((v) => v !== "All");
-
-        // 이미 선택되어 있으면 제거
-        if (withoutAll.includes(option)) {
-          const next = withoutAll.filter((v) => v !== option);
-          // 아무것도 없으면 All로 복귀
-          return { ...prev, [groupKey]: next.length === 0 ? ["All"] : next };
-        }
-
-        // 새로 추가
-        return { ...prev, [groupKey]: [...withoutAll, option] };
+      // 쿼리 없으면 All active
+      if (option === "All") {
+        return values.length === 0;
       }
 
-      // 2) 단일 선택
-      return { ...prev, [groupKey]: option };
-    });
+      return values.includes(option);
+    }
+
+    // 단일 선택
+    const value = searchParams.get(groupKey);
+
+    // 🔥 쿼리 없으면 All active
+    if (option === "All") {
+      return value === null;
+    }
+
+    return value === option;
   };
 
-  const isActive = (groupKey: string, option: string) => {
-    const value = filters[groupKey];
+  const handleClick = (groupKey: string, option: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    // 1) feature: 다중 선택
     if (groupKey === "feature") {
-      return Array.isArray(value) && value.includes(option);
+      const current = params.getAll(groupKey);
+
+      // (a) All 클릭 → 무조건 All만
+      if (option === "All") {
+        params.delete(groupKey);
+        router.push(`?${params.toString()}`);
+        return;
+      }
+
+      // (b) 토글
+      if (current.includes(option)) {
+        // 이미 있으면 제거
+        const next = current.filter((v) => v !== option);
+        params.delete(groupKey);
+        next.forEach((v) => params.append(groupKey, v));
+      } else {
+        // 없으면 추가
+        params.append(groupKey, option);
+      }
+
+      router.push(`?${params.toString()}`);
+      return;
     }
-    return value === option;
+
+    // 2) 단일 선택
+    if (option === "All") {
+      params.delete(groupKey);
+    } else {
+      params.set(groupKey, option);
+    }
+
+    router.push(`?${params.toString()}`);
   };
 
   return (
@@ -63,7 +88,7 @@ export default function CharacterFilterBar({ characterFilters }: CharacterFilter
       {characterFilters.map((group) => (
         <div key={group.key}>
           {/* Label */}
-          <div className="mb-2 text-sm font-semibold text-white/80">{group.label}</div>
+          <div className="mb-2 text-sm font-semibold text-white/80">{WORD_LABELS[group.key]}</div>
 
           {/* Options */}
           <div className="flex flex-wrap gap-2">
@@ -83,7 +108,7 @@ export default function CharacterFilterBar({ characterFilters }: CharacterFilter
                     }
                   `}
                 >
-                  {option}
+                  {LABEL_MAP[option] ?? option}
                 </button>
               );
             })}

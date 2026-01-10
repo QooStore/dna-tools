@@ -1,47 +1,44 @@
-export type Character = {
-  id: string;
-  name: string;
-  image: string;
-  element: string;
-  features: string[];
-  elementIcon: string;
-  slug: string;
-  meleeProficiency: string;
-  rangedProficiency: string;
-};
+import { CharacterListItem } from "@/domains/characters/character";
 
-export const CHARACTERS: Character[] = [
+export const CHARACTERS: CharacterListItem[] = [
   {
-    id: "berenica",
-    name: "베레니카",
-    image: "/images/character_list/berenica.png",
-    element: "불",
-    elementIcon: "/images/element_icon/umbro.png",
-    features: ["딜러", "무기 대미지"],
+    id: 1,
     slug: "berenica",
-    meleeProficiency: "대검",
-    rangedProficiency: "권총",
+    name: "베레니카",
+    listImage: "/images/character_list/berenica.png",
+    elementCode: "pyro",
+    elementImage: "/images/element_icon/umbro.png",
+    features: [{ featureCode: "dmg" }, { featureCode: "weaponDmg" }],
+    meleeProficiency: "sword",
+    rangedProficiency: "pistol",
   },
   {
-    id: "fina",
-    name: "피나",
-    image: "/images/character_list/fina.png",
-    element: "물",
-    elementIcon: "/images/element_icon/hydro.png",
-    features: ["서포터", "치료", "정신력 회복"],
+    id: 2,
     slug: "fina",
-    meleeProficiency: "쌍도",
-    rangedProficiency: "소총",
+    name: "피나",
+    listImage: "/images/character_list/fina.png",
+    elementCode: "hydro",
+    elementImage: "/images/element_icon/hydro.png",
+    features: [{ featureCode: "support" }, { featureCode: "heal" }, { featureCode: "sanityRecovery" }],
+    meleeProficiency: "dualBlades",
+    rangedProficiency: "bow",
   },
   {
-    id: "kezhuo",
+    id: 3,
+    slug: "kezhuo",
     name: "커저우",
-    image: "/images/character_list/tabethe.png",
-    element: "번개",
-    elementIcon: "/images/element_icon/electro.png",
-    features: ["딜러", "스킬 대미지", "제어", "서포터", "치료", "정신력 회복"],
-    slug: "abc",
-    meleeProficiency: "장병기",
-    rangedProficiency: "저격총",
+    listImage: "/images/character_list/tabethe.png",
+    elementCode: "electro",
+    elementImage: "/images/element_icon/electro.png",
+    features: [
+      { featureCode: "dps" },
+      { featureCode: "skillDmg" },
+      { featureCode: "control" },
+      { featureCode: "support" },
+      { featureCode: "heal" },
+      { featureCode: "sanityRecovery" },
+    ],
+    meleeProficiency: "polearm",
+    rangedProficiency: "shotgun",
   },
 ];

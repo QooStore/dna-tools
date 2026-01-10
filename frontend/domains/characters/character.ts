@@ -43,7 +43,7 @@ export interface CharacterDetail {
   elementCode: ElementType;
   image: string;
   elementImage: string;
-  list_image: string;
+  listImage: string;
 
   /** 무기 숙련 */
   meleeProficiency: MeleeWeaponType;
@@ -68,4 +68,21 @@ export interface CharacterDetail {
 
   /** 근원 */
   introns: IntronEffect[];
+}
+
+export interface CharacterListItem {
+  id: number;
+  slug: string;
+  name: string;
+
+  elementCode: ElementType;
+  listImage: string;
+  elementImage: string;
+
+  meleeProficiency: MeleeWeaponType;
+  rangedProficiency: RangedWeaponType;
+
+  features: {
+    featureCode: string;
+  }[];
 }
