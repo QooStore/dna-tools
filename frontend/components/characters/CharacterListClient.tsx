@@ -6,6 +6,8 @@ import { useSearchParams } from "next/navigation";
 import CharacterCard from "@/components/characters/CharacterCard";
 
 import { CharacterListItem } from "@/domains/characters/character";
+import { buildSearchableText } from "@/lib/utils";
+import { deleteCharacter } from "@/lib/api/characters";
 
 type Props = {
   allCharacters: CharacterListItem[];
@@ -48,8 +50,14 @@ export default function CharacterListClient({ allCharacters }: Props) {
 
       // 검색어
       if (keyword) {
-        const q = keyword.toLowerCase();
-        if (!c.name.toLowerCase().includes(q)) return false;
+        const q = keyword.trim().toLowerCase();
+
+        const searchableText = buildSearchableText(
+          [c.name],
+          [c.elementCode, c.meleeProficiency, c.rangedProficiency, ...c.features.map((f) => f.featureCode)]
+        );
+
+        if (!searchableText.includes(q)) return false;
       }
 
       return true;
@@ -58,10 +66,14 @@ export default function CharacterListClient({ allCharacters }: Props) {
 
   // --- 캐릭터 목록 삭제 ---
   const handleDelete = async (id: number) => {
-    // await deleteCharacter(id);
+    if (!confirm("정말 삭제하시겠습니까?")) return;
 
-    // 성공 시 프론트 상태만 제거
-    setCharacters((prev) => prev.filter((c) => c.id !== id));
+    try {
+      await deleteCharacter(id);
+      setCharacters((prev) => prev.filter((c) => c.id !== id));
+    } catch (e) {
+      alert("삭제에 실패했습니다.");
+    }
   };
 
   if (filteredCharacters.length === 0) {
@@ -78,7 +90,7 @@ export default function CharacterListClient({ allCharacters }: Props) {
           listImage={character.listImage}
           features={character.features}
           elementImage={character.elementImage}
-          // onDelete={() => handleDelete(character.id)} // 관리자일 때만 노출
+          onDelete={() => handleDelete(character.id)} // 관리자일 때만 노출
         />
       ))}
     </div>

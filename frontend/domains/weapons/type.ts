@@ -12,7 +12,7 @@ export type ConsonanceWeaponStats =
   | {
       category: "melee";
       type: MeleeWeaponType;
-      attackType: "베기" | "관통" | "진동";
+      attackType: "slash" | "spike" | "smash";
 
       attack: number;
       critRate: number;
@@ -23,7 +23,7 @@ export type ConsonanceWeaponStats =
   | {
       category: "ranged";
       type: RangedWeaponType;
-      attackType: "베기" | "관통" | "진동";
+      attackType: "slash" | "spike" | "smash";
 
       attack: number;
       critRate: number;

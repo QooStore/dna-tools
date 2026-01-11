@@ -18,6 +18,12 @@ export const WEAPON_LABELS: Record<string, string> = {
   triggerProbability: "발동 확률",
 };
 
+export const ATTACK_TYPE_LABELS: Record<string, string> = {
+  slash: "베기",
+  spike: "관통",
+  smash: "진동",
+};
+
 export const ELEMENT_LABELS: Record<string, string> = {
   umbro: "어둠",
   hydro: "물",
@@ -63,4 +69,13 @@ export const WORD_LABELS: Record<string, string> = {
   meleeProficiency: "근거리 무기 마스터리",
   rangedProficiency: "원거리 무기 마스터리",
   feature: "특성",
+};
+
+export const LABELS = {
+  stat: STAT_LABELS,
+  weapon: WEAPON_LABELS,
+  element: ELEMENT_LABELS,
+  weaponCategory: WEAPON_CATEGORY_LABELS,
+  feature: FEATURE_LABELS,
+  word: WORD_LABELS,
 };

@@ -1,5 +1,3 @@
-import { CharacterDetail } from "@/domains/characters/character";
-
 export const BERENICA = {
   slug: "berenica",
   name: "베레니카",

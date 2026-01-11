@@ -4,10 +4,23 @@ import Link from "next/link";
 import Feature from "../Feature";
 
 import { CharacterListItem } from "@/domains/characters/character";
+import { FEATURE_LABELS } from "@/domains/labels";
+import { AdminActionButton } from "../ui/AdminActionButton";
 
-type CharacterCardProps = Pick<CharacterListItem, "slug" | "name" | "listImage" | "features" | "elementImage">;
+type CharacterCardProps = Pick<CharacterListItem, "slug" | "name" | "listImage" | "features" | "elementImage"> & {
+  onUpdate?: () => void;
+  onDelete?: () => void;
+};
 
-export default function CharacterCard({ slug, name, listImage, features, elementImage }: CharacterCardProps) {
+export default function CharacterCard({
+  slug,
+  name,
+  listImage,
+  features,
+  elementImage,
+  onDelete,
+  onUpdate,
+}: CharacterCardProps) {
   return (
     <Link href={`/characters/${slug}`} className="block">
       <div className="group mx-auto w-full max-w-60 overflow-hidden rounded-xl border bg-[#0b1020]/80 transition  border-white/10 hover:border-cyan-400/50">
@@ -19,7 +32,23 @@ export default function CharacterCard({ slug, name, listImage, features, element
           />
 
           <div className="absolute inset-0 bg-black/20" />
-          {/* 🔥 속성 아이콘 */}
+
+          {/* 삭제 버튼 */}
+          <div
+            className="
+                        absolute inset-0 z-20
+                        flex items-center justify-center
+                        bg-black/40
+                        opacity-0 group-hover:opacity-100
+                        transition
+                        pointer-events-none
+                      "
+          >
+            <AdminActionButton variant="delete" onClick={() => onDelete?.()} />
+            <AdminActionButton variant="edit" onClick={() => onUpdate?.()} />
+          </div>
+
+          {/* 속성 아이콘 */}
           {elementImage && (
             <div className="absolute right-2 top-2 z-10 rounded-md bg-black/60 p-1 backdrop-blur">
               <Image src={elementImage} alt="" width={30} height={30} />
@@ -35,7 +64,7 @@ export default function CharacterCard({ slug, name, listImage, features, element
           {/* Features */}
           <div className="flex flex-wrap justify-center gap-1.5">
             {features.map((feature) => (
-              <Feature key={feature.featureCode} feature={feature.featureCode} />
+              <Feature key={feature.featureCode} feature={FEATURE_LABELS[feature.featureCode]} />
             ))}
           </div>
         </div>

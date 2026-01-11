@@ -14,9 +14,13 @@ public class CharacterDetailResponse {
     private final String elementImage;
     private final String meleeProficiency;
     private final String rangedProficiency;
-
     private final CharacterStatsResponse stats;
     private final ConsonanceWeaponResponse consonanceWeapon;
+
+    private final List<CharacterFeatureResponse> features;
+    private final List<SkillResponse> skills;
+    private final List<IntronResponse> introns;
+    private final List<PassiveUpgradeResponse> passiveUpgrades;
 
     public CharacterDetailResponse(String name, String slug, String elementCode, String image, String elementImage,
             String meleeProficiency, String rangedProficiency, CharacterStatsResponse stats,
@@ -36,10 +40,5 @@ public class CharacterDetailResponse {
         this.introns = introns;
         this.passiveUpgrades = passiveUpgrades;
     }
-
-    private final List<CharacterFeatureResponse> features;
-    private final List<SkillResponse> skills;
-    private final List<IntronResponse> introns;
-    private final List<PassiveUpgradeResponse> passiveUpgrades;
 
 }

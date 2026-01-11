@@ -6,7 +6,7 @@ import InfoCard from "@/components/ui/InfoCard";
 import SkillCard from "@/components/ui/SkillCard";
 import StatCard from "@/components/ui/StatCard";
 
-import { STAT_LABELS, WEAPON_LABELS } from "@/domains/labels";
+import { STAT_LABELS, WEAPON_LABELS, WEAPON_CATEGORY_LABELS, FEATURE_LABELS } from "@/domains/labels";
 import { getCharacterDetail } from "@/lib/api/characters";
 import { formatWeaponStat } from "@/lib/utils";
 import { WeaponStatKey } from "@/domains/weapons/type";
@@ -42,12 +42,13 @@ export default async function CharacterDetailPage({ params }: { params: Promise<
             <h1 className="text-5xl font-bold">{character.name}</h1>
 
             <div className="text-sm text-white/70">
-              {character.meleeProficiency} · {character.rangedProficiency}
+              {WEAPON_CATEGORY_LABELS[character.meleeProficiency]} ·{" "}
+              {WEAPON_CATEGORY_LABELS[character.rangedProficiency]}
             </div>
 
             <div className="flex flex-wrap gap-2 pt-2">
               {character.features.map((feature) => (
-                <Feature key={feature.featureCode} feature={feature.featureCode} />
+                <Feature key={feature.featureCode} feature={FEATURE_LABELS[feature.featureCode]} />
               ))}
             </div>
           </div>
