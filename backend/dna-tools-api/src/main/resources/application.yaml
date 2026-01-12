@@ -16,3 +16,7 @@ spring:
 
 server:
   port: 8080
+
+jwt:
+  secret: mySecretKey
+  expiration: 3600000 # 1시간
