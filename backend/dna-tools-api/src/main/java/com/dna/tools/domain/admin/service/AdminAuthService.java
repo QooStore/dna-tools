@@ -22,6 +22,8 @@ public class AdminAuthService {
         AdminUser admin = adminUserRepository.findByUserId(request.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 관리자"));
 
+        // 프론트에서 넘어온 평문 비밀번호와 DB에 저장된 암호화된 비밀번호 비교
+        // bcrypt 해시 문자열은 같은 암호를 encode해도 해시 결과가 다르다.
         if (!passwordEncoder.matches(request.getPassword(), admin.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 올바르지 않습니다");
         }

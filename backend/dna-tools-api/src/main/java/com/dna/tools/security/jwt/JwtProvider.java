@@ -8,6 +8,7 @@ import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -21,6 +22,7 @@ public class JwtProvider {
     @Value("${jwt.expiration}")
     private long expirationMs;
 
+    /** 토큰 생성 */
     public String createToken(Long userId, String role) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + expirationMs);
@@ -35,8 +37,27 @@ public class JwtProvider {
                 .compact(); // JWT Builder -> 문자열 반환(형식 예시 : xxxxx.yyyyy.zzzzz)
     }
 
+    /** 서명 키 */
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(
                 secretKey.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /** 토큰 검증 */
+    public boolean validateToken(String token) {
+        try {
+            parseClaims(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public Claims parseClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }

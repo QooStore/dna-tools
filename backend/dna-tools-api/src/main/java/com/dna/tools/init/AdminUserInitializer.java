@@ -1,6 +1,15 @@
 package com.dna.tools.init;
 
-/** 관리자 계정 1회 생성용 */
+// import org.springframework.boot.CommandLineRunner;
+// import org.springframework.security.crypto.password.PasswordEncoder;
+// import org.springframework.stereotype.Component;
+
+// import com.dna.tools.domain.admin.entity.AdminUser;
+// import com.dna.tools.domain.admin.repository.AdminUserRepository;
+
+// import lombok.RequiredArgsConstructor;
+
+// /** 관리자 계정 1회 생성용 */
 
 // @Component
 // @RequiredArgsConstructor
