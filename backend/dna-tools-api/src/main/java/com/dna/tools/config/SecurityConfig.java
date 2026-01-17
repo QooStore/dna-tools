@@ -23,6 +23,11 @@ public class SecurityConfig {
     private final JwtProvider jwtProvider;
 
     @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(jwtProvider);
+    }
+
+    @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
@@ -46,7 +51,7 @@ public class SecurityConfig {
                         .requestMatchers("/lee/**").hasRole("ADMIN")
                         .anyRequest().permitAll())
                 // security 기본 인증 필터 UsernamePasswordAuthenticationFilter 대신 커스텀 필터 사용.
-                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
