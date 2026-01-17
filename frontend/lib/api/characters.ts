@@ -19,13 +19,3 @@ export async function getAllCharacters(): Promise<CharacterListItem[]> {
 
   return res.json();
 }
-
-export async function deleteCharacter(id: number) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/characters/${id}`, {
-    method: "DELETE",
-  });
-
-  if (!res.ok) {
-    throw new Error("캐릭터 삭제 실패");
-  }
-}

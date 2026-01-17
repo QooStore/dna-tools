@@ -7,13 +7,14 @@ import CharacterCard from "@/components/characters/CharacterCard";
 
 import { CharacterListItem } from "@/domains/characters/character";
 import { buildSearchableText } from "@/lib/utils";
-import { deleteCharacter } from "@/lib/api/characters";
+import { deleteCharacter } from "@/lib/api/admin";
 
 type Props = {
   allCharacters: CharacterListItem[];
+  isAdmin: boolean;
 };
 
-export default function CharacterListClient({ allCharacters }: Props) {
+export default function CharacterListClient({ allCharacters, isAdmin }: Props) {
   const searchParams = useSearchParams();
 
   // 관리자 삭제 대비
@@ -54,7 +55,7 @@ export default function CharacterListClient({ allCharacters }: Props) {
 
         const searchableText = buildSearchableText(
           [c.name],
-          [c.elementCode, c.meleeProficiency, c.rangedProficiency, ...c.features.map((f) => f.featureCode)]
+          [c.elementCode, c.meleeProficiency, c.rangedProficiency, ...c.features.map((f) => f.featureCode)],
         );
 
         if (!searchableText.includes(q)) return false;
@@ -91,6 +92,7 @@ export default function CharacterListClient({ allCharacters }: Props) {
           features={character.features}
           elementImage={character.elementImage}
           onDelete={() => handleDelete(character.id)} // 관리자일 때만 노출
+          isAdmin={isAdmin}
         />
       ))}
     </div>

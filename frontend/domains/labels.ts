@@ -9,7 +9,7 @@ export const STAT_LABELS: Record<string, string> = {
 
 export const WEAPON_LABELS: Record<string, string> = {
   category: "카테고리",
-  type: "무기 타입",
+  weaponType: "무기 타입",
   attackType: "공격 타입",
   attack: "공격력",
   critRate: "치명타 확률",

@@ -10,6 +10,7 @@ import { AdminActionButton } from "../ui/AdminActionButton";
 type CharacterCardProps = Pick<CharacterListItem, "slug" | "name" | "listImage" | "features" | "elementImage"> & {
   onUpdate?: () => void;
   onDelete?: () => void;
+  isAdmin: boolean;
 };
 
 export default function CharacterCard({
@@ -20,6 +21,7 @@ export default function CharacterCard({
   elementImage,
   onDelete,
   onUpdate,
+  isAdmin,
 }: CharacterCardProps) {
   return (
     <Link href={`/characters/${slug}`} className="block">
@@ -34,8 +36,9 @@ export default function CharacterCard({
           <div className="absolute inset-0 bg-black/20" />
 
           {/* 삭제 버튼 */}
-          <div
-            className="
+          {isAdmin && (
+            <div
+              className="
                         absolute inset-0 z-20
                         flex items-center justify-center
                         bg-black/40
@@ -43,10 +46,11 @@ export default function CharacterCard({
                         transition
                         pointer-events-none
                       "
-          >
-            <AdminActionButton variant="delete" onClick={() => onDelete?.()} />
-            <AdminActionButton variant="edit" onClick={() => onUpdate?.()} />
-          </div>
+            >
+              <AdminActionButton variant="delete" onClick={() => onDelete?.()} />
+              <AdminActionButton variant="edit" onClick={() => onUpdate?.()} />
+            </div>
+          )}
 
           {/* 속성 아이콘 */}
           {elementImage && (

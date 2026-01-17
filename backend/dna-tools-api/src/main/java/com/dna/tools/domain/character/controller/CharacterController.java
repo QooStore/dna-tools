@@ -33,9 +33,4 @@ public class CharacterController {
         return CharacterDetailMapper.toResponse(character);
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteCharacter(@PathVariable Long id) {
-        characterService.deleteCharacter(id);
-    }
-
 }

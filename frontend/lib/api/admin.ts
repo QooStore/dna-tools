@@ -23,3 +23,13 @@ export async function getAdminMe(): Promise<boolean> {
     return false;
   }
 }
+
+export async function deleteCharacter(id: number) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/lee/characters/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!res.ok) {
+    throw new Error("캐릭터 삭제 실패");
+  }
+}

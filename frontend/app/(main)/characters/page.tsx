@@ -6,9 +6,11 @@ import { CHARACTER_FILTERS } from "@/config/characterFilters";
 import { getAllCharacters } from "@/lib/api/characters";
 
 import { CharacterListItem } from "@/domains/characters/character";
+import { getAdminMe } from "@/lib/api/admin";
 
 export default async function CharactersPage() {
   const characters: CharacterListItem[] = await getAllCharacters();
+  const isAdmin = await getAdminMe();
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
@@ -24,7 +26,7 @@ export default async function CharactersPage() {
       </div>
 
       {/* List */}
-      <CharacterListClient allCharacters={characters} />
+      <CharacterListClient allCharacters={characters} isAdmin={isAdmin} />
     </div>
   );
 }
