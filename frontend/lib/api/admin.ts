@@ -33,3 +33,21 @@ export async function deleteCharacter(id: number) {
     throw new Error("캐릭터 삭제 실패");
   }
 }
+
+export async function adminCreateCharacter(payload: any) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/lee/characters`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`캐릭터 등록 실패: ${text}`);
+  }
+
+  return;
+}

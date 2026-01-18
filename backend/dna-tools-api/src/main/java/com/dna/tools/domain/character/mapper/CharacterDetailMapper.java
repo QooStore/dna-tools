@@ -20,6 +20,7 @@ public class CharacterDetailMapper {
                                 character.getSlug(),
                                 character.getElement(),
                                 character.getImage(),
+                                character.getListImage(),
                                 character.getElementImage(),
                                 character.getMeleeProficiency(),
                                 character.getRangedProficiency(),

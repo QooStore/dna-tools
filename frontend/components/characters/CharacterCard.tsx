@@ -8,7 +8,6 @@ import { FEATURE_LABELS } from "@/domains/labels";
 import { AdminActionButton } from "../ui/AdminActionButton";
 
 type CharacterCardProps = Pick<CharacterListItem, "slug" | "name" | "listImage" | "features" | "elementImage"> & {
-  onUpdate?: () => void;
   onDelete?: () => void;
   isAdmin: boolean;
 };
@@ -20,7 +19,6 @@ export default function CharacterCard({
   features,
   elementImage,
   onDelete,
-  onUpdate,
   isAdmin,
 }: CharacterCardProps) {
   return (
@@ -48,7 +46,21 @@ export default function CharacterCard({
                       "
             >
               <AdminActionButton variant="delete" onClick={() => onDelete?.()} />
-              <AdminActionButton variant="edit" onClick={() => onUpdate?.()} />
+              <Link
+                href="/characters/edit"
+                className="
+                            pointer-events-auto
+                            rounded-full
+                            bg-black/70
+                            px-4 py-2
+                            text-sm font-semibold
+                            ring-1
+                            transition
+                            text-cyan-300 ring-cyan-500 hover:bg-cyan-500/20
+                          "
+              >
+                수정
+              </Link>
             </div>
           )}
 

@@ -50,7 +50,7 @@ public class SecurityConfig {
                 // 요청 권한 설정
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/lee/signin").permitAll()
-                        .requestMatchers("/lee/**").hasRole("ADMIN")
+                        // .requestMatchers("/lee/**").hasRole("ADMIN")
                         .anyRequest().permitAll())
                 // security 기본 인증 필터 UsernamePasswordAuthenticationFilter 대신 커스텀 필터 사용.
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

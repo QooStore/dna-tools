@@ -36,7 +36,4 @@ public class CharacterService {
         return characterRepository.findAllCharacterList().stream().map(this::toListResponse).toList();
     }
 
-    public void deleteCharacter(Long id) {
-        characterRepository.deleteById(id);
-    }
 }

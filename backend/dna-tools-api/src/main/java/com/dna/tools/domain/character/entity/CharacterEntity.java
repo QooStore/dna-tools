@@ -45,7 +45,7 @@ public class CharacterEntity {
     @Column(name = "ranged_proficiency", nullable = false, length = 20)
     private String rangedProficiency;
 
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "created_at", updatable = false, insertable = false)
     private LocalDateTime createdAt;
 
     /** 연관 관계 */
@@ -72,10 +72,56 @@ public class CharacterEntity {
     @OrderBy("id ASC")
     private Set<PassiveUpgradeEntity> passiveUpgrades = new HashSet<PassiveUpgradeEntity>();
 
-    // @PrePersist
-    // protected void onCreate() {
-    // this.createdAt = LocalDateTime.now();
-    // }
+    // ===== 생성 팩토리 (등록) =====
+    public static CharacterEntity create(
+            String slug,
+            String name,
+            String element,
+            String image,
+            String elementImage,
+            String listImage,
+            String meleeProficiency,
+            String rangedProficiency) {
+        CharacterEntity c = new CharacterEntity();
+        c.slug = slug;
+        c.name = name;
+        c.element = element;
+        c.image = image;
+        c.elementImage = elementImage;
+        c.listImage = listImage;
+        c.meleeProficiency = meleeProficiency;
+        c.rangedProficiency = rangedProficiency;
+        return c;
+    }
+
+    // ===== 기본 정보 수정 (수정) =====
+    public void updateBasic(
+            String slug,
+            String name,
+            String element,
+            String image,
+            String elementImage,
+            String listImage,
+            String meleeProficiency,
+            String rangedProficiency) {
+        this.slug = slug;
+        this.name = name;
+        this.element = element;
+        this.image = image;
+        this.elementImage = elementImage;
+        this.listImage = listImage;
+        this.meleeProficiency = meleeProficiency;
+        this.rangedProficiency = rangedProficiency;
+    }
+
+    // ===== 1:1 관계 세터 =====
+    public void setStats(CharacterStatsEntity stats) {
+        this.stats = stats;
+    }
+
+    public void setConsonanceWeapon(ConsonanceWeaponEntity weapon) {
+        this.consonanceWeapon = weapon;
+    }
 
     /** feature 테이블 데이터 컬럼 제어(addFeature, clearFeatures) */
     public void addFeature(String feature) {
@@ -102,6 +148,29 @@ public class CharacterEntity {
 
     public void clearIntrons() {
         this.introns.clear();
+    }
+
+    // ===== Passive Upgrade =====
+    public void addPassiveUpgrade(
+            String upgradeKey,
+            String upgradeType,
+            String targetStat,
+            java.math.BigDecimal value,
+            String name,
+            String description) {
+        this.passiveUpgrades.add(
+                new PassiveUpgradeEntity(
+                        this,
+                        upgradeKey,
+                        upgradeType,
+                        targetStat,
+                        value,
+                        name,
+                        description));
+    }
+
+    public void clearPassiveUpgrades() {
+        this.passiveUpgrades.clear();
     }
 
 }
