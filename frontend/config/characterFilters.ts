@@ -10,11 +10,11 @@ export const CHARACTER_FILTERS: FilterGroup[] = [
   },
   {
     key: "meleeProficiency",
-    options: ["All", "sword", "dualBlades", "greatsword", "polearm"],
+    options: ["All", "sword", "dualBlades", "greatsword", "polearm", "katana", "whipsword"],
   },
   {
     key: "rangedProficiency",
-    options: ["All", "pistol", "assaultRifle", "bow", "shotgun"],
+    options: ["All", "pistol", "assaultRifle", "bow", "shotgun", "dualPistols", "grenadeLauncher"],
   },
   {
     key: "feature",

@@ -1,39 +1,83 @@
-export default function BasicSection({ form, setForm }: any) {
+import FormImageUpload from "@/components/ui/FormImageUpload";
+import InputComponent from "@/components/ui/FormInput";
+import LabelComponent from "@/components/ui/FormLabel";
+import FormSelect from "@/components/ui/FormSelect";
+import { ELEMENT_OPTIONS, MELEE_PROFICIENCY_OPTIONS, RANGED_PROFICIENCY_OPTIONS } from "@/config/navigation";
+
+type Props = {
+  form: any;
+  setForm: React.Dispatch<React.SetStateAction<any>>;
+};
+
+export default function BasicSection({ form, setForm }: Props) {
   const update = (key: string, value: any) => {
-    setForm((prev: any) => ({ ...prev, [key]: value }));
+    setForm((prev: any) => ({
+      ...prev,
+      [key]: value,
+    }));
   };
 
   return (
-    <section className="border p-4 rounded">
-      <h2 className="font-bold mb-3">기본 정보</h2>
+    <section className="rounded-xl border border-white/10 bg-white/[0.02] p-6 space-y-6">
+      <h2 className="text-lg font-semibold">기본 정보</h2>
 
-      <input placeholder="slug" value={form.slug} onChange={(e) => update("slug", e.target.value)} />
+      {/* slug */}
+      <div className="space-y-1">
+        <LabelComponent>Slug (고유 ID)</LabelComponent>
+        <InputComponent value={form.slug} onChange={(value) => update("slug", value)} />
+        <p className="text-[11px] text-white/35">URL 및 내부 식별자로 사용됩니다.</p>
+      </div>
 
-      <input placeholder="이름" value={form.name} onChange={(e) => update("name", e.target.value)} />
+      {/* name */}
+      <div className="space-y-1">
+        <LabelComponent>캐릭터 이름</LabelComponent>
+        <InputComponent value={form.name} onChange={(value) => update("name", value)} />
+      </div>
 
-      <input placeholder="속성 코드" value={form.element} onChange={(e) => update("element", e.target.value)} />
+      {/* element */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-start">
+        <div className="space-y-1">
+          <LabelComponent>속성</LabelComponent>
+          <FormSelect
+            value={form.elementCode}
+            onChange={(value) => update("elementCode", value)}
+            options={ELEMENT_OPTIONS}
+          />
+        </div>
 
-      <input placeholder="이미지 URL" value={form.image} onChange={(e) => update("image", e.target.value)} />
+        <FormImageUpload
+          label="속성 아이콘"
+          value={form.elementImage}
+          onChange={(url) => update("elementImage", url)}
+          compact
+        />
+      </div>
 
-      <input
-        placeholder="속성 아이콘"
-        value={form.elementImage}
-        onChange={(e) => update("elementImage", e.target.value)}
-      />
+      {/* image */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-start">
+        <FormImageUpload label="캐릭터 이미지" value={form.image} onChange={(url) => update("image", url)} />
+        <FormImageUpload label="목록 이미지" value={form.listImage} onChange={(url) => update("listImage", url)} />
+      </div>
 
-      <input placeholder="리스트 이미지" value={form.listImage} onChange={(e) => update("listImage", e.target.value)} />
-
-      <input
-        placeholder="근접 숙련"
-        value={form.meleeProficiency}
-        onChange={(e) => update("meleeProficiency", e.target.value)}
-      />
-
-      <input
-        placeholder="원거리 숙련"
-        value={form.rangedProficiency}
-        onChange={(e) => update("rangedProficiency", e.target.value)}
-      />
+      {/* proficiency */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="space-y-1">
+          <LabelComponent>근접 무기 숙련 타입</LabelComponent>
+          <FormSelect
+            value={form.meleeProficiency}
+            onChange={(value) => update("meleeProficiency", value)}
+            options={MELEE_PROFICIENCY_OPTIONS}
+          />
+        </div>
+        <div className="space-y-1">
+          <LabelComponent>원거리 무기 숙련 타입</LabelComponent>
+          <FormSelect
+            value={form.rangedProficiency}
+            onChange={(value) => update("rangedProficiency", value)}
+            options={RANGED_PROFICIENCY_OPTIONS}
+          />
+        </div>
+      </div>
     </section>
   );
 }
