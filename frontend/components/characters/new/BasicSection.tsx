@@ -40,17 +40,10 @@ export default function BasicSection({ form, setForm }: Props) {
           <LabelComponent>속성</LabelComponent>
           <FormSelect
             value={form.elementCode}
-            onChange={(value) => update("elementCode", value)}
+            onChange={(value) => update("elementCode", value)} // 속성 클릭 시 url도 같이 저장하는 것으로 변경하기.
             options={ELEMENT_OPTIONS}
           />
         </div>
-
-        <FormImageUpload
-          label="속성 아이콘"
-          value={form.elementImage}
-          onChange={(url) => update("elementImage", url)}
-          compact
-        />
       </div>
 
       {/* image */}

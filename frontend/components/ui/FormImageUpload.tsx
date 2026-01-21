@@ -26,7 +26,7 @@ export default function FormImageUpload({ label, value, onChange, description, c
 
     setUploading(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/lee/upload/image`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/lee/upload/image`, {
         method: "POST",
         credentials: "include",
         body: formData,

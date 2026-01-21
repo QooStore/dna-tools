@@ -1,3 +1,6 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -21,6 +24,8 @@ export default function CharacterCard({
   onDelete,
   isAdmin,
 }: CharacterCardProps) {
+  const router = useRouter();
+
   return (
     <Link href={`/characters/${slug}`} className="block">
       <div className="group mx-auto w-full max-w-60 overflow-hidden rounded-xl border bg-[#0b1020]/80 transition  border-white/10 hover:border-cyan-400/50">
@@ -46,8 +51,12 @@ export default function CharacterCard({
                       "
             >
               <AdminActionButton variant="delete" onClick={() => onDelete?.()} />
-              <Link
-                href="/characters/edit"
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  router.push("/characters/edit");
+                }}
                 className="
                             pointer-events-auto
                             rounded-full
@@ -60,7 +69,7 @@ export default function CharacterCard({
                           "
               >
                 수정
-              </Link>
+              </button>
             </div>
           )}
 

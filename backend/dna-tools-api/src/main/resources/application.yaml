@@ -20,3 +20,11 @@ server:
 jwt:
   secret: dna-tools-jwt-secret-key-should-be-at-least-32-bytes!!
   expiration: 3600000 # 1시간
+
+file:
+  upload:
+    image-dir: E:/dna/uploads/images
+
+app:
+  image:
+    base-url: http://localhost:8080
