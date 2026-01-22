@@ -12,17 +12,23 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.dna.tools.domain.image.entity.UploadedImage;
+import com.dna.tools.domain.image.repository.UploadedImageRepository;
+
 @Service
 public class ImageUploadService {
+
+    private final UploadedImageRepository uploadedImageRepository;
 
     private String baseUrl;
     private final Path uploadDir;
     private static final Set<String> ALLOWED_EXT = Set.of("jpg", "jpeg", "png", "webp");
 
     public ImageUploadService(@Value("${file.upload.image-dir}") String uploadDir,
-            @Value("${app.image.base-url}") String baseUrl) {
+            @Value("${app.image.base-url}") String baseUrl, UploadedImageRepository uploadedImageRepository) {
         this.uploadDir = Paths.get(uploadDir);
         this.baseUrl = baseUrl;
+        this.uploadedImageRepository = uploadedImageRepository;
     }
 
     public String upload(MultipartFile file) {
@@ -41,7 +47,11 @@ public class ImageUploadService {
             throw new RuntimeException("이미지 업로드 실패", e);
         }
 
-        return baseUrl + "/images/" + filename;
+        String url = baseUrl + "/images/" + filename;
+
+        uploadedImageRepository.save(new UploadedImage(url));
+
+        return url;
     }
 
     public void validate(MultipartFile file) {
@@ -54,8 +64,8 @@ public class ImageUploadService {
             throw new IllegalArgumentException("허용되지 않는 파일 형식입니다.");
         }
 
-        if (file.getSize() > 5 * 1024 * 1024) {
-            throw new IllegalArgumentException("이미지 용량은 5MB 이하여야 합니다.");
+        if (file.getSize() > 20 * 1024 * 1024) {
+            throw new IllegalArgumentException("이미지 용량은 20MB 이하여야 합니다.");
         }
     }
 

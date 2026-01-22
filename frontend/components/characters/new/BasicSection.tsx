@@ -40,7 +40,10 @@ export default function BasicSection({ form, setForm }: Props) {
           <LabelComponent>속성</LabelComponent>
           <FormSelect
             value={form.elementCode}
-            onChange={(value) => update("elementCode", value)} // 속성 클릭 시 url도 같이 저장하는 것으로 변경하기.
+            onChange={(value) => {
+              update("elementCode", value);
+              update("elementImage", `/images/element_icon/${value}.png`);
+            }}
             options={ELEMENT_OPTIONS}
           />
         </div>
@@ -48,7 +51,12 @@ export default function BasicSection({ form, setForm }: Props) {
 
       {/* image */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-start">
-        <FormImageUpload label="캐릭터 이미지" value={form.image} onChange={(url) => update("image", url)} />
+        <FormImageUpload
+          label="캐릭터 이미지"
+          value={form.image}
+          onChange={(url) => update("image", url)}
+          previewSize="lg"
+        />
         <FormImageUpload label="목록 이미지" value={form.listImage} onChange={(url) => update("listImage", url)} />
       </div>
 

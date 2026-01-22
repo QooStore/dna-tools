@@ -8,10 +8,12 @@ type Props = {
   value: string;
   onChange: (url: string) => void;
   description?: string;
-  compact?: boolean;
+  previewSize?: "sm" | "md" | "lg";
 };
 
-export default function FormImageUpload({ label, value, onChange, description, compact = false }: Props) {
+export default function FormImageUpload({ label, value, onChange, description, previewSize = "md" }: Props) {
+  const previewClass = previewSize === "lg" ? "h-56" : previewSize === "md" ? "h-40" : "h-24";
+
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
 
@@ -47,7 +49,7 @@ export default function FormImageUpload({ label, value, onChange, description, c
         {description && <p className="text-[11px] text-white/35">{description}</p>}
       </div>
 
-      <div className={compact ? "flex items-center gap-3" : "flex items-start gap-4"}>
+      <div className={"flex items-start gap-4"}>
         {/* Button */}
         <div>
           <button
@@ -71,21 +73,13 @@ export default function FormImageUpload({ label, value, onChange, description, c
             <img
               src={value}
               alt={label}
-              className={
-                compact
-                  ? "h-12 w-12 rounded-md border border-white/10 object-cover bg-black/30"
-                  : "h-24 rounded-md border border-white/10 object-contain bg-black/30"
-              }
+              className={`${previewClass} rounded-md border border-white/10 object-contain bg-black/30`}
             />
           ) : (
             <div
-              className={
-                compact
-                  ? "h-12 w-12 rounded-md border border-dashed border-white/20 bg-black/20 flex items-center justify-center text-[10px] text-white/40"
-                  : "h-24 rounded-md border border-dashed border-white/20 bg-black/20 flex items-center justify-center text-xs text-white/40"
-              }
+              className={`${previewClass} h-24 rounded-md border border-dashed border-white/20 bg-black/20 flex items-center justify-center text-xs text-white/40`}
             >
-              {compact ? "없음" : "미리보기 없음"}
+              {"미리보기 없음"}
             </div>
           )}
         </div>

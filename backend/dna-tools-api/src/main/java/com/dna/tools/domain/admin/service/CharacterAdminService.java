@@ -5,6 +5,8 @@ import com.dna.tools.domain.character.entity.CharacterEntity;
 import com.dna.tools.domain.character.entity.CharacterStatsEntity;
 import com.dna.tools.domain.character.entity.ConsonanceWeaponEntity;
 import com.dna.tools.domain.character.repository.CharacterRepository;
+import com.dna.tools.domain.image.entity.UploadedImage;
+import com.dna.tools.domain.image.repository.UploadedImageRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CharacterAdminService {
 
     private final CharacterRepository characterRepository;
+    private final UploadedImageRepository uploadedImageRepository;
 
     /*
      * =====================
@@ -93,6 +96,11 @@ public class CharacterAdminService {
                     p.getDescription()));
         }
 
+        markImagesUsed(
+                req.getImage(),
+                req.getElementImage(),
+                req.getListImage());
+
         characterRepository.flush();
     }
 
@@ -112,6 +120,10 @@ public class CharacterAdminService {
                 && characterRepository.findBySlug(req.getSlug()).isPresent()) {
             throw new IllegalArgumentException("slug 중복");
         }
+
+        String prevImage = character.getImage();
+        String prevElementImage = character.getElementImage();
+        String prevListImage = character.getListImage();
 
         // 1) 기본 정보
         character.updateBasic(
@@ -178,10 +190,62 @@ public class CharacterAdminService {
                     w.getTriggerProbability()));
         }
 
+        // 새 이미지 사용 확정
+        markImagesUsed(
+                req.getImage(),
+                req.getElementImage(),
+                req.getListImage());
+
+        // 이전 이미지 해제 (바뀐 경우만)
+        unmarkIfChanged(prevImage, req.getImage());
+        unmarkIfChanged(prevElementImage, req.getElementImage());
+        unmarkIfChanged(prevListImage, req.getListImage());
+
         characterRepository.flush();
     }
 
     public void deleteCharacter(Long id) {
+
+        CharacterEntity character = characterRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("캐릭터 없음. id=" + id));
+
+        unmarkImages(
+                character.getImage(),
+                character.getElementImage(),
+                character.getListImage());
+
         characterRepository.deleteById(id);
     }
+
+    private void markImagesUsed(String... urls) {
+        for (String url : urls) {
+            if (url == null || url.isBlank())
+                continue;
+
+            uploadedImageRepository
+                    .findByUrl(url)
+                    .ifPresent(UploadedImage::markUsed); // ifPresent value가 있을 때만 실행.
+        }
+    }
+
+    private void unmarkImages(String... urls) {
+        for (String url : urls) {
+            if (url == null || url.isBlank())
+                continue;
+
+            uploadedImageRepository.findByUrl(url)
+                    .ifPresent(UploadedImage::markUnused);
+        }
+    }
+
+    private void unmarkIfChanged(String prev, String current) {
+        if (prev == null || prev.isBlank())
+            return;
+        if (prev.equals(current))
+            return;
+
+        uploadedImageRepository.findByUrl(prev)
+                .ifPresent(img -> img.markUnused());
+    }
+
 }
