@@ -16,12 +16,12 @@ public class CharacterDetailMapper {
         public static CharacterDetailResponse toResponse(CharacterEntity character) {
 
                 return new CharacterDetailResponse(
-                                character.getName(),
                                 character.getSlug(),
+                                character.getName(),
                                 character.getElement(),
                                 character.getImage(),
-                                character.getListImage(),
                                 character.getElementImage(),
+                                character.getListImage(),
                                 character.getMeleeProficiency(),
                                 character.getRangedProficiency(),
                                 toStats(character.getStats()),
@@ -34,8 +34,8 @@ public class CharacterDetailMapper {
 
         private static CharacterStatsResponse toStats(CharacterStatsEntity stats) {
                 return new CharacterStatsResponse(
-                                stats.getHp(),
                                 stats.getAttack(),
+                                stats.getHp(),
                                 stats.getDefense(),
                                 stats.getMaxMentality(),
                                 stats.getResolve(),
@@ -91,6 +91,9 @@ public class CharacterDetailMapper {
                 return upgrades.stream()
                                 .map(p -> new PassiveUpgradeResponse(
                                                 p.getUpgradeKey(),
+                                                p.getUpgradeType(),
+                                                p.getTargetStat(),
+                                                p.getValue(),
                                                 p.getName(),
                                                 p.getDescription()))
                                 .collect(Collectors.toList());

@@ -5,7 +5,7 @@ export function useCharacterForm(initial?: unknown) {
     initial ?? {
       slug: "",
       name: "",
-      element: "",
+      elementCode: "",
       image: "",
       elementImage: "",
       listImage: "",

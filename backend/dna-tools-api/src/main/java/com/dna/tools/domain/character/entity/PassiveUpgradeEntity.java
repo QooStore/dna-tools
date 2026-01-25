@@ -58,4 +58,19 @@ public class PassiveUpgradeEntity {
         this.description = description;
     }
 
+    public void update(
+            String upgradeKey,
+            String upgradeType,
+            String targetStat,
+            BigDecimal value,
+            String name,
+            String description) {
+        this.upgradeKey = upgradeKey;
+        this.upgradeType = upgradeType;
+        this.targetStat = targetStat;
+        this.value = value;
+        this.name = name;
+        this.description = description;
+    }
+
 }

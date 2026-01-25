@@ -18,6 +18,7 @@ public class ConsonanceWeaponEntity {
     private Long characterId;
 
     /** 1:1 연관관계 (PK 공유 X) */
+    @MapsId
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "character_id")
     private CharacterEntity character;
@@ -57,7 +58,25 @@ public class ConsonanceWeaponEntity {
             BigDecimal attackSpeed,
             BigDecimal triggerProbability) {
         this.character = character;
-        this.characterId = character.getId();
+        this.category = category;
+        this.weaponType = weaponType;
+        this.attackType = attackType;
+        this.attack = attack;
+        this.critRate = critRate;
+        this.critDamage = critDamage;
+        this.attackSpeed = attackSpeed;
+        this.triggerProbability = triggerProbability;
+    }
+
+    public void update(
+            String category,
+            String weaponType,
+            String attackType,
+            BigDecimal attack,
+            BigDecimal critRate,
+            BigDecimal critDamage,
+            BigDecimal attackSpeed,
+            BigDecimal triggerProbability) {
         this.category = category;
         this.weaponType = weaponType;
         this.attackType = attackType;

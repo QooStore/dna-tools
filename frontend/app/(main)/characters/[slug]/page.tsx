@@ -30,7 +30,14 @@ export default async function CharacterDetailPage({ params }: { params: Promise<
 
         {/* Image */}
         <div className="absolute inset-0">
-          <Image src={character.image} alt={character.name} fill className="object-contain object-bottom" priority />
+          <Image
+            src={character.image}
+            alt={character.name}
+            fill
+            className="object-contain object-bottom"
+            priority
+            unoptimized
+          />
         </div>
 
         {/* Overlay */}

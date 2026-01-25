@@ -1,26 +1,27 @@
-const STAT_KEYS = ["attack", "hp", "defense", "maxMentality", "resolve", "morale"];
+import FormSectionRenderer from "@/components/characters/new/FormSectionRenderer";
+import { STATS_FIELDS } from "@/domains/fields/statsFields";
+import type React from "react";
 
-export default function StatsSection({ form, setForm }: any) {
-  const update = (key: string, value: number) => {
-    setForm((prev: any) => ({
-      ...prev,
-      stats: { ...prev.stats, [key]: value },
-    }));
-  };
+type Props = {
+  form: any;
+  setForm: React.Dispatch<React.SetStateAction<any>>;
+};
 
+export default function StatsSection({ form, setForm }: Props) {
   return (
-    <section className="border p-4 rounded">
-      <h2 className="font-bold mb-3">스탯</h2>
-
-      {STAT_KEYS.map((key) => (
-        <input
-          key={key}
-          type="number"
-          value={form.stats[key]}
-          onChange={(e) => update(key, Number(e.target.value))}
-          placeholder={key}
-        />
-      ))}
-    </section>
+    <FormSectionRenderer
+      title="스탯"
+      fields={STATS_FIELDS}
+      value={form?.stats}
+      onChange={(key, value) =>
+        setForm((prev: any) => ({
+          ...prev,
+          stats: {
+            ...prev.stats,
+            [key]: value,
+          },
+        }))
+      }
+    />
   );
 }

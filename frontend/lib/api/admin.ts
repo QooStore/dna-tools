@@ -34,20 +34,21 @@ export async function deleteCharacter(id: number) {
   }
 }
 
-export async function adminCreateCharacter(payload: any) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/lee/characters`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+export async function adminSaveCharacter(payload: any, slug?: string) {
+  const url = slug
+    ? `${process.env.NEXT_PUBLIC_API_URL}/lee/characters/${slug}`
+    : `${process.env.NEXT_PUBLIC_API_URL}/lee/characters`;
+
+  const method = slug ? "PUT" : "POST";
+
+  const res = await fetch(url, {
+    method,
+    headers: { "Content-Type": "application/json" },
     credentials: "include",
     body: JSON.stringify(payload),
   });
 
   if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`캐릭터 등록 실패: ${text}`);
+    throw new Error(await res.text());
   }
-
-  return;
 }

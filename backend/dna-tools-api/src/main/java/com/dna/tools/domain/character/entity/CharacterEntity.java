@@ -7,7 +7,13 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import com.dna.tools.domain.admin.dto.CharacterSaveRequest;
 
 @Entity
 @Getter
@@ -169,8 +175,38 @@ public class CharacterEntity {
                         description));
     }
 
-    public void clearPassiveUpgrades() {
-        this.passiveUpgrades.clear();
+    public void syncPassiveUpgrades(List<CharacterSaveRequest.PassiveUpgrade> reqs) {
+        Map<String, PassiveUpgradeEntity> current = this.passiveUpgrades.stream()
+                .collect(Collectors.toMap(
+                        PassiveUpgradeEntity::getUpgradeKey,
+                        Function.identity()));
+
+        // update or insert
+        for (var r : reqs) {
+            if (current.containsKey(r.getUpgradeKey())) {
+                current.get(r.getUpgradeKey()).update(
+                        r.getUpgradeKey(),
+                        r.getUpgradeType(),
+                        r.getTargetStat(),
+                        r.getValue(),
+                        r.getName(),
+                        r.getDescription());
+            } else {
+                this.passiveUpgrades.add(new PassiveUpgradeEntity(
+                        this,
+                        r.getUpgradeKey(),
+                        r.getUpgradeType(),
+                        r.getTargetStat(),
+                        r.getValue(),
+                        r.getName(),
+                        r.getDescription()));
+            }
+        }
+
+        // delete removed
+        this.passiveUpgrades.removeIf(
+                e -> reqs.stream()
+                        .noneMatch(r -> r.getUpgradeKey().equals(e.getUpgradeKey())));
     }
 
 }

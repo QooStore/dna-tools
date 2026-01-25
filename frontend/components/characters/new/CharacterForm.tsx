@@ -3,11 +3,12 @@
 import BasicSection from "./BasicSection";
 import FeaturesSection from "./FeaturesSection";
 import IntronsSection from "./IntronsSection";
-import PassiveSection from "./PassiveSection";
+import PassiveSection from "./PassiveUpgradeSection";
 import SkillsSection from "./SkillsSection";
 import StatsSection from "./StatsSection";
 import WeaponSection from "./WeaponSection";
 import { useCharacterForm } from "./useCharacterForm";
+import { buildCharacterPayload } from "@/lib/buildCharacterPayload";
 
 export default function CharacterForm({ initialData, onSubmit }: { initialData?: any; onSubmit: (data: any) => void }) {
   const { form, setForm } = useCharacterForm(initialData);
@@ -16,7 +17,9 @@ export default function CharacterForm({ initialData, onSubmit }: { initialData?:
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        onSubmit(form);
+
+        const payload = buildCharacterPayload(form);
+        onSubmit(payload);
       }}
       className="space-y-8"
     >

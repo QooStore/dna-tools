@@ -1,30 +1,59 @@
-export default function IntronsSection({ form, setForm }: any) {
-  const add = () =>
-    setForm((p: any) => ({
-      ...p,
-      introns: [...p.introns, { stage: 1, description: "" }],
-    }));
+import InputComponent from "@/components/ui/FormInput";
+import LabelComponent from "@/components/ui/FormLabel";
+import type React from "react";
 
-  const update = (i: number, key: string, value: any) => {
-    const next = [...form.introns];
-    next[i] = { ...next[i], [key]: value };
-    setForm((p: any) => ({ ...p, introns: next }));
+const STAGES = [1, 2, 3, 4, 5, 6];
+
+type IntronItem = {
+  stage: number;
+  description: string;
+};
+
+type Props = {
+  form: any;
+  setForm: React.Dispatch<React.SetStateAction<any>>;
+};
+
+export default function IntronSection({ form, setForm }: Props) {
+  const introns: IntronItem[] = form?.introns ?? [];
+
+  const getDescription = (stage: number) => introns.find((i) => i.stage === stage)?.description ?? "";
+
+  const updateIntron = (stage: number, description: string) => {
+    setForm((prev: any) => {
+      const exists = prev.introns?.some((i: IntronItem) => i.stage === stage);
+
+      return {
+        ...prev,
+        introns: exists
+          ? prev.introns.map((i: IntronItem) => (i.stage === stage ? { ...i, description } : i))
+          : [...(prev.introns ?? []), { stage, description }],
+      };
+    });
   };
 
   return (
-    <section className="border p-4 rounded">
-      <h2 className="font-bold">인트론</h2>
+    <section className="rounded-xl border border-white/10 bg-white/[0.02] p-6 space-y-6">
+      <h2 className="text-lg font-semibold">근원</h2>
 
-      {form.introns.map((it: any, i: number) => (
-        <div key={i}>
-          <input type="number" value={it.stage} onChange={(e) => update(i, "stage", Number(e.target.value))} />
-          <textarea value={it.description} onChange={(e) => update(i, "description", e.target.value)} />
-        </div>
-      ))}
+      <div className="space-y-4">
+        {STAGES.map((stage) => (
+          <div key={stage} className="rounded-lg border border-white/10 p-4 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium">근원 {stage}단계</span>
+            </div>
 
-      <button type="button" onClick={add}>
-        + 추가
-      </button>
+            <div className="space-y-1">
+              <LabelComponent>효과 설명</LabelComponent>
+              <InputComponent
+                value={getDescription(stage)}
+                placeholder={`근원 ${stage}단계 효과 설명`}
+                onChange={(v) => updateIntron(stage, v)}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
     </section>
   );
 }

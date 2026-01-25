@@ -6,7 +6,7 @@ type Option = {
 type FormSelectProps = {
   value: string;
   onChange: (value: string) => void;
-  options: Option[];
+  options: readonly Option[];
   placeholder?: string;
   disabled?: boolean;
 };

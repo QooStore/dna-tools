@@ -1,41 +1,27 @@
-export default function WeaponSection({ form, setForm }: any) {
-  const w = form.consonanceWeapon;
+import FormSectionRenderer from "@/components/characters/new/FormSectionRenderer";
+import { WEAPON_FIELDS } from "@/domains/fields/weaponFields";
+import type React from "react";
 
-  const update = (key: string, value: any) => {
-    setForm((prev: any) => ({
-      ...prev,
-      consonanceWeapon: { ...prev.consonanceWeapon, [key]: value },
-    }));
-  };
+type Props = {
+  form: any;
+  setForm: React.Dispatch<React.SetStateAction<any>>;
+};
 
+export default function WeaponSection({ form, setForm }: Props) {
   return (
-    <section className="border p-4 rounded">
-      <h2 className="font-bold mb-3">공명 무기</h2>
-
-      {[
-        "category",
-        "weaponType",
-        "attackType",
-        "attack",
-        "critRate",
-        "critDamage",
-        "attackSpeed",
-        "triggerProbability",
-      ].map((key) => (
-        <input
-          key={key}
-          value={w[key]}
-          onChange={(e) =>
-            update(
-              key,
-              ["attack", "critRate", "critDamage", "attackSpeed", "triggerProbability"].includes(key)
-                ? Number(e.target.value)
-                : e.target.value,
-            )
-          }
-          placeholder={key}
-        />
-      ))}
-    </section>
+    <FormSectionRenderer
+      title="동조 무기"
+      fields={WEAPON_FIELDS}
+      value={form?.consonanceWeapon}
+      onChange={(key, value) =>
+        setForm((prev: any) => ({
+          ...prev,
+          consonanceWeapon: {
+            ...prev.consonanceWeapon,
+            [key]: value,
+          },
+        }))
+      }
+    />
   );
 }

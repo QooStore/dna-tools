@@ -34,4 +34,10 @@ public class IntronEntity {
         this.stage = stage;
         this.description = description;
     }
+
+    public void update(int stage,
+            String description) {
+        this.stage = stage;
+        this.description = description;
+    }
 }

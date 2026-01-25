@@ -1,35 +1,104 @@
-export default function SkillsSection({ form, setForm }: any) {
-  const add = () =>
-    setForm((p: any) => ({
-      ...p,
-      skills: [...p.skills, { name: "", type: "", description: "" }],
-    }));
+import type React from "react";
 
-  const update = (i: number, key: string, value: string) => {
-    const next = [...form.skills];
-    next[i] = { ...next[i], [key]: value };
-    setForm((p: any) => ({ ...p, skills: next }));
+import InputComponent from "@/components/ui/FormInput";
+import LabelComponent from "@/components/ui/FormLabel";
+import SelectComponent from "@/components/ui/FormSelect";
+import { SKILL_TYPE_OPTIONS } from "@/config/navigation";
+
+type SkillItem = {
+  name: string;
+  type: string;
+  description: string;
+};
+
+type Props = {
+  form: any;
+  setForm: React.Dispatch<React.SetStateAction<any>>;
+};
+
+export default function SkillSection({ form, setForm }: Props) {
+  const skills: SkillItem[] = form?.skills ?? [];
+
+  const addSkill = () => {
+    setForm((prev: any) => ({
+      ...prev,
+      skills: [...(prev.skills ?? []), { name: "", type: "buff", description: "" }],
+    }));
+  };
+
+  const updateSkill = (index: number, key: keyof SkillItem, value: any) => {
+    setForm((prev: any) => {
+      const next = [...prev.skills];
+      next[index] = { ...next[index], [key]: value };
+      return { ...prev, skills: next };
+    });
+  };
+
+  const removeSkill = (index: number) => {
+    setForm((prev: any) => ({
+      ...prev,
+      skills: prev.skills.filter((_: any, i: number) => i !== index),
+    }));
   };
 
   return (
-    <section className="border p-4 rounded">
-      <h2 className="font-bold">스킬</h2>
+    <section className="rounded-xl border border-white/10 bg-white/[0.02] p-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold">스킬</h2>
+        <button type="button" onClick={addSkill} className="text-sm text-indigo-400 hover:text-indigo-300">
+          + 스킬 추가
+        </button>
+      </div>
 
-      {form.skills.map((s: any, i: number) => (
-        <div key={i}>
-          <input placeholder="이름" value={s.name} onChange={(e) => update(i, "name", e.target.value)} />
-          <input placeholder="타입" value={s.type} onChange={(e) => update(i, "type", e.target.value)} />
-          <textarea
-            placeholder="설명"
-            value={s.description}
-            onChange={(e) => update(i, "description", e.target.value)}
-          />
-        </div>
-      ))}
+      <div className="space-y-4">
+        {skills.map((skill, index) => (
+          <div key={index} className="rounded-lg border border-white/10 p-4 space-y-4">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-white/60">스킬 {index + 1}</span>
+              <button
+                type="button"
+                onClick={() => removeSkill(index)}
+                className="text-xs text-red-400 hover:text-red-300"
+              >
+                삭제
+              </button>
+            </div>
 
-      <button type="button" onClick={add}>
-        + 추가
-      </button>
+            {/* name */}
+            <div className="space-y-1">
+              <LabelComponent>스킬 이름</LabelComponent>
+              <InputComponent
+                value={skill.name}
+                placeholder="스킬 이름"
+                onChange={(v) => updateSkill(index, "name", v)}
+              />
+            </div>
+
+            {/* type */}
+            <div className="space-y-1">
+              <LabelComponent>스킬 타입</LabelComponent>
+              <SelectComponent
+                value={skill.type}
+                options={SKILL_TYPE_OPTIONS}
+                placeholder="스킬 타입 선택"
+                onChange={(v) => updateSkill(index, "type", v)}
+              />
+            </div>
+
+            {/* description */}
+            <div className="space-y-1">
+              <LabelComponent>설명</LabelComponent>
+              <InputComponent
+                value={skill.description}
+                placeholder="스킬 설명"
+                onChange={(v) => updateSkill(index, "description", v)}
+              />
+            </div>
+          </div>
+        ))}
+
+        {skills.length === 0 && <p className="text-sm text-white/40">등록된 스킬이 없습니다.</p>}
+      </div>
     </section>
   );
 }

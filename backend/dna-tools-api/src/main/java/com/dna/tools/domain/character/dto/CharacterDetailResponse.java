@@ -23,7 +23,7 @@ public class CharacterDetailResponse {
     private final List<IntronResponse> introns;
     private final List<PassiveUpgradeResponse> passiveUpgrades;
 
-    public CharacterDetailResponse(String name, String slug, String elementCode, String image, String elementImage,
+    public CharacterDetailResponse(String slug, String name, String elementCode, String image, String elementImage,
             String listImage, String meleeProficiency, String rangedProficiency, CharacterStatsResponse stats,
             ConsonanceWeaponResponse consonanceWeapon, List<CharacterFeatureResponse> features,
             List<SkillResponse> skills, List<IntronResponse> introns, List<PassiveUpgradeResponse> passiveUpgrades) {

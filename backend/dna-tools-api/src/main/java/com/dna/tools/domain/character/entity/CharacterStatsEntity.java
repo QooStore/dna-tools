@@ -51,7 +51,21 @@ public class CharacterStatsEntity {
             BigDecimal resolve,
             BigDecimal morale) {
         this.character = character;
-        this.characterId = character.getId(); // PK 공유
+        this.attack = attack;
+        this.hp = hp;
+        this.defense = defense;
+        this.maxMentality = maxMentality;
+        this.resolve = resolve;
+        this.morale = morale;
+    }
+
+    public void update(
+            int attack,
+            int hp,
+            int defense,
+            int maxMentality,
+            BigDecimal resolve,
+            BigDecimal morale) {
         this.attack = attack;
         this.hp = hp;
         this.defense = defense;

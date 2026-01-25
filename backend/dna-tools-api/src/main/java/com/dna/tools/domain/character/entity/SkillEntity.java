@@ -40,4 +40,12 @@ public class SkillEntity {
         this.description = description;
     }
 
+    public void update(String name,
+            String type,
+            String description) {
+        this.name = name;
+        this.type = type;
+        this.description = description;
+    }
+
 }

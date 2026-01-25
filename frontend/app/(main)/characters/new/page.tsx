@@ -3,13 +3,13 @@ import { useRouter } from "next/navigation";
 
 import CharacterForm from "@/components/characters/new/CharacterForm";
 
-import { adminCreateCharacter } from "@/lib/api/admin";
+import { adminSaveCharacter } from "@/lib/api/admin";
 
 export default function NewCharacterPage() {
   const router = useRouter();
 
   const handleSubmit = async (data: any) => {
-    await adminCreateCharacter(data);
+    await adminSaveCharacter(data);
     router.push("/characters");
   };
 

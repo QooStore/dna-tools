@@ -31,9 +31,17 @@ function collectLabels(codes: (string | undefined)[]) {
     });
 }
 
-/** 코드와 라벨, text를 검색용 문자열 배열로 합친다 */
+/** 코드와 라벨, text를 검색용 문자열 배열로 합친다. */
 export function buildSearchableText(texts: string[], codes: string[]) {
   const labelTexts = collectLabels(codes);
 
   return [...texts, ...codes, ...labelTexts].filter(Boolean).join(" ").toLowerCase();
+}
+
+/** form number 빈 값 String으로 전환한다. */
+export const numberValue = (v?: number) => (v === null || v === undefined ? "" : String(v));
+
+/** Form 빈 값 체크 */
+export function isBlank(v?: string | null): boolean {
+  return v === null || v === undefined || v.trim() === "";
 }

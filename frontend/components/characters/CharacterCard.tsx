@@ -55,7 +55,7 @@ export default function CharacterCard({
                 onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
-                  router.push("/characters/edit");
+                  router.push(`/characters/${slug}/edit`);
                 }}
                 className="
                             pointer-events-auto

@@ -83,7 +83,9 @@ public class CharacterAdminService {
         }
 
         if (req.getIntrons() != null) {
-            req.getIntrons().forEach(i -> character.addIntron(i.getStage(), i.getDescription()));
+            req.getIntrons().stream()
+                    .filter(i -> i.getDescription() != null && !i.getDescription().isBlank())
+                    .forEach(i -> character.addIntron(i.getStage(), i.getDescription()));
         }
 
         if (req.getPassiveUpgrades() != null) {
@@ -110,10 +112,10 @@ public class CharacterAdminService {
      * =====================
      */
     @Transactional
-    public void update(Long id, CharacterSaveRequest req) {
+    public void updateBySlug(String slug, CharacterSaveRequest req) {
 
-        CharacterEntity character = characterRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("캐릭터 없음. id=" + id));
+        CharacterEntity character = characterRepository.findBySlug(slug)
+                .orElseThrow(() -> new IllegalArgumentException("캐릭터 없음. slug=" + slug));
 
         // slug 변경 시 중복 체크
         if (!character.getSlug().equals(req.getSlug())
@@ -149,45 +151,62 @@ public class CharacterAdminService {
 
         character.clearIntrons();
         if (req.getIntrons() != null) {
-            req.getIntrons().forEach(i -> character.addIntron(i.getStage(), i.getDescription()));
+            req.getIntrons().stream()
+                    .filter(i -> i.getDescription() != null && !i.getDescription().isBlank())
+                    .forEach(i -> character.addIntron(i.getStage(), i.getDescription()));
         }
 
-        character.clearPassiveUpgrades();
         if (req.getPassiveUpgrades() != null) {
-            req.getPassiveUpgrades().forEach(p -> character.addPassiveUpgrade(
-                    p.getUpgradeKey(),
-                    p.getUpgradeType(),
-                    p.getTargetStat(),
-                    p.getValue(),
-                    p.getName(),
-                    p.getDescription()));
+            character.syncPassiveUpgrades(req.getPassiveUpgrades());
         }
 
         // 3) 1:1 교체
-        if (req.getStats() != null) {
-            var s = req.getStats();
-            character.setStats(new CharacterStatsEntity(
-                    character,
-                    s.getAttack(),
-                    s.getHp(),
-                    s.getDefense(),
-                    s.getMaxMentality(),
-                    s.getResolve(),
-                    s.getMorale()));
+        var s = req.getStats();
+        if (s != null) {
+            if (character.getStats() == null) {
+                character.setStats(new CharacterStatsEntity(
+                        character,
+                        s.getAttack(),
+                        s.getHp(),
+                        s.getDefense(),
+                        s.getMaxMentality(),
+                        s.getResolve(),
+                        s.getMorale()));
+            } else {
+                character.getStats().update(
+                        s.getAttack(),
+                        s.getHp(),
+                        s.getDefense(),
+                        s.getMaxMentality(),
+                        s.getResolve(),
+                        s.getMorale());
+            }
         }
 
-        if (req.getConsonanceWeapon() != null) {
-            var w = req.getConsonanceWeapon();
-            character.setConsonanceWeapon(new ConsonanceWeaponEntity(
-                    character,
-                    w.getCategory(),
-                    w.getWeaponType(),
-                    w.getAttackType(),
-                    w.getAttack(),
-                    w.getCritRate(),
-                    w.getCritDamage(),
-                    w.getAttackSpeed(),
-                    w.getTriggerProbability()));
+        var w = req.getConsonanceWeapon();
+        if (w != null) {
+            if (character.getConsonanceWeapon() == null) {
+                character.setConsonanceWeapon(new ConsonanceWeaponEntity(
+                        character,
+                        w.getCategory(),
+                        w.getWeaponType(),
+                        w.getAttackType(),
+                        w.getAttack(),
+                        w.getCritRate(),
+                        w.getCritDamage(),
+                        w.getAttackSpeed(),
+                        w.getTriggerProbability()));
+            } else {
+                character.getConsonanceWeapon().update(
+                        w.getCategory(),
+                        w.getWeaponType(),
+                        w.getAttackType(),
+                        w.getAttack(),
+                        w.getCritRate(),
+                        w.getCritDamage(),
+                        w.getAttackSpeed(),
+                        w.getTriggerProbability());
+            }
         }
 
         // 새 이미지 사용 확정
@@ -204,7 +223,7 @@ public class CharacterAdminService {
         characterRepository.flush();
     }
 
-    public void deleteCharacter(Long id) {
+    public void deleteCharacter(long id) {
 
         CharacterEntity character = characterRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("캐릭터 없음. id=" + id));
