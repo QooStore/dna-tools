@@ -4,11 +4,12 @@ import { useRouter } from "next/navigation";
 import CharacterForm from "@/components/characters/new/CharacterForm";
 
 import { adminSaveCharacter } from "@/lib/api/admin";
+import { CharacterSaveRequest } from "@/domains/characterApi";
 
 export default function NewCharacterPage() {
   const router = useRouter();
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: CharacterSaveRequest) => {
     await adminSaveCharacter(data);
     router.push("/characters");
   };

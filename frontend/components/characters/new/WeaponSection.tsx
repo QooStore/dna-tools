@@ -1,10 +1,12 @@
-import FormSectionRenderer from "@/components/characters/new/FormSectionRenderer";
-import { WEAPON_FIELDS } from "@/domains/fields/weaponFields";
 import type React from "react";
 
+import FormSectionRenderer from "@/components/characters/new/FormSectionRenderer";
+import { WEAPON_FIELDS } from "@/domains/fields/weaponFields";
+import { CharacterFormState } from "@/domains/characterForm";
+
 type Props = {
-  form: any;
-  setForm: React.Dispatch<React.SetStateAction<any>>;
+  form: CharacterFormState;
+  setForm: React.Dispatch<React.SetStateAction<CharacterFormState>>;
 };
 
 export default function WeaponSection({ form, setForm }: Props) {
@@ -14,7 +16,7 @@ export default function WeaponSection({ form, setForm }: Props) {
       fields={WEAPON_FIELDS}
       value={form?.consonanceWeapon}
       onChange={(key, value) =>
-        setForm((prev: any) => ({
+        setForm((prev) => ({
           ...prev,
           consonanceWeapon: {
             ...prev.consonanceWeapon,

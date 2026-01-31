@@ -2,9 +2,8 @@ package com.dna.tools.domain.character.controller;
 
 import com.dna.tools.domain.character.dto.CharacterDetailResponse;
 import com.dna.tools.domain.character.dto.CharacterListResponse;
-import com.dna.tools.domain.character.entity.CharacterEntity;
-import com.dna.tools.domain.character.mapper.CharacterDetailMapper;
 import com.dna.tools.domain.character.service.CharacterService;
+import com.dna.tools.domain.common.service.CommonCodeLabelService;
 
 import java.util.List;
 
@@ -16,7 +15,7 @@ public class CharacterController {
 
     private final CharacterService characterService;
 
-    public CharacterController(CharacterService characterDetailService) {
+    public CharacterController(CharacterService characterDetailService, CommonCodeLabelService commonCodeLabelService) {
         this.characterService = characterDetailService;
     }
 
@@ -28,9 +27,8 @@ public class CharacterController {
     @GetMapping("/{slug}")
     public CharacterDetailResponse getCharacterDetail(
             @PathVariable String slug) {
-        CharacterEntity character = characterService.getCharacterBySlug(slug);
 
-        return CharacterDetailMapper.toResponse(character);
+        return characterService.getCharacterDetail(slug);
     }
 
 }

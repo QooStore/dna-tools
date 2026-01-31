@@ -2,32 +2,34 @@ package com.dna.tools.domain.character.mapper;
 
 import com.dna.tools.domain.character.dto.*;
 import com.dna.tools.domain.character.entity.*;
+import com.dna.tools.domain.common.dto.LabelContext;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CharacterDetailMapper {
 
-        public static CharacterDetailResponse toResponse(CharacterEntity character) {
+        public static CharacterDetailResponse toResponse(CharacterEntity character,
+                        LabelContext labels) {
 
                 return new CharacterDetailResponse(
                                 character.getSlug(),
                                 character.getName(),
                                 character.getElement(),
+                                labels.label("ELEMENT", character.getElement()),
                                 character.getImage(),
                                 character.getElementImage(),
                                 character.getListImage(),
                                 character.getMeleeProficiency(),
                                 character.getRangedProficiency(),
                                 toStats(character.getStats()),
-                                toConsonanceWeapon(character.getConsonanceWeapon()),
-                                toFeatures(character.getFeatures()),
-                                toSkills(character.getSkills()),
+                                toConsonanceWeapon(character.getConsonanceWeapon(), labels),
+                                toFeatures(character.getFeatures(), labels),
+                                toSkills(character.getSkills(), labels),
                                 toIntrons(character.getIntrons()),
                                 toPassiveUpgrades(character.getPassiveUpgrades()));
         }
@@ -43,10 +45,9 @@ public class CharacterDetailMapper {
         }
 
         private static ConsonanceWeaponResponse toConsonanceWeapon(
-                        ConsonanceWeaponEntity weapon) {
-                if (weapon == null) {
+                        ConsonanceWeaponEntity weapon, LabelContext labels) {
+                if (weapon == null)
                         return null;
-                }
 
                 return new ConsonanceWeaponResponse(
                                 weapon.getCategory(),
@@ -60,21 +61,23 @@ public class CharacterDetailMapper {
         }
 
         private static List<CharacterFeatureResponse> toFeatures(
-                        Set<CharacterFeatureEntity> features) {
+                        Set<CharacterFeatureEntity> features, LabelContext labels) {
                 return features.stream()
                                 .map(f -> new CharacterFeatureResponse(
-                                                f.getFeature()))
-                                .collect(Collectors.toList());
+                                                f.getFeature(),
+                                                labels.label("FEATURE", f.getFeature())))
+                                .toList();
         }
 
         private static List<SkillResponse> toSkills(
-                        Set<SkillEntity> skills) {
+                        Set<SkillEntity> skills, LabelContext labels) {
                 return skills.stream()
                                 .map(s -> new SkillResponse(
                                                 s.getName(),
                                                 s.getType(),
+                                                labels.label("WORD", s.getType()),
                                                 s.getDescription()))
-                                .collect(Collectors.toList());
+                                .toList();
         }
 
         private static List<IntronResponse> toIntrons(
@@ -83,7 +86,7 @@ public class CharacterDetailMapper {
                                 .map(i -> new IntronResponse(
                                                 i.getStage(),
                                                 i.getDescription()))
-                                .collect(Collectors.toList());
+                                .toList();
         }
 
         private static List<PassiveUpgradeResponse> toPassiveUpgrades(
@@ -96,6 +99,6 @@ public class CharacterDetailMapper {
                                                 p.getValue(),
                                                 p.getName(),
                                                 p.getDescription()))
-                                .collect(Collectors.toList());
+                                .toList();
         }
 }

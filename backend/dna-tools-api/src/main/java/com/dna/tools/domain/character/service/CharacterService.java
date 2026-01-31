@@ -1,9 +1,14 @@
 package com.dna.tools.domain.character.service;
 
+import com.dna.tools.domain.character.dto.CharacterDetailResponse;
 import com.dna.tools.domain.character.dto.CharacterFeatureResponse;
 import com.dna.tools.domain.character.dto.CharacterListResponse;
 import com.dna.tools.domain.character.entity.CharacterEntity;
+import com.dna.tools.domain.character.mapper.CharacterDetailMapper;
 import com.dna.tools.domain.character.repository.CharacterRepository;
+import com.dna.tools.domain.common.dto.LabelContext;
+import com.dna.tools.domain.common.service.CommonCodeLabelService;
+
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -16,24 +21,45 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class CharacterService {
 
-    private final CharacterRepository characterRepository;
+        private final CharacterRepository characterRepository;
+        private final CommonCodeLabelService commonCodeLabelService;
 
-    public CharacterEntity getCharacterBySlug(String slug) {
-        return characterRepository.findBySlug(slug)
-                .orElseThrow(() -> new IllegalArgumentException("Character not found. slug=" + slug));
-    }
+        public CharacterDetailResponse getCharacterDetail(String slug) {
+                CharacterEntity character = characterRepository.findBySlug(slug)
+                                .orElseThrow(() -> new IllegalArgumentException("Character not found. slug=" + slug));
 
-    // 목록 조회는 join table이 1개뿐이라 mapper사용 대신 map으로 entity, dto(response) 조인.
-    private CharacterListResponse toListResponse(CharacterEntity character) {
-        return new CharacterListResponse(character.getId(), character.getSlug(), character.getName(),
-                character.getElement(), character.getListImage(), character.getElementImage(),
-                character.getMeleeProficiency(), character.getRangedProficiency(),
-                character.getFeatures().stream().map(feature -> new CharacterFeatureResponse(feature.getFeature()))
-                        .toList());
-    }
+                LabelContext labels = commonCodeLabelService.getLabelContext(List.of(
+                                "FEATURE",
+                                "ELEMENT",
+                                "MELEEWEAPON",
+                                "RANGEDWEAPON",
+                                "ATTACK_TYPE",
+                                "WORD"));
 
-    public List<CharacterListResponse> getAllCharacters() {
-        return characterRepository.findAllCharacterList().stream().map(this::toListResponse).toList();
-    }
+                return CharacterDetailMapper.toResponse(character, labels);
+
+        }
+
+        // 목록 조회 DTO 조립
+        private CharacterListResponse toListResponse(CharacterEntity character, LabelContext labels) {
+                return new CharacterListResponse(character.getId(), character.getSlug(), character.getName(),
+                                character.getElement(), character.getListImage(), character.getElementImage(),
+                                character.getMeleeProficiency(), character.getRangedProficiency(),
+                                character.getFeatures().stream()
+                                                .map(feature -> new CharacterFeatureResponse(feature.getFeature(),
+                                                                labels.label("FEATURE",
+                                                                                feature.getFeature())))
+                                                .toList());
+        }
+
+        public List<CharacterListResponse> getAllCharacters() {
+                List<CharacterEntity> characters = characterRepository.findAllCharacterList();
+
+                LabelContext labels = commonCodeLabelService.getLabelContext(List.of("FEATURE"));
+
+                return characters.stream()
+                                .map(c -> toListResponse(c, labels))
+                                .toList();
+        }
 
 }

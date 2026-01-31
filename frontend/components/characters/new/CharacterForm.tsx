@@ -9,8 +9,16 @@ import StatsSection from "./StatsSection";
 import WeaponSection from "./WeaponSection";
 import { useCharacterForm } from "./useCharacterForm";
 import { buildCharacterPayload } from "@/lib/buildCharacterPayload";
+import { CharacterFormState } from "@/domains/characterForm";
+import { CharacterSaveRequest } from "@/domains/characterApi";
 
-export default function CharacterForm({ initialData, onSubmit }: { initialData?: any; onSubmit: (data: any) => void }) {
+export default function CharacterForm({
+  initialData,
+  onSubmit,
+}: {
+  initialData?: Partial<CharacterFormState>;
+  onSubmit: (data: CharacterSaveRequest) => void;
+}) {
   const { form, setForm } = useCharacterForm(initialData);
 
   return (

@@ -1,6 +1,8 @@
 "use server";
 import { cookies } from "next/headers";
 
+import { CharacterSaveRequest } from "@/domains/characterApi";
+
 export async function getAdminMe(): Promise<boolean> {
   const cookieStore = await cookies();
   const adminToken = cookieStore.get("admin_token");
@@ -34,7 +36,7 @@ export async function deleteCharacter(id: number) {
   }
 }
 
-export async function adminSaveCharacter(payload: any, slug?: string) {
+export async function adminSaveCharacter(payload: CharacterSaveRequest, slug?: string) {
   const url = slug
     ? `${process.env.NEXT_PUBLIC_API_URL}/lee/characters/${slug}`
     : `${process.env.NEXT_PUBLIC_API_URL}/lee/characters`;

@@ -1,6 +1,8 @@
+import type React from "react";
+
 import InputComponent from "@/components/ui/FormInput";
 import LabelComponent from "@/components/ui/FormLabel";
-import type React from "react";
+import { CharacterFormState } from "@/domains/characterForm";
 
 const STAGES = [1, 2, 3, 4, 5, 6];
 
@@ -10,8 +12,8 @@ type IntronItem = {
 };
 
 type Props = {
-  form: any;
-  setForm: React.Dispatch<React.SetStateAction<any>>;
+  form: CharacterFormState;
+  setForm: React.Dispatch<React.SetStateAction<CharacterFormState>>;
 };
 
 export default function IntronSection({ form, setForm }: Props) {
@@ -20,7 +22,7 @@ export default function IntronSection({ form, setForm }: Props) {
   const getDescription = (stage: number) => introns.find((i) => i.stage === stage)?.description ?? "";
 
   const updateIntron = (stage: number, description: string) => {
-    setForm((prev: any) => {
+    setForm((prev) => {
       const exists = prev.introns?.some((i: IntronItem) => i.stage === stage);
 
       return {

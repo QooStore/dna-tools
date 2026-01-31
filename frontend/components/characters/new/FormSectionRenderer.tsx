@@ -26,15 +26,21 @@ export type Field =
       placeholder?: string;
     };
 
-type Props = {
+type Props<T extends object> = {
   title: string;
   fields: readonly Field[];
-  value: any;
-  onChange: (key: string, value: any) => void;
+  value: T | undefined;
+  onChange: (key: string, value: string | number) => void;
   columns?: 1 | 2 | 3;
 };
 
-export default function FormSectionRenderer({ title, fields, value, onChange, columns = 2 }: Props) {
+export default function FormSectionRenderer<T extends object>({
+  title,
+  fields,
+  value,
+  onChange,
+  columns = 2,
+}: Props<T>) {
   const gridCols =
     columns === 1 ? "grid-cols-1" : columns === 3 ? "grid-cols-1 sm:grid-cols-3" : "grid-cols-1 sm:grid-cols-2";
 
@@ -49,7 +55,7 @@ export default function FormSectionRenderer({ title, fields, value, onChange, co
 
             {f.kind === "select" ? (
               <SelectComponent
-                value={value?.[f.key] ?? ""}
+                value={(value?.[f.key as keyof T] as string) ?? ""}
                 options={f.options}
                 placeholder={f.placeholder}
                 onChange={(v) => onChange(f.key, v)}
@@ -57,13 +63,13 @@ export default function FormSectionRenderer({ title, fields, value, onChange, co
             ) : f.kind === "number" ? (
               <InputComponent
                 type="number"
-                value={numberValue(value?.[f.key])}
+                value={numberValue(value?.[f.key as keyof T] as number)}
                 placeholder={f.placeholder ?? f.label}
                 onChange={(v) => onChange(f.key, Number(v))}
               />
             ) : (
               <InputComponent
-                value={value?.[f.key] ?? ""}
+                value={(value?.[f.key as keyof T] as string) ?? ""}
                 placeholder={f.placeholder ?? f.label}
                 onChange={(v) => onChange(f.key, v)}
               />

@@ -11,7 +11,7 @@ export type WeaponStatKey = keyof typeof WEAPON_LABELS;
 export type ConsonanceWeaponStats =
   | {
       category: "melee";
-      type: MeleeWeaponType;
+      weaponType: MeleeWeaponType;
       attackType: "slash" | "spike" | "smash";
 
       attack: number;
@@ -22,7 +22,7 @@ export type ConsonanceWeaponStats =
     }
   | {
       category: "ranged";
-      type: RangedWeaponType;
+      weaponType: RangedWeaponType;
       attackType: "slash" | "spike" | "smash";
 
       attack: number;

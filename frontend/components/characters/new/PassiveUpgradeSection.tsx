@@ -1,10 +1,12 @@
+import type React from "react";
+
 import InputComponent from "@/components/ui/FormInput";
 import LabelComponent from "@/components/ui/FormLabel";
 import SelectComponent from "@/components/ui/FormSelect";
 import { PASSIVE_UPGRADE_TYPE_OPTIONS, TARGET_STAT_OPTIONS } from "@/config/navigation";
-import type React from "react";
 
 import { numberValue } from "@/lib/utils";
+import { CharacterFormState } from "@/domains/characterForm";
 
 type PassiveUpgradeItem = {
   upgradeKey: string;
@@ -16,15 +18,15 @@ type PassiveUpgradeItem = {
 };
 
 type Props = {
-  form: any;
-  setForm: React.Dispatch<React.SetStateAction<any>>;
+  form: CharacterFormState;
+  setForm: React.Dispatch<React.SetStateAction<CharacterFormState>>;
 };
 
 export default function PassiveUpgradeSection({ form, setForm }: Props) {
-  const upgrades: PassiveUpgradeItem[] = form?.passiveUpgrades ?? [];
+  const upgrades = form?.passiveUpgrades ?? [];
 
   const addUpgrade = () => {
-    setForm((prev: any) => ({
+    setForm((prev) => ({
       ...prev,
       passiveUpgrades: [
         ...(prev.passiveUpgrades ?? []),
@@ -38,8 +40,8 @@ export default function PassiveUpgradeSection({ form, setForm }: Props) {
     }));
   };
 
-  const updateUpgrade = (index: number, key: keyof PassiveUpgradeItem, value: any) => {
-    setForm((prev: any) => {
+  const updateUpgrade = <K extends keyof PassiveUpgradeItem>(index: number, key: K, value: PassiveUpgradeItem[K]) => {
+    setForm((prev) => {
       const next = [...prev.passiveUpgrades];
       next[index] = { ...next[index], [key]: value };
 
@@ -54,9 +56,9 @@ export default function PassiveUpgradeSection({ form, setForm }: Props) {
   };
 
   const removeUpgrade = (index: number) => {
-    setForm((prev: any) => ({
+    setForm((prev) => ({
       ...prev,
-      passiveUpgrades: prev.passiveUpgrades.filter((_: any, i: number) => i !== index),
+      passiveUpgrades: prev.passiveUpgrades.filter((_, i: number) => i !== index),
     }));
   };
 
@@ -95,7 +97,7 @@ export default function PassiveUpgradeSection({ form, setForm }: Props) {
               <SelectComponent
                 value={p.upgradeType}
                 options={PASSIVE_UPGRADE_TYPE_OPTIONS}
-                onChange={(v) => updateUpgrade(index, "upgradeType", v)}
+                onChange={(v) => updateUpgrade(index, "upgradeType", v as PassiveUpgradeItem["upgradeType"])}
               />
             </div>
 
@@ -132,7 +134,7 @@ export default function PassiveUpgradeSection({ form, setForm }: Props) {
             {/* description */}
             <div className="space-y-1">
               <LabelComponent>설명</LabelComponent>
-              <InputComponent value={p.description} onChange={(v) => updateUpgrade(index, "description", v)} />
+              <InputComponent value={p.description ?? ""} onChange={(v) => updateUpgrade(index, "description", v)} />
             </div>
           </div>
         ))}

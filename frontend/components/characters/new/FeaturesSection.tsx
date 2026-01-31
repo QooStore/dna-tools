@@ -1,20 +1,22 @@
-import { FEATURE_OPTIONS } from "@/config/navigation";
 import type React from "react";
+
+import { FEATURE_OPTIONS } from "@/config/navigation";
+import { CharacterFormState } from "@/domains/characterForm";
 
 type FeatureItem = {
   featureCode: string;
 };
 
 type Props = {
-  form: any;
-  setForm: React.Dispatch<React.SetStateAction<any>>;
+  form: CharacterFormState;
+  setForm: React.Dispatch<React.SetStateAction<CharacterFormState>>;
 };
 
 export default function FeaturesSection({ form, setForm }: Props) {
   const features: FeatureItem[] = form?.features ?? [];
 
   const toggleFeature = (code: string) => {
-    setForm((prev: any) => {
+    setForm((prev) => {
       const exists = prev.features?.some((f: FeatureItem) => f.featureCode === code);
 
       return {

@@ -4,6 +4,7 @@ import InputComponent from "@/components/ui/FormInput";
 import LabelComponent from "@/components/ui/FormLabel";
 import SelectComponent from "@/components/ui/FormSelect";
 import { SKILL_TYPE_OPTIONS } from "@/config/navigation";
+import { CharacterFormState, SkillForm } from "@/domains/characterForm";
 
 type SkillItem = {
   name: string;
@@ -12,22 +13,22 @@ type SkillItem = {
 };
 
 type Props = {
-  form: any;
-  setForm: React.Dispatch<React.SetStateAction<any>>;
+  form: CharacterFormState;
+  setForm: React.Dispatch<React.SetStateAction<CharacterFormState>>;
 };
 
 export default function SkillSection({ form, setForm }: Props) {
   const skills: SkillItem[] = form?.skills ?? [];
 
   const addSkill = () => {
-    setForm((prev: any) => ({
+    setForm((prev) => ({
       ...prev,
       skills: [...(prev.skills ?? []), { name: "", type: "buff", description: "" }],
     }));
   };
 
-  const updateSkill = (index: number, key: keyof SkillItem, value: any) => {
-    setForm((prev: any) => {
+  const updateSkill = <K extends keyof SkillForm>(index: number, key: K, value: SkillForm[K]) => {
+    setForm((prev) => {
       const next = [...prev.skills];
       next[index] = { ...next[index], [key]: value };
       return { ...prev, skills: next };
@@ -35,9 +36,9 @@ export default function SkillSection({ form, setForm }: Props) {
   };
 
   const removeSkill = (index: number) => {
-    setForm((prev: any) => ({
+    setForm((prev) => ({
       ...prev,
-      skills: prev.skills.filter((_: any, i: number) => i !== index),
+      skills: prev.skills.filter((_, i: number) => i !== index),
     }));
   };
 

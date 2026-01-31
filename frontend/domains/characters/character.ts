@@ -17,6 +17,10 @@ export interface Skill {
   description: string;
 }
 
+export interface feature {
+  featureCode: string;
+}
+
 export interface IntronEffect {
   stage: number; // 1~6
   description: string;
@@ -50,9 +54,7 @@ export interface CharacterDetail {
   rangedProficiency: RangedWeaponType;
 
   /** 역할 태그 */
-  features: {
-    featureCode: string;
-  }[];
+  features: feature[];
 
   /** 기본 스탯 (캐릭터 고정값) */
   stats: BaseStats;

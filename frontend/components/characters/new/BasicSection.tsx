@@ -3,15 +3,16 @@ import InputComponent from "@/components/ui/FormInput";
 import LabelComponent from "@/components/ui/FormLabel";
 import FormSelect from "@/components/ui/FormSelect";
 import { ELEMENT_OPTIONS, MELEE_PROFICIENCY_OPTIONS, RANGED_PROFICIENCY_OPTIONS } from "@/config/navigation";
+import { CharacterFormState } from "@/domains/characterForm";
 
 type Props = {
-  form: any;
-  setForm: React.Dispatch<React.SetStateAction<any>>;
+  form: CharacterFormState;
+  setForm: React.Dispatch<React.SetStateAction<CharacterFormState>>;
 };
 
 export default function BasicSection({ form, setForm }: Props) {
-  const update = (key: string, value: any) => {
-    setForm((prev: any) => ({
+  const update = (key: string, value: string) => {
+    setForm((prev) => ({
       ...prev,
       [key]: value,
     }));

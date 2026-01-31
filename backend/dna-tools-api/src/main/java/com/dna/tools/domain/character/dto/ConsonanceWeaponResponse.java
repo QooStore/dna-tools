@@ -8,7 +8,7 @@ import lombok.Getter;
 public class ConsonanceWeaponResponse {
 
     private final String category;
-    private final String type;
+    private final String weaponType;
     private final String attackType;
     private final BigDecimal attack;
     private final BigDecimal critRate;
@@ -16,10 +16,10 @@ public class ConsonanceWeaponResponse {
     private final BigDecimal attackSpeed;
     private final BigDecimal triggerProbability;
 
-    public ConsonanceWeaponResponse(String category, String type, String attackType, BigDecimal attack,
+    public ConsonanceWeaponResponse(String category, String weaponType, String attackType, BigDecimal attack,
             BigDecimal critRate, BigDecimal critDamage, BigDecimal attackSpeed, BigDecimal triggerProbability) {
         this.category = category;
-        this.type = type;
+        this.weaponType = weaponType;
         this.attackType = attackType;
         this.attack = attack;
         this.critRate = critRate;

@@ -6,6 +6,8 @@ import { useRouter, useParams } from "next/navigation";
 import CharacterForm from "@/components/characters/new/CharacterForm";
 import { adminSaveCharacter } from "@/lib/api/admin";
 import { getCharacterDetail } from "@/lib/api/characters";
+import { CharacterSaveRequest } from "@/domains/characterApi";
+import { CharacterFormState } from "@/domains/characterForm";
 
 export default function EditCharacterPage() {
   const router = useRouter();
@@ -14,7 +16,7 @@ export default function EditCharacterPage() {
   const slug = typeof slugParam === "string" ? slugParam : undefined;
 
   const [loading, setLoading] = useState(true);
-  const [initialData, setInitialData] = useState<any>(null);
+  const [initialData, setInitialData] = useState<Partial<CharacterFormState> | null>(null);
 
   useEffect(() => {
     if (!slug) return;
@@ -22,7 +24,6 @@ export default function EditCharacterPage() {
     const fetchData = async () => {
       try {
         const data = await getCharacterDetail(slug);
-        console.log("data ==> ", data);
         setInitialData(data);
       } finally {
         setLoading(false);
@@ -32,7 +33,7 @@ export default function EditCharacterPage() {
     fetchData();
   }, [slug]);
 
-  const handleSubmit = async (payload: any) => {
+  const handleSubmit = async (payload: CharacterSaveRequest) => {
     await adminSaveCharacter(payload, slug);
     router.push("/characters");
   };

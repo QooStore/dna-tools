@@ -40,8 +40,3 @@ export function buildSearchableText(texts: string[], codes: string[]) {
 
 /** form number 빈 값 String으로 전환한다. */
 export const numberValue = (v?: number) => (v === null || v === undefined ? "" : String(v));
-
-/** Form 빈 값 체크 */
-export function isBlank(v?: string | null): boolean {
-  return v === null || v === undefined || v.trim() === "";
-}
