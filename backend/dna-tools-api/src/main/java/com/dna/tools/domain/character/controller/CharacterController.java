@@ -3,7 +3,6 @@ package com.dna.tools.domain.character.controller;
 import com.dna.tools.domain.character.dto.CharacterDetailResponse;
 import com.dna.tools.domain.character.dto.CharacterListResponse;
 import com.dna.tools.domain.character.service.CharacterService;
-import com.dna.tools.domain.common.service.CommonCodeLabelService;
 
 import java.util.List;
 
@@ -15,7 +14,7 @@ public class CharacterController {
 
     private final CharacterService characterService;
 
-    public CharacterController(CharacterService characterDetailService, CommonCodeLabelService commonCodeLabelService) {
+    public CharacterController(CharacterService characterDetailService) {
         this.characterService = characterDetailService;
     }
 

@@ -19,6 +19,7 @@ export interface Skill {
 
 export interface feature {
   featureCode: string;
+  featureName: string;
 }
 
 export interface IntronEffect {
@@ -51,7 +52,9 @@ export interface CharacterDetail {
 
   /** 무기 숙련 */
   meleeProficiency: MeleeWeaponType;
+  meleeProficiencyLabel: string;
   rangedProficiency: RangedWeaponType;
+  rangedProficiencyLabel: string;
 
   /** 역할 태그 */
   features: feature[];
@@ -78,6 +81,7 @@ export interface CharacterListItem {
   name: string;
 
   elementCode: ElementType;
+  elementName: string;
   listImage: string;
   elementImage: string;
 
@@ -86,5 +90,6 @@ export interface CharacterListItem {
 
   features: {
     featureCode: string;
+    featureName: string;
   }[];
 }

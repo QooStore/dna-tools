@@ -43,7 +43,8 @@ public class CharacterService {
         // 목록 조회 DTO 조립
         private CharacterListResponse toListResponse(CharacterEntity character, LabelContext labels) {
                 return new CharacterListResponse(character.getId(), character.getSlug(), character.getName(),
-                                character.getElement(), character.getListImage(), character.getElementImage(),
+                                character.getElement(), labels.label("ELEMENT", character.getElement()),
+                                character.getListImage(), character.getElementImage(),
                                 character.getMeleeProficiency(), character.getRangedProficiency(),
                                 character.getFeatures().stream()
                                                 .map(feature -> new CharacterFeatureResponse(feature.getFeature(),

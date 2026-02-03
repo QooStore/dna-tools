@@ -15,7 +15,9 @@ public class CharacterDetailResponse {
     private final String elementImage;
     private final String listImage;
     private final String meleeProficiency;
+    private final String meleeProficiencyLabel;
     private final String rangedProficiency;
+    private final String rangedProficiencyLabel;
     private final CharacterStatsResponse stats;
     private final ConsonanceWeaponResponse consonanceWeapon;
 
@@ -26,7 +28,8 @@ public class CharacterDetailResponse {
 
     public CharacterDetailResponse(String slug, String name, String elementCode, String elementName, String image,
             String elementImage,
-            String listImage, String meleeProficiency, String rangedProficiency, CharacterStatsResponse stats,
+            String listImage, String meleeProficiency, String meleeProficiencyLabel, String rangedProficiency,
+            String rangedProficiencyLabel, CharacterStatsResponse stats,
             ConsonanceWeaponResponse consonanceWeapon, List<CharacterFeatureResponse> features,
             List<SkillResponse> skills, List<IntronResponse> introns, List<PassiveUpgradeResponse> passiveUpgrades) {
         this.name = name;
@@ -37,7 +40,9 @@ public class CharacterDetailResponse {
         this.elementImage = elementImage;
         this.listImage = listImage;
         this.meleeProficiency = meleeProficiency;
+        this.meleeProficiencyLabel = meleeProficiencyLabel;
         this.rangedProficiency = rangedProficiency;
+        this.rangedProficiencyLabel = rangedProficiencyLabel;
         this.stats = stats;
         this.consonanceWeapon = consonanceWeapon;
         this.features = features;

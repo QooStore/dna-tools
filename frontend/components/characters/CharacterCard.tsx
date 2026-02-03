@@ -7,7 +7,6 @@ import Link from "next/link";
 import Feature from "../Feature";
 
 import { CharacterListItem } from "@/domains/characters/character";
-import { FEATURE_LABELS } from "@/domains/labels";
 import { AdminActionButton } from "../ui/AdminActionButton";
 
 type CharacterCardProps = Pick<CharacterListItem, "slug" | "name" | "listImage" | "features" | "elementImage"> & {
@@ -89,7 +88,7 @@ export default function CharacterCard({
           {/* Features */}
           <div className="flex flex-wrap justify-center gap-1.5">
             {features.map((feature) => (
-              <Feature key={feature.featureCode} feature={FEATURE_LABELS[feature.featureCode]} />
+              <Feature key={feature.featureCode} feature={feature} />
             ))}
           </div>
         </div>

@@ -11,19 +11,22 @@ public class CharacterListResponse {
     private final String slug;
     private final String name;
     private final String elementCode;
+    private final String elementName;
     private final String listImage;
     private final String elementImage;
     private final String meleeProficiency;
     private final String rangedProficiency;
     private final List<CharacterFeatureResponse> features;
 
-    public CharacterListResponse(Long id, String slug, String name, String elementCode, String listImage,
+    public CharacterListResponse(Long id, String slug, String name, String elementCode, String elementName,
+            String listImage,
             String elementImage, String meleeProficiency, String rangedProficiency,
             List<CharacterFeatureResponse> features) {
         this.id = id;
         this.slug = slug;
         this.name = name;
         this.elementCode = elementCode;
+        this.elementName = elementName;
         this.listImage = listImage;
         this.elementImage = elementImage;
         this.meleeProficiency = meleeProficiency;

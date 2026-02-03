@@ -2,17 +2,10 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 
-import { FEATURE_LABELS, WEAPON_CATEGORY_LABELS, ELEMENT_LABELS, WORD_LABELS } from "@/domains/labels";
 import type { FilterGroup } from "@/config/characterFilters";
 
 type CharacterFilterBarProps = {
   characterFilters: FilterGroup[];
-};
-
-const LABEL_MAP = {
-  ...FEATURE_LABELS,
-  ...WEAPON_CATEGORY_LABELS,
-  ...ELEMENT_LABELS,
 };
 
 export default function CharacterFilterBar({ characterFilters }: CharacterFilterBarProps) {
@@ -36,7 +29,7 @@ export default function CharacterFilterBar({ characterFilters }: CharacterFilter
     // 단일 선택
     const value = searchParams.get(groupKey);
 
-    // 🔥 쿼리 없으면 All active
+    // 쿼리 없으면 All active
     if (option === "All") {
       return value === null;
     }
@@ -86,19 +79,19 @@ export default function CharacterFilterBar({ characterFilters }: CharacterFilter
   return (
     <div className="space-y-6 pb-8">
       {characterFilters.map((group) => (
-        <div key={group.key}>
+        <div key={group.field}>
           {/* Label */}
-          <div className="mb-2 text-sm font-semibold text-white/80">{WORD_LABELS[group.key]}</div>
+          <div className="mb-2 text-sm font-semibold text-white/80">{group.title}</div>
 
           {/* Options */}
           <div className="flex flex-wrap gap-2">
             {group.options.map((option) => {
-              const active = isActive(group.key, option);
+              const active = isActive(group.field, option.value);
 
               return (
                 <button
-                  key={option}
-                  onClick={() => handleClick(group.key, option)}
+                  key={option.value}
+                  onClick={() => handleClick(group.field, option.value)}
                   className={`
                     h-8 rounded-md px-3 text-xs font-medium transition
                     ${
@@ -108,7 +101,7 @@ export default function CharacterFilterBar({ characterFilters }: CharacterFilter
                     }
                   `}
                 >
-                  {LABEL_MAP[option] ?? option}
+                  {option.label}
                 </button>
               );
             })}
