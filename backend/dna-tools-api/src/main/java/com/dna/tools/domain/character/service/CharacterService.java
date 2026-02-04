@@ -45,7 +45,10 @@ public class CharacterService {
                 return new CharacterListResponse(character.getId(), character.getSlug(), character.getName(),
                                 character.getElement(), labels.label("ELEMENT", character.getElement()),
                                 character.getListImage(), character.getElementImage(),
-                                character.getMeleeProficiency(), character.getRangedProficiency(),
+                                character.getMeleeProficiency(),
+                                labels.label("MELEEWEAPON", character.getMeleeProficiency()),
+                                character.getRangedProficiency(),
+                                labels.label("RANGEDWEAPON", character.getRangedProficiency()),
                                 character.getFeatures().stream()
                                                 .map(feature -> new CharacterFeatureResponse(feature.getFeature(),
                                                                 labels.label("FEATURE",

@@ -4,6 +4,8 @@ export type MeleeWeaponType = "greatsword" | "sword" | "dualBlades" | "katana" |
 
 export type RangedWeaponType = "bow" | "grenadeLauncher" | "dualPistols" | "assaultRifle" | "pistol" | "shotgun";
 
+export type WeaponStatKey = "attack" | "critRate" | "critDamage" | "attackSpeed" | "triggerProbability";
+
 export type ConsonanceWeaponStats =
   | {
       category: "melee";

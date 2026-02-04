@@ -86,7 +86,9 @@ export interface CharacterListItem {
   elementImage: string;
 
   meleeProficiency: MeleeWeaponType;
+  meleeProficiencyLabel: string;
   rangedProficiency: RangedWeaponType;
+  rangedProficiencyLabel: string;
 
   features: {
     featureCode: string;

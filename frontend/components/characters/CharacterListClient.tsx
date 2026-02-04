@@ -53,10 +53,16 @@ export default function CharacterListClient({ allCharacters, isAdmin }: Props) {
       if (keyword) {
         const q = keyword.trim().toLowerCase();
 
-        const searchableText = buildSearchableText(
-          [c.name],
-          [c.elementCode, c.meleeProficiency, c.rangedProficiency, ...c.features.map((f) => f.featureCode)],
-        );
+        const searchableText: string = buildSearchableText([
+          c.name,
+          c.elementCode,
+          c.elementName,
+          c.meleeProficiency,
+          c.meleeProficiencyLabel,
+          c.rangedProficiency,
+          c.rangedProficiencyLabel,
+          ...c.features.flatMap((f) => [f.featureCode, f.featureName]),
+        ]);
 
         if (!searchableText.includes(q)) return false;
       }

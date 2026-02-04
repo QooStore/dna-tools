@@ -4,19 +4,19 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 import type { FilterGroup } from "@/config/characterFilters";
 
-type CharacterFilterBarProps = {
-  characterFilters: FilterGroup[];
+type Props = {
+  filters: FilterGroup[];
 };
 
-export default function CharacterFilterBar({ characterFilters }: CharacterFilterBarProps) {
+export default function FilterBar({ filters }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   // 현재 URL을 기반으로 active 여부 판단
-  const isActive = (groupKey: string, option: string) => {
-    // feature: 다중 선택
-    if (groupKey === "feature") {
-      const values = searchParams.getAll(groupKey);
+  const isActive = (field: string, option: string, multi?: boolean) => {
+    //  다중 선택
+    if (multi) {
+      const values = searchParams.getAll(field);
 
       // 쿼리 없으면 All active
       if (option === "All") {
@@ -27,7 +27,7 @@ export default function CharacterFilterBar({ characterFilters }: CharacterFilter
     }
 
     // 단일 선택
-    const value = searchParams.get(groupKey);
+    const value = searchParams.get(field);
 
     // 쿼리 없으면 All active
     if (option === "All") {
@@ -37,16 +37,16 @@ export default function CharacterFilterBar({ characterFilters }: CharacterFilter
     return value === option;
   };
 
-  const handleClick = (groupKey: string, option: string) => {
+  const handleClick = (field: string, option: string, multi?: boolean) => {
     const params = new URLSearchParams(searchParams.toString());
 
-    // 1) feature: 다중 선택
-    if (groupKey === "feature") {
-      const current = params.getAll(groupKey);
+    // 1) 다중 선택
+    if (multi) {
+      const current = params.getAll(field);
 
       // (a) All 클릭 → 무조건 All만
       if (option === "All") {
-        params.delete(groupKey);
+        params.delete(field);
         router.push(`?${params.toString()}`);
         return;
       }
@@ -55,11 +55,11 @@ export default function CharacterFilterBar({ characterFilters }: CharacterFilter
       if (current.includes(option)) {
         // 이미 있으면 제거
         const next = current.filter((v) => v !== option);
-        params.delete(groupKey);
-        next.forEach((v) => params.append(groupKey, v));
+        params.delete(field);
+        next.forEach((v) => params.append(field, v));
       } else {
         // 없으면 추가
-        params.append(groupKey, option);
+        params.append(field, option);
       }
 
       router.push(`?${params.toString()}`);
@@ -68,9 +68,9 @@ export default function CharacterFilterBar({ characterFilters }: CharacterFilter
 
     // 2) 단일 선택
     if (option === "All") {
-      params.delete(groupKey);
+      params.delete(field);
     } else {
-      params.set(groupKey, option);
+      params.set(field, option);
     }
 
     router.push(`?${params.toString()}`);
@@ -78,7 +78,7 @@ export default function CharacterFilterBar({ characterFilters }: CharacterFilter
 
   return (
     <div className="space-y-6 pb-8">
-      {characterFilters.map((group) => (
+      {filters.map((group) => (
         <div key={group.field}>
           {/* Label */}
           <div className="mb-2 text-sm font-semibold text-white/80">{group.title}</div>
@@ -86,12 +86,12 @@ export default function CharacterFilterBar({ characterFilters }: CharacterFilter
           {/* Options */}
           <div className="flex flex-wrap gap-2">
             {group.options.map((option) => {
-              const active = isActive(group.field, option.value);
+              const active = isActive(group.field, option.value, group.multi);
 
               return (
                 <button
                   key={option.value}
-                  onClick={() => handleClick(group.field, option.value)}
+                  onClick={() => handleClick(group.field, option.value, group.multi)}
                   className={`
                     h-8 rounded-md px-3 text-xs font-medium transition
                     ${

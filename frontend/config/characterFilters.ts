@@ -5,6 +5,7 @@ export type FilterGroup = {
     value: string;
     label: string;
   }[];
+  multi?: boolean;
 };
 
 export const CHARACTER_FILTERS: FilterGroup[] = [
@@ -66,5 +67,6 @@ export const CHARACTER_FILTERS: FilterGroup[] = [
       { value: "def", label: "방어" },
       { value: "maxSanity", label: "최대 정신력" },
     ],
+    multi: true,
   },
 ];

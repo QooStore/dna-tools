@@ -1,4 +1,4 @@
-import CharacterFilterBar from "@/components/characters/CharacterFilterBar";
+import FilterBar from "@/components/ui/FilterBar";
 import CharacterListClient from "@/components/characters/CharacterListClient";
 import CharacterSearchBar from "@/components/characters/CharacterSearchBar";
 
@@ -41,7 +41,7 @@ export default async function CharactersPage() {
 
       {/* Filters */}
       <div className="mb-10">
-        <CharacterFilterBar characterFilters={CHARACTER_FILTERS} />
+        <FilterBar filters={CHARACTER_FILTERS} />
         <CharacterSearchBar />
       </div>
 
