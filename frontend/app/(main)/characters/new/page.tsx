@@ -1,10 +1,10 @@
 "use client";
 import { useRouter } from "next/navigation";
 
-import CharacterForm from "@/components/characters/new/CharacterForm";
+import CharacterForm from "../_form/CharacterForm";
 
-import { adminSaveCharacter } from "@/lib/api/admin";
-import { CharacterSaveRequest } from "@/domains/characterApi";
+import { adminSaveCharacter } from "@/api/admin";
+import { CharacterSaveRequest } from "@/domains/characterForm";
 
 export default function NewCharacterPage() {
   const router = useRouter();

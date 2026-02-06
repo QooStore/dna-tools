@@ -1,5 +1,4 @@
-import { CharacterFormState } from "@/domains/characterForm";
-import { CharacterSaveRequest } from "@/domains/characterApi";
+import { CharacterFormState, CharacterSaveRequest } from "@/domains/characterForm";
 
 const isBlank = (v?: string | null) => v === undefined || v === null || v.trim() === "";
 

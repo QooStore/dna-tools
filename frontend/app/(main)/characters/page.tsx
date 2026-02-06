@@ -1,12 +1,12 @@
 import FilterBar from "@/components/ui/FilterBar";
-import CharacterListClient from "@/components/characters/CharacterListClient";
-import CharacterSearchBar from "@/components/characters/CharacterSearchBar";
+import CharacterListClient from "./_components/CharacterListClient";
+import CharacterSearchBar from "./_components/CharacterSearchBar";
 
 import { CHARACTER_FILTERS } from "@/config/characterFilters";
-import { getAllCharacters } from "@/lib/api/characters";
+import { getAllCharacters } from "@/api/characters";
 
-import { CharacterListItem } from "@/domains/characters/character";
-import { getAdminMe } from "@/lib/api/admin";
+import { CharacterListItem } from "@/domains/characters/types";
+import { getAdminMe } from "@/api/admin";
 import Link from "next/link";
 
 export default async function CharactersPage() {

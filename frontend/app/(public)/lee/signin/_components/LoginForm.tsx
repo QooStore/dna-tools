@@ -1,7 +1,7 @@
 "use client";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { adminLogin } from "@/lib/api/signin";
+import { adminLogin } from "@/api/signin";
 
 export default function LoginForm() {
   const router = useRouter();

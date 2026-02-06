@@ -8,9 +8,8 @@ import SkillsSection from "./SkillsSection";
 import StatsSection from "./StatsSection";
 import WeaponSection from "./WeaponSection";
 import { useCharacterForm } from "./useCharacterForm";
-import { buildCharacterPayload } from "@/lib/buildCharacterPayload";
-import { CharacterFormState } from "@/domains/characterForm";
-import { CharacterSaveRequest } from "@/domains/characterApi";
+import { buildCharacterPayload } from "@/domains/characters/buildPayload";
+import { CharacterFormState, CharacterSaveRequest } from "@/domains/characterForm";
 
 export default function CharacterForm({
   initialData,

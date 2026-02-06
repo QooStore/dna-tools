@@ -3,7 +3,7 @@ import type React from "react";
 import InputComponent from "@/components/ui/FormInput";
 import LabelComponent from "@/components/ui/FormLabel";
 import SelectComponent from "@/components/ui/FormSelect";
-import { PASSIVE_UPGRADE_TYPE_OPTIONS, TARGET_STAT_OPTIONS } from "@/config/navigation";
+import { PASSIVE_UPGRADE_TYPE_OPTIONS, TARGET_STAT_OPTIONS } from "@/config/options";
 
 import { numberValue } from "@/lib/utils";
 import { CharacterFormState } from "@/domains/characterForm";

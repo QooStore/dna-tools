@@ -1,7 +1,7 @@
 "use server";
 import { cookies } from "next/headers";
 
-import { CharacterSaveRequest } from "@/domains/characterApi";
+import { CharacterSaveRequest } from "@/domains/characterForm";
 
 export async function getAdminMe(): Promise<boolean> {
   const cookieStore = await cookies();

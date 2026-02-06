@@ -38,14 +38,16 @@ Schema is managed manually via `Script.sql` (Hibernate ddl-auto: none).
 
 ### Frontend Architecture
 - **App Router** with route groups: `(main)/` for authenticated pages, `(public)/` for login
+- **Co-location pattern**: Route-specific components live next to their pages in `_components/` or `_form/` folders
 - **API proxy**: `/api/*` requests are rewritten to `http://localhost:8080/*` via `next.config.ts`
-- **Path alias**: `@/*` maps to project root
+- **Path alias**: `@/*` maps to frontend root. Use relative imports for co-located files, `@/` for cross-cutting.
 - **Key directories**:
-  - `app/` — Routes and pages
-  - `components/` — UI components organized by feature (`characters/`, `layout/`, `ui/`, `signin/`)
-  - `domains/` — TypeScript types, form interfaces, field definitions, labels, calculator formulas
-  - `lib/api/` — Server-side API client functions (use `"use server"` actions)
-  - `config/` — Filter configurations
+  - `app/` — Routes, pages, and co-located components (`_components/`, `_form/`)
+  - `components/ui/` — Shared UI primitives (FormInput, FilterBar, StatCard, etc.)
+  - `api/` — Backend API call functions (server actions and fetch wrappers)
+  - `domains/` — TypeScript types, form interfaces, field definitions, domain logic
+  - `config/` — Constants (navigation, options, labels, filters, element styles)
+  - `lib/` — General utilities
 
 ### Backend Architecture (Domain-Driven)
 Each feature domain (`domain/admin/`, `domain/character/`, `domain/common/`, `domain/image/`) follows a layered pattern:

@@ -3,7 +3,7 @@ import type React from "react";
 import InputComponent from "@/components/ui/FormInput";
 import LabelComponent from "@/components/ui/FormLabel";
 import SelectComponent from "@/components/ui/FormSelect";
-import { SKILL_TYPE_OPTIONS } from "@/config/navigation";
+import { SKILL_TYPE_OPTIONS } from "@/config/options";
 import { CharacterFormState, SkillForm } from "@/domains/characterForm";
 
 type SkillItem = {

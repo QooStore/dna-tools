@@ -4,10 +4,10 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 
-import Feature from "../Feature";
+import Feature from "./Feature";
 
-import { CharacterListItem } from "@/domains/characters/character";
-import { AdminActionButton } from "../ui/AdminActionButton";
+import { CharacterListItem } from "@/domains/characters/types";
+import { AdminActionButton } from "@/components/ui/AdminActionButton";
 
 type CharacterCardProps = Pick<CharacterListItem, "slug" | "name" | "listImage" | "features" | "elementImage"> & {
   onDelete?: () => void;

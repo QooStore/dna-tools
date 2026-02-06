@@ -60,3 +60,22 @@ export interface CharacterFormState {
   introns: IntronForm[];
   passiveUpgrades: PassiveUpgradeForm[];
 }
+
+export interface CharacterSaveRequest {
+  slug: string;
+  name: string;
+  elementCode: string;
+  image: string;
+  elementImage: string;
+  listImage: string;
+  meleeProficiency: string;
+  rangedProficiency: string;
+
+  stats?: CharacterStatsForm;
+  consonanceWeapon?: ConsonanceWeaponForm;
+
+  features?: FeatureForm[];
+  skills?: SkillForm[];
+  introns?: IntronForm[];
+  passiveUpgrades?: PassiveUpgradeForm[];
+}

@@ -1,4 +1,4 @@
-import { CharacterDetail, CharacterListItem } from "@/domains/characters/character";
+import { CharacterDetail, CharacterListItem } from "@/domains/characters/types";
 
 export async function getCharacterDetail(slug: string): Promise<CharacterDetail> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/characters/${slug}`, { cache: "no-store" });

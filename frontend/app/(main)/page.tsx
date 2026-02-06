@@ -1,4 +1,4 @@
-import HomeCard from "@/components/home/HomeCard";
+import HomeCard from "./_components/HomeCard";
 
 import { NAV_ITEMS as HOME_CARDS } from "@/config/navigation";
 

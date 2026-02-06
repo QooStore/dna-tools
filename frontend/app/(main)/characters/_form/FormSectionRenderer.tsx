@@ -2,29 +2,7 @@ import InputComponent from "@/components/ui/FormInput";
 import LabelComponent from "@/components/ui/FormLabel";
 import SelectComponent from "@/components/ui/FormSelect";
 import { numberValue } from "@/lib/utils";
-
-type Option = { value: string; label: string };
-
-export type Field =
-  | {
-      key: string;
-      label: string;
-      kind: "text";
-      placeholder?: string;
-    }
-  | {
-      key: string;
-      label: string;
-      kind: "number";
-      placeholder?: string;
-    }
-  | {
-      key: string;
-      label: string;
-      kind: "select";
-      options: readonly Option[];
-      placeholder?: string;
-    };
+import type { Field } from "@/domains/characters/fields";
 
 type Props<T extends object> = {
   title: string;

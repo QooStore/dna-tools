@@ -3,11 +3,11 @@
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
-import CharacterCard from "@/components/characters/CharacterCard";
+import CharacterCard from "./CharacterCard";
 
-import { CharacterListItem } from "@/domains/characters/character";
+import { CharacterListItem } from "@/domains/characters/types";
 import { buildSearchableText } from "@/lib/utils";
-import { deleteCharacter } from "@/lib/api/admin";
+import { deleteCharacter } from "@/api/admin";
 
 type Props = {
   allCharacters: CharacterListItem[];

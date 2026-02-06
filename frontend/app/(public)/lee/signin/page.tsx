@@ -1,6 +1,6 @@
-import LoginForm from "@/components/signin/LoginForm";
+import LoginForm from "./_components/LoginForm";
 
-import { getAdminMe } from "@/lib/api/admin";
+import { getAdminMe } from "@/api/admin";
 import { redirect } from "next/navigation";
 
 export default async function AdminLoginPage() {

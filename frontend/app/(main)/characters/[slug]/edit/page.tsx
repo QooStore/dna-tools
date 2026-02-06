@@ -3,11 +3,10 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 
-import CharacterForm from "@/components/characters/new/CharacterForm";
-import { adminSaveCharacter } from "@/lib/api/admin";
-import { getCharacterDetail } from "@/lib/api/characters";
-import { CharacterSaveRequest } from "@/domains/characterApi";
-import { CharacterFormState } from "@/domains/characterForm";
+import CharacterForm from "../../_form/CharacterForm";
+import { adminSaveCharacter } from "@/api/admin";
+import { getCharacterDetail } from "@/api/characters";
+import { CharacterSaveRequest, CharacterFormState } from "@/domains/characterForm";
 
 export default function EditCharacterPage() {
   const router = useRouter();

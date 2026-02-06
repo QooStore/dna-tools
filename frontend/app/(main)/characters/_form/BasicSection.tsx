@@ -2,7 +2,7 @@ import FormImageUpload from "@/components/ui/FormImageUpload";
 import InputComponent from "@/components/ui/FormInput";
 import LabelComponent from "@/components/ui/FormLabel";
 import FormSelect from "@/components/ui/FormSelect";
-import { ELEMENT_OPTIONS, MELEE_PROFICIENCY_OPTIONS, RANGED_PROFICIENCY_OPTIONS } from "@/config/navigation";
+import { ELEMENT_OPTIONS, MELEE_PROFICIENCY_OPTIONS, RANGED_PROFICIENCY_OPTIONS } from "@/config/options";
 import { CharacterFormState } from "@/domains/characterForm";
 
 type Props = {

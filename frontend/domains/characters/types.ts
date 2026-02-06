@@ -1,5 +1,14 @@
 import { ConsonanceWeaponStats, MeleeWeaponType, RangedWeaponType } from "../weapons/type";
-import { ElementType, PassiveTargetStat, PassiveUpgradeType } from "./type";
+
+// --- Union Types ---
+
+export type ElementType = "pyro" | "hydro" | "electro" | "anemo" | "lumino" | "umbro";
+
+export type PassiveUpgradeType = "STAT" | "ABILITY" | "COOP";
+
+export type PassiveTargetStat = "ATK" | "SKILL_EFFICIENCY";
+
+// --- Response Types ---
 
 export interface BaseStats {
   attack: number;
@@ -17,7 +26,7 @@ export interface Skill {
   description: string;
 }
 
-export interface feature {
+export interface Feature {
   featureCode: string;
   featureName: string;
 }
@@ -57,7 +66,7 @@ export interface CharacterDetail {
   rangedProficiencyLabel: string;
 
   /** 역할 태그 */
-  features: feature[];
+  features: Feature[];
 
   /** 기본 스탯 (캐릭터 고정값) */
   stats: BaseStats;

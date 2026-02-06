@@ -1,5 +1,4 @@
 import { WeaponStatKey } from "@/domains/weapons/type";
-import { LABELS } from "@/domains/labels";
 
 const PERCENT_KEYS: WeaponStatKey[] = ["critRate", "critDamage", "triggerProbability"] as const;
 

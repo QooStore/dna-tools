@@ -1,6 +1,6 @@
 import type React from "react";
 
-import { FEATURE_OPTIONS } from "@/config/navigation";
+import { FEATURE_OPTIONS } from "@/config/options";
 import { CharacterFormState } from "@/domains/characterForm";
 
 type FeatureItem = {

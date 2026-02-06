@@ -1,16 +1,17 @@
 import Image from "next/image";
 
-import Feature from "@/components/Feature";
+import Feature from "../_components/Feature";
 import ContentSection from "@/components/ui/ContentSection";
 import InfoCard from "@/components/ui/InfoCard";
 import SkillCard from "@/components/ui/SkillCard";
 import StatCard from "@/components/ui/StatCard";
 
-import { getCharacterDetail } from "@/lib/api/characters";
+import { getCharacterDetail } from "@/api/characters";
 import { formatWeaponStat } from "@/lib/utils";
-import { CharacterDetail } from "@/domains/characters/character";
-import { ELEMENT_GLOW_STYLES } from "@/domains/elementStyles";
-import { LABELS } from "@/domains/labels";
+import type { WeaponStatKey } from "@/domains/weapons/type";
+import { CharacterDetail } from "@/domains/characters/types";
+import { ELEMENT_GLOW_STYLES } from "@/config/elementStyles";
+import { LABELS } from "@/config/labels";
 
 export default async function CharacterDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const param = await params;
@@ -73,7 +74,7 @@ export default async function CharacterDetailPage({ params }: { params: Promise<
         <ContentSection title="동조 무기">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {Object.entries(character.consonanceWeapon).map(([key, value]) => {
-              return <StatCard key={key} label={LABELS.weapon[key]} value={formatWeaponStat(key, value)} />;
+              return <StatCard key={key} label={LABELS.weapon[key]} value={formatWeaponStat(key as WeaponStatKey, value)} />;
             })}
           </div>
         </ContentSection>

@@ -1,25 +1,25 @@
 import type React from "react";
 
-import FormSectionRenderer from "@/components/characters/new/FormSectionRenderer";
-import { WEAPON_FIELDS } from "@/domains/fields/weaponFields";
+import FormSectionRenderer from "./FormSectionRenderer";
 import { CharacterFormState } from "@/domains/characterForm";
+import { STATS_FIELDS } from "@/domains/characters/fields";
 
 type Props = {
   form: CharacterFormState;
   setForm: React.Dispatch<React.SetStateAction<CharacterFormState>>;
 };
 
-export default function WeaponSection({ form, setForm }: Props) {
+export default function StatsSection({ form, setForm }: Props) {
   return (
     <FormSectionRenderer
-      title="동조 무기"
-      fields={WEAPON_FIELDS}
-      value={form?.consonanceWeapon}
+      title="스탯"
+      fields={STATS_FIELDS}
+      value={form?.stats}
       onChange={(key, value) =>
         setForm((prev) => ({
           ...prev,
-          consonanceWeapon: {
-            ...prev.consonanceWeapon,
+          stats: {
+            ...prev.stats,
             [key]: value,
           },
         }))

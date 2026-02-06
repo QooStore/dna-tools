@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getAdminMe } from "@/lib/api/admin";
+import { getAdminMe } from "@/api/admin";
 import "./globals.css";
 
 export const metadata: Metadata = {
