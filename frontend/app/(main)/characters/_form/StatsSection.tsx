@@ -2,7 +2,7 @@ import type React from "react";
 
 import FormSectionRenderer from "./FormSectionRenderer";
 import { CharacterFormState } from "@/domains/characterForm";
-import { STATS_FIELDS } from "@/domains/characters/fields";
+import { STATS_FIELDS } from "@/config/fields";
 
 type Props = {
   form: CharacterFormState;

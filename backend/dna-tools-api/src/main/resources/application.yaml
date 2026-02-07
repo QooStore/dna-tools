@@ -28,7 +28,7 @@ file:
 
 app:
   image:
-    base-url: http://localhost:8080
+    base-url: ""
 
 logging:
   level:

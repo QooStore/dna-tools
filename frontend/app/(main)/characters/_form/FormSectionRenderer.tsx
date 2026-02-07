@@ -2,7 +2,7 @@ import InputComponent from "@/components/ui/FormInput";
 import LabelComponent from "@/components/ui/FormLabel";
 import SelectComponent from "@/components/ui/FormSelect";
 import { numberValue } from "@/lib/utils";
-import type { Field } from "@/domains/characters/fields";
+import type { Field } from "@/config/fields";
 
 type Props<T extends object> = {
   title: string;

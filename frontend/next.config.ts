@@ -4,20 +4,14 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: "/api/:path*",
+        source: "/request/:path*",
         destination: "http://localhost:8080/:path*",
       },
-    ];
-  },
-  images: {
-    remotePatterns: [
       {
-        protocol: "http",
-        hostname: "localhost",
-        port: "8080",
-        pathname: "/images/**",
+        source: "/images/:path*",
+        destination: "http://localhost:8080/images/:path*",
       },
-    ],
+    ];
   },
 };
 

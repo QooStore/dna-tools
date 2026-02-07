@@ -1,7 +1,7 @@
 import type React from "react";
 
 import FormSectionRenderer from "./FormSectionRenderer";
-import { WEAPON_FIELDS } from "@/domains/characters/fields";
+import { WEAPON_FIELDS } from "@/config/fields";
 import { CharacterFormState } from "@/domains/characterForm";
 
 type Props = {
