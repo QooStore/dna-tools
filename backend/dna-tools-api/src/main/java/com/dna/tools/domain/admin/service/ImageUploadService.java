@@ -1,76 +1,54 @@
 package com.dna.tools.domain.admin.service;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.Set;
-import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dna.tools.domain.image.entity.UploadedImage;
 import com.dna.tools.domain.image.repository.UploadedImageRepository;
+import com.dna.tools.domain.image.storage.ImageStorage;
+import com.dna.tools.exception.BusinessException;
+import com.dna.tools.exception.ErrorCode;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class ImageUploadService {
 
     private final UploadedImageRepository uploadedImageRepository;
+    private final ImageStorage imageStorage;
 
-    private String baseUrl;
-    private final Path uploadDir;
     private static final Set<String> ALLOWED_EXT = Set.of("jpg", "jpeg", "png", "webp");
 
-    public ImageUploadService(@Value("${file.upload.image-dir}") String uploadDir,
-            @Value("${app.image.base-url}") String baseUrl, UploadedImageRepository uploadedImageRepository) {
-        this.uploadDir = Paths.get(uploadDir);
-        this.baseUrl = baseUrl;
-        this.uploadedImageRepository = uploadedImageRepository;
-    }
-
+    /** 파일 검증 → 저장 → DB 기록 → full URL 반환 */
     public String upload(MultipartFile file) {
-
         validate(file);
 
-        String ext = getExtension(file.getOriginalFilename());
-        String filename = UUID.randomUUID() + "." + ext;
+        String filename = imageStorage.upload(file);
 
-        Path filePath = uploadDir.resolve(filename);
+        uploadedImageRepository.save(new UploadedImage(filename));
 
-        try {
-            Files.createDirectories(uploadDir);
-            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new RuntimeException("이미지 업로드 실패", e);
-        }
-
-        String url = baseUrl + "/images/" + filename;
-
-        uploadedImageRepository.save(new UploadedImage(url));
-
-        return url;
+        return imageStorage.getUrl(filename);
     }
 
-    public void validate(MultipartFile file) {
+    private void validate(MultipartFile file) {
         if (file.isEmpty()) {
-            throw new IllegalArgumentException("파일이 비어있습니다.");
+            throw new BusinessException(ErrorCode.IMAGE_EMPTY);
         }
 
         String ext = getExtension(file.getOriginalFilename());
         if (!ALLOWED_EXT.contains(ext)) {
-            throw new IllegalArgumentException("허용되지 않는 파일 형식입니다.");
+            throw new BusinessException(ErrorCode.INVALID_FILE_TYPE);
         }
 
         if (file.getSize() > 20 * 1024 * 1024) {
-            throw new IllegalArgumentException("이미지 용량은 20MB 이하여야 합니다.");
+            throw new BusinessException(ErrorCode.FILE_SIZE_EXCEEDED);
         }
     }
 
     private String getExtension(String originalFilename) {
-
         return originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toLowerCase();
     }
 }

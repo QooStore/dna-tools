@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface UploadedImageRepository extends JpaRepository<UploadedImage, Long> {
 
-    Optional<UploadedImage> findByUrl(String url);
+    Optional<UploadedImage> findByFilename(String filename);
 
     List<UploadedImage> findByUsedFalseAndCreatedAtBefore(LocalDateTime time);
 }

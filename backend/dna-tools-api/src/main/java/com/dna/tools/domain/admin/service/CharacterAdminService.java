@@ -7,6 +7,9 @@ import com.dna.tools.domain.character.entity.ConsonanceWeaponEntity;
 import com.dna.tools.domain.character.repository.CharacterRepository;
 import com.dna.tools.domain.image.entity.UploadedImage;
 import com.dna.tools.domain.image.repository.UploadedImageRepository;
+import com.dna.tools.domain.image.storage.ImageStorage;
+import com.dna.tools.exception.BusinessException;
+import com.dna.tools.exception.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,6 +23,7 @@ public class CharacterAdminService {
 
     private final CharacterRepository characterRepository;
     private final UploadedImageRepository uploadedImageRepository;
+    private final ImageStorage imageStorage;
 
     /*
      * =====================
@@ -33,22 +37,21 @@ public class CharacterAdminService {
                 req.getSlug(),
                 req.getName(),
                 req.getElementCode(),
-                req.getImage(),
+                extractFilename(req.getImage()),
                 req.getElementImage(),
-                req.getListImage(),
+                extractFilename(req.getListImage()),
                 req.getMeleeProficiency(),
                 req.getRangedProficiency());
 
-        // 1) characters 먼저 저장 → ID 생성을 위해 saveAndFlush() 사용
         try {
-            characterRepository.saveAndFlush(character); // insert는 flush 시점에 실행되기 때문에 일반 save() 대신 사용.
+            characterRepository.save(character);
         } catch (DataIntegrityViolationException e) {
-            throw new IllegalArgumentException("slug 중복 또는 제약조건 위반", e);
+            throw new BusinessException(ErrorCode.CHARACTER_SLUG_DUPLICATE);
         }
 
-        // 2) 1:1
+        // 1:1
         if (req.getStats() != null) {
-            var s = req.getStats(); // var는 CharacterCreateRequest.Stats 대신 사용.
+            var s = req.getStats();
             character.setStats(new CharacterStatsEntity(
                     character,
                     s.getAttack(),
@@ -73,7 +76,7 @@ public class CharacterAdminService {
                     w.getTriggerProbability()));
         }
 
-        // 3) 1:N
+        // 1:N
         if (req.getFeatures() != null) {
             req.getFeatures().forEach(f -> character.addFeature(f.getFeatureCode()));
         }
@@ -99,11 +102,9 @@ public class CharacterAdminService {
         }
 
         markImagesUsed(
-                req.getImage(),
-                req.getElementImage(),
-                req.getListImage());
+                character.getImage(),
+                character.getListImage());
 
-        characterRepository.flush();
     }
 
     /*
@@ -115,26 +116,25 @@ public class CharacterAdminService {
     public void updateBySlug(String slug, CharacterSaveRequest req) {
 
         CharacterEntity character = characterRepository.findBySlug(slug)
-                .orElseThrow(() -> new IllegalArgumentException("캐릭터 없음. slug=" + slug));
+                .orElseThrow(() -> new BusinessException(ErrorCode.CHARACTER_NOT_FOUND));
 
         // slug 변경 시 중복 체크
         if (!character.getSlug().equals(req.getSlug())
                 && characterRepository.findBySlug(req.getSlug()).isPresent()) {
-            throw new IllegalArgumentException("slug 중복");
+            throw new BusinessException(ErrorCode.CHARACTER_SLUG_DUPLICATE);
         }
 
-        String prevImage = character.getImage();
-        String prevElementImage = character.getElementImage();
-        String prevListImage = character.getListImage();
+        // 이미지 변경 감지를 위해 updateBasic 전에 이전 값 캡처
+        ImagePaths prevImages = captureImagePaths(character);
 
-        // 1) 기본 정보
+        // 1) 기본 정보 (이미지는 filename으로 변환하여 저장)
         character.updateBasic(
                 req.getSlug(),
                 req.getName(),
                 req.getElementCode(),
-                req.getImage(),
+                extractFilename(req.getImage()),
                 req.getElementImage(),
-                req.getListImage(),
+                extractFilename(req.getListImage()),
                 req.getMeleeProficiency(),
                 req.getRangedProficiency());
 
@@ -209,50 +209,63 @@ public class CharacterAdminService {
             }
         }
 
-        // 새 이미지 사용 확정
-        markImagesUsed(
-                req.getImage(),
-                req.getElementImage(),
-                req.getListImage());
+        // 이미지 메타데이터 갱신
+        updateImageMetadata(character, prevImages);
 
-        // 이전 이미지 해제 (바뀐 경우만)
-        unmarkIfChanged(prevImage, req.getImage());
-        unmarkIfChanged(prevElementImage, req.getElementImage());
-        unmarkIfChanged(prevListImage, req.getListImage());
-
-        characterRepository.flush();
     }
 
+    @Transactional
     public void deleteCharacter(long id) {
 
         CharacterEntity character = characterRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("캐릭터 없음. id=" + id));
+                .orElseThrow(() -> new BusinessException(ErrorCode.CHARACTER_NOT_FOUND));
 
         unmarkImages(
                 character.getImage(),
-                character.getElementImage(),
                 character.getListImage());
 
         characterRepository.deleteById(id);
     }
 
-    private void markImagesUsed(String... urls) {
-        for (String url : urls) {
-            if (url == null || url.isBlank())
+    // ==== Private Helper Methods ====
+
+    /** URL에서 filename 추출. elementImage는 정적 경로이므로 대상이 아님 */
+    private String extractFilename(String urlOrFilename) {
+        return imageStorage.extractFilename(urlOrFilename);
+    }
+
+    private ImagePaths captureImagePaths(CharacterEntity character) {
+        return new ImagePaths(
+                character.getImage(),
+                character.getListImage());
+    }
+
+    private void updateImageMetadata(CharacterEntity character, ImagePaths prevImages) {
+        // 새 이미지 사용 확정
+        markImagesUsed(character.getImage(), character.getListImage());
+
+        // 이전 이미지 해제 (바뀐 경우만)
+        unmarkIfChanged(prevImages.image, character.getImage());
+        unmarkIfChanged(prevImages.listImage, character.getListImage());
+    }
+
+    private void markImagesUsed(String... filenames) {
+        for (String filename : filenames) {
+            if (filename == null || filename.isBlank())
                 continue;
 
             uploadedImageRepository
-                    .findByUrl(url)
-                    .ifPresent(UploadedImage::markUsed); // ifPresent value가 있을 때만 실행.
+                    .findByFilename(filename)
+                    .ifPresent(UploadedImage::markUsed);
         }
     }
 
-    private void unmarkImages(String... urls) {
-        for (String url : urls) {
-            if (url == null || url.isBlank())
+    private void unmarkImages(String... filenames) {
+        for (String filename : filenames) {
+            if (filename == null || filename.isBlank())
                 continue;
 
-            uploadedImageRepository.findByUrl(url)
+            uploadedImageRepository.findByFilename(filename)
                     .ifPresent(UploadedImage::markUnused);
         }
     }
@@ -263,8 +276,12 @@ public class CharacterAdminService {
         if (prev.equals(current))
             return;
 
-        uploadedImageRepository.findByUrl(prev)
-                .ifPresent(img -> img.markUnused());
+        uploadedImageRepository.findByFilename(prev)
+                .ifPresent(UploadedImage::markUnused);
+    }
+
+    // ===== 내부 클래스 =====
+    private record ImagePaths(String image, String listImage) {
     }
 
 }

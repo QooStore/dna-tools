@@ -6,6 +6,7 @@ spring:
     username: dna_user
     password: dna1412
     driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
     hibernate:
       ddl-auto: none
@@ -23,8 +24,19 @@ jwt:
 
 file:
   upload:
-    image-dir: E:/dna/uploads/images
+    image-dir: ./uploads/images
 
 app:
   image:
     base-url: http://localhost:8080
+
+logging:
+  level:
+    root: INFO
+    com.dna.tools: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/dna-tools.log
+    max-size: 10MB
+    max-history: 30
