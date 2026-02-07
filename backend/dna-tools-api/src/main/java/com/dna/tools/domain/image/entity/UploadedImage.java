@@ -17,7 +17,7 @@ public class UploadedImage {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String url;
+    private String filename;
 
     @Column(nullable = false)
     private boolean used = false;
@@ -25,8 +25,8 @@ public class UploadedImage {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    public UploadedImage(String url) {
-        this.url = url;
+    public UploadedImage(String filename) {
+        this.filename = filename;
         this.createdAt = LocalDateTime.now();
     }
 

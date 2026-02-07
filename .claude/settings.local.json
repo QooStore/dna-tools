@@ -6,7 +6,9 @@
       "Bash(git commit -m \"$\\(cat <<''EOF''\nCLAUDE.md 추가: Claude Code 작업 가이드 문서\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(git push:*)",
       "Bash(npm run build:*)",
-      "Bash(npm run lint)"
+      "Bash(npm run lint)",
+      "Bash(del \"E:\\\\DJL\\\\react_work\\\\dna-tools\\\\backend\\\\dna-tools-api\\\\src\\\\main\\\\java\\\\com\\\\dna\\\\tools\\\\exception\\\\ImageException.java\")",
+      "Bash(./gradlew build:*)"
     ]
   }
 }

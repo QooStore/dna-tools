@@ -3,17 +3,22 @@ package com.dna.tools.domain.character.mapper;
 import com.dna.tools.domain.character.dto.*;
 import com.dna.tools.domain.character.entity.*;
 import com.dna.tools.domain.common.dto.LabelContext;
+import com.dna.tools.domain.image.storage.ImageStorage;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Set;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Component
+@RequiredArgsConstructor
 public class CharacterDetailMapper {
 
-        public static CharacterDetailResponse toResponse(CharacterEntity character,
+        private final ImageStorage imageStorage;
+
+        public CharacterDetailResponse toResponse(CharacterEntity character,
                         LabelContext labels) {
 
                 return new CharacterDetailResponse(
@@ -21,9 +26,9 @@ public class CharacterDetailMapper {
                                 character.getName(),
                                 character.getElement(),
                                 labels.label("ELEMENT", character.getElement()),
-                                character.getImage(),
+                                imageStorage.getUrl(character.getImage()),
                                 character.getElementImage(),
-                                character.getListImage(),
+                                imageStorage.getUrl(character.getListImage()),
                                 character.getMeleeProficiency(),
                                 labels.label("MELEEWEAPON", character.getMeleeProficiency()),
                                 character.getRangedProficiency(),

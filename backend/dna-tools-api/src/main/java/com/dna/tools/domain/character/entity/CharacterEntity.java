@@ -59,7 +59,7 @@ public class CharacterEntity {
             CascadeType.REMOVE }, orphanRemoval = true)
     private CharacterStatsEntity stats;
 
-    @OneToOne(mappedBy = "character", fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
+    @OneToOne(mappedBy = "character", fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, orphanRemoval = true)
     private ConsonanceWeaponEntity consonanceWeapon;
 
     @OneToMany(mappedBy = "character", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

@@ -133,7 +133,7 @@ CREATE TABLE `characters` (
 
 LOCK TABLES `characters` WRITE;
 /*!40000 ALTER TABLE `characters` DISABLE KEYS */;
-INSERT INTO `characters` VALUES (1,'berenica','베레니카','umbro','/images/characters/berenica_v1.png','/images/element_icon/umbro.png','/images/character_list/berenica.png','sword','dualPistols','2026-01-13 14:08:10'),(2,'new-character','뉴캐릭','pyro','http://localhost:8080/images/0ecbe94c-b8be-4310-85a3-e4d84a0edf01.png','/images/element_icon/pyro.png','http://localhost:8080/images/eb6d5684-9c87-4cc6-8f44-2420a788c5ed.png','sword','bow',NULL),(7,'test01','test01','hydro','http://localhost:8080/images/85db1912-d184-4fac-a2f5-5dad9f2794b0.png','/images/element_icon/hydro.png','http://localhost:8080/images/62aa564f-cc88-482f-bcb3-2461c4b47b15.png','dualBlades','assaultRifle','2026-01-24 12:38:01');
+INSERT INTO `characters` VALUES (1,'berenica','베레니카','umbro','characters/berenica_v1.png','/images/element_icon/umbro.png','character_list/berenica.png','sword','dualPistols','2026-01-13 14:08:10'),(2,'new-character','뉴캐릭','pyro','0ecbe94c-b8be-4310-85a3-e4d84a0edf01.png','/images/element_icon/pyro.png','eb6d5684-9c87-4cc6-8f44-2420a788c5ed.png','sword','bow',NULL),(7,'test01','test01','hydro','85db1912-d184-4fac-a2f5-5dad9f2794b0.png','/images/element_icon/hydro.png','62aa564f-cc88-482f-bcb3-2461c4b47b15.png','dualBlades','assaultRifle','2026-01-24 12:38:01');
 /*!40000 ALTER TABLE `characters` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -314,11 +314,11 @@ DROP TABLE IF EXISTS `uploaded_images`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `uploaded_images` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `url` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `filename` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `used` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `url` (`url`)
+  UNIQUE KEY `url` (`filename`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -328,7 +328,7 @@ CREATE TABLE `uploaded_images` (
 
 LOCK TABLES `uploaded_images` WRITE;
 /*!40000 ALTER TABLE `uploaded_images` DISABLE KEYS */;
-INSERT INTO `uploaded_images` VALUES (1,'http://localhost:8080/images/85db1912-d184-4fac-a2f5-5dad9f2794b0.png',1,'2026-01-24 21:36:06'),(4,'http://localhost:8080/images/62aa564f-cc88-482f-bcb3-2461c4b47b15.png',1,'2026-01-24 21:36:34'),(10,'http://localhost:8080/images/eb6d5684-9c87-4cc6-8f44-2420a788c5ed.png',1,'2026-01-25 18:55:44'),(12,'http://localhost:8080/images/0ecbe94c-b8be-4310-85a3-e4d84a0edf01.png',1,'2026-01-25 18:55:54');
+INSERT INTO `uploaded_images` VALUES (1,'85db1912-d184-4fac-a2f5-5dad9f2794b0.png',1,'2026-01-24 21:36:06'),(4,'62aa564f-cc88-482f-bcb3-2461c4b47b15.png',1,'2026-01-24 21:36:34'),(10,'eb6d5684-9c87-4cc6-8f44-2420a788c5ed.png',1,'2026-01-25 18:55:44'),(12,'0ecbe94c-b8be-4310-85a3-e4d84a0edf01.png',1,'2026-01-25 18:55:54');
 /*!40000 ALTER TABLE `uploaded_images` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -345,4 +345,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-02-05  0:57:31
+-- Dump completed on 2026-02-07 16:18:46
