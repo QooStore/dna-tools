@@ -29,3 +29,45 @@ export type ConsonanceWeaponStats =
       attackSpeed: number;
       triggerProbability: number;
     };
+
+// --- 무기 목록 ---
+export interface WeaponListItem {
+  id: number;
+  slug: string;
+  name: string;
+  image: string | null;
+
+  // 분류
+  category: WeaponCategory;
+  categoryLabel: string;
+  weaponType: string;
+  weaponTypeLabel: string;
+  attackType: string;
+  attackTypeLabel: string;
+  element: string | null;
+  elementLabel: string | null;
+
+  // 공통 스탯
+  attack: number;
+  critRate: number;
+  critDamage: number;
+  attackSpeed: number;
+  triggerProbability: number;
+
+  // 근접 전용
+  chargeAttackSpeed: number | null;
+  fallAttackSpeed: number | null;
+
+  // 원거리 전용
+  multiShot: number | null;
+  maxAmmo: number | null;
+  ammoConversionRate: number | null;
+
+  // 패시브
+  passiveStat: string | null;
+  passiveStatLabel: string | null;
+  passiveValue: number | null;
+
+  // 액티브
+  activeSkillDescription: string | null;
+}

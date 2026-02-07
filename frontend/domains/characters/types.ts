@@ -6,8 +6,6 @@ export type ElementType = "pyro" | "hydro" | "electro" | "anemo" | "lumino" | "u
 
 export type PassiveUpgradeType = "STAT" | "ABILITY" | "COOP";
 
-export type PassiveTargetStat = "ATK" | "SKILL_EFFICIENCY";
-
 // --- Response Types ---
 
 export interface BaseStats {
@@ -40,7 +38,7 @@ export interface CharacterPassiveUpgrade {
   upgradeKey: string; // atk_20, afterburn
   upgradeType: PassiveUpgradeType;
 
-  targetStat?: PassiveTargetStat; // STAT, COOP
+  targetStat?: string; // STAT, COOP
   value?: number; // % 값
 
   name: string; // 표시용 이름

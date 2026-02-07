@@ -26,8 +26,8 @@ export default function CharacterCard({
   const router = useRouter();
 
   return (
-    <Link href={`/characters/${slug}`} className="block">
-      <div className="group mx-auto w-full max-w-60 overflow-hidden rounded-xl border bg-[#0b1020]/80 transition  border-white/10 hover:border-cyan-400/50">
+    <Link href={`/characters/${slug}`} className="block h-full">
+      <div className="group mx-auto flex h-full w-full max-w-60 flex-col overflow-hidden rounded-xl border bg-[#0b1020]/80 transition  border-white/10 hover:border-cyan-400/50">
         {/* Image */}
         <div className="relative aspect-3/4 overflow-hidden">
           <div
@@ -81,7 +81,7 @@ export default function CharacterCard({
         </div>
 
         {/* Info */}
-        <div className="p-3">
+        <div className="flex flex-1 flex-col justify-center p-3">
           {/* Name */}
           <div className="mb-2 text-center font-semibold tracking-wide">{name}</div>
 

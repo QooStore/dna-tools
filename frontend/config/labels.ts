@@ -16,6 +16,11 @@ export const WEAPON_LABELS: Record<string, string> = {
   critDamage: "치명타 피해",
   attackSpeed: "공격 속도",
   triggerProbability: "발동 확률",
+  chargeAttackSpeed: "차지 공격 속도",
+  fallAttackSpeed: "낙하 공격 속도",
+  multiShot: "다중 사격",
+  maxAmmo: "최대 탄약",
+  ammoConversionRate: "탄약 전환율",
 };
 
 export const LABELS = {
