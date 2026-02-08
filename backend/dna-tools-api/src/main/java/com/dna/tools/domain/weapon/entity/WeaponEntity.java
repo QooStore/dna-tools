@@ -88,4 +88,68 @@ public class WeaponEntity {
 
     @Column(name = "created_at", updatable = false, insertable = false)
     private LocalDateTime createdAt;
+
+    // ===== 생성 팩토리 =====
+    public static WeaponEntity create(
+            String slug, String name, String image,
+            String category, String weaponType, String attackType, String element,
+            BigDecimal attack, BigDecimal critRate, BigDecimal critDamage,
+            BigDecimal attackSpeed, BigDecimal triggerProbability,
+            BigDecimal chargeAttackSpeed, BigDecimal fallAttackSpeed,
+            Integer multiShot, Integer maxAmmo, BigDecimal ammoConversionRate,
+            String passiveStat, BigDecimal passiveValue, String activeSkillDescription) {
+        WeaponEntity w = new WeaponEntity();
+        w.slug = slug;
+        w.name = name;
+        w.image = image;
+        w.category = category;
+        w.weaponType = weaponType;
+        w.attackType = attackType;
+        w.element = element;
+        w.attack = attack;
+        w.critRate = critRate;
+        w.critDamage = critDamage;
+        w.attackSpeed = attackSpeed;
+        w.triggerProbability = triggerProbability;
+        w.chargeAttackSpeed = chargeAttackSpeed;
+        w.fallAttackSpeed = fallAttackSpeed;
+        w.multiShot = multiShot;
+        w.maxAmmo = maxAmmo;
+        w.ammoConversionRate = ammoConversionRate;
+        w.passiveStat = passiveStat;
+        w.passiveValue = passiveValue;
+        w.activeSkillDescription = activeSkillDescription;
+        return w;
+    }
+
+    // ===== 수정 =====
+    public void update(
+            String slug, String name, String image,
+            String category, String weaponType, String attackType, String element,
+            BigDecimal attack, BigDecimal critRate, BigDecimal critDamage,
+            BigDecimal attackSpeed, BigDecimal triggerProbability,
+            BigDecimal chargeAttackSpeed, BigDecimal fallAttackSpeed,
+            Integer multiShot, Integer maxAmmo, BigDecimal ammoConversionRate,
+            String passiveStat, BigDecimal passiveValue, String activeSkillDescription) {
+        this.slug = slug;
+        this.name = name;
+        this.image = image;
+        this.category = category;
+        this.weaponType = weaponType;
+        this.attackType = attackType;
+        this.element = element;
+        this.attack = attack;
+        this.critRate = critRate;
+        this.critDamage = critDamage;
+        this.attackSpeed = attackSpeed;
+        this.triggerProbability = triggerProbability;
+        this.chargeAttackSpeed = chargeAttackSpeed;
+        this.fallAttackSpeed = fallAttackSpeed;
+        this.multiShot = multiShot;
+        this.maxAmmo = maxAmmo;
+        this.ammoConversionRate = ammoConversionRate;
+        this.passiveStat = passiveStat;
+        this.passiveValue = passiveValue;
+        this.activeSkillDescription = activeSkillDescription;
+    }
 }

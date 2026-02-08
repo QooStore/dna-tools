@@ -5,9 +5,7 @@ import com.dna.tools.domain.character.entity.CharacterEntity;
 import com.dna.tools.domain.character.entity.CharacterStatsEntity;
 import com.dna.tools.domain.character.entity.ConsonanceWeaponEntity;
 import com.dna.tools.domain.character.repository.CharacterRepository;
-import com.dna.tools.domain.image.entity.UploadedImage;
-import com.dna.tools.domain.image.repository.UploadedImageRepository;
-import com.dna.tools.domain.image.storage.ImageStorage;
+import com.dna.tools.domain.image.service.ImageUsageService;
 import com.dna.tools.exception.BusinessException;
 import com.dna.tools.exception.ErrorCode;
 
@@ -22,8 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CharacterAdminService {
 
     private final CharacterRepository characterRepository;
-    private final UploadedImageRepository uploadedImageRepository;
-    private final ImageStorage imageStorage;
+    private final ImageUsageService imageUsageService;
 
     /*
      * =====================
@@ -37,9 +34,9 @@ public class CharacterAdminService {
                 req.getSlug(),
                 req.getName(),
                 req.getElementCode(),
-                extractFilename(req.getImage()),
+                imageUsageService.extractFilename(req.getImage()),
                 req.getElementImage(),
-                extractFilename(req.getListImage()),
+                imageUsageService.extractFilename(req.getListImage()),
                 req.getMeleeProficiency(),
                 req.getRangedProficiency());
 
@@ -101,7 +98,7 @@ public class CharacterAdminService {
                     p.getDescription()));
         }
 
-        markImagesUsed(
+        imageUsageService.markUsed(
                 character.getImage(),
                 character.getListImage());
 
@@ -125,16 +122,17 @@ public class CharacterAdminService {
         }
 
         // 이미지 변경 감지를 위해 updateBasic 전에 이전 값 캡처
-        ImagePaths prevImages = captureImagePaths(character);
+        String prevImage = character.getImage();
+        String prevListImage = character.getListImage();
 
         // 1) 기본 정보 (이미지는 filename으로 변환하여 저장)
         character.updateBasic(
                 req.getSlug(),
                 req.getName(),
                 req.getElementCode(),
-                extractFilename(req.getImage()),
+                imageUsageService.extractFilename(req.getImage()),
                 req.getElementImage(),
-                extractFilename(req.getListImage()),
+                imageUsageService.extractFilename(req.getListImage()),
                 req.getMeleeProficiency(),
                 req.getRangedProficiency());
 
@@ -210,7 +208,9 @@ public class CharacterAdminService {
         }
 
         // 이미지 메타데이터 갱신
-        updateImageMetadata(character, prevImages);
+        imageUsageService.markUsed(character.getImage(), character.getListImage());
+        imageUsageService.unmarkIfChanged(prevImage, character.getImage());
+        imageUsageService.unmarkIfChanged(prevListImage, character.getListImage());
 
     }
 
@@ -220,68 +220,10 @@ public class CharacterAdminService {
         CharacterEntity character = characterRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorCode.CHARACTER_NOT_FOUND));
 
-        unmarkImages(
+        imageUsageService.markUnused(
                 character.getImage(),
                 character.getListImage());
 
         characterRepository.deleteById(id);
     }
-
-    // ==== Private Helper Methods ====
-
-    /** URL에서 filename 추출. elementImage는 정적 경로이므로 대상이 아님 */
-    private String extractFilename(String urlOrFilename) {
-        return imageStorage.extractFilename(urlOrFilename);
-    }
-
-    private ImagePaths captureImagePaths(CharacterEntity character) {
-        return new ImagePaths(
-                character.getImage(),
-                character.getListImage());
-    }
-
-    private void updateImageMetadata(CharacterEntity character, ImagePaths prevImages) {
-        // 새 이미지 사용 확정
-        markImagesUsed(character.getImage(), character.getListImage());
-
-        // 이전 이미지 해제 (바뀐 경우만)
-        unmarkIfChanged(prevImages.image, character.getImage());
-        unmarkIfChanged(prevImages.listImage, character.getListImage());
-    }
-
-    private void markImagesUsed(String... filenames) {
-        for (String filename : filenames) {
-            if (filename == null || filename.isBlank())
-                continue;
-
-            uploadedImageRepository
-                    .findByFilename(filename)
-                    .ifPresent(UploadedImage::markUsed);
-        }
-    }
-
-    private void unmarkImages(String... filenames) {
-        for (String filename : filenames) {
-            if (filename == null || filename.isBlank())
-                continue;
-
-            uploadedImageRepository.findByFilename(filename)
-                    .ifPresent(UploadedImage::markUnused);
-        }
-    }
-
-    private void unmarkIfChanged(String prev, String current) {
-        if (prev == null || prev.isBlank())
-            return;
-        if (prev.equals(current))
-            return;
-
-        uploadedImageRepository.findByFilename(prev)
-                .ifPresent(UploadedImage::markUnused);
-    }
-
-    // ===== 내부 클래스 =====
-    private record ImagePaths(String image, String listImage) {
-    }
-
 }

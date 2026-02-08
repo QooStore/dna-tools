@@ -1,19 +1,22 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 import WeaponCard from "./WeaponCard";
 
 import { WeaponListItem } from "@/domains/weapons/type";
 import { buildSearchableText } from "@/lib/utils";
+import { deleteWeapon } from "@/api/admin";
 
 type Props = {
   allWeapons: WeaponListItem[];
+  isAdmin?: boolean;
 };
 
-export default function WeaponListClient({ allWeapons }: Props) {
+export default function WeaponListClient({ allWeapons, isAdmin = false }: Props) {
   const searchParams = useSearchParams();
+  const [weapons, setWeapons] = useState(allWeapons);
 
   // --- URL 값 읽기 ---
   const category = searchParams.get("category");
@@ -24,7 +27,7 @@ export default function WeaponListClient({ allWeapons }: Props) {
 
   // --- 필터링 ---
   const filteredWeapons = useMemo(() => {
-    return allWeapons.filter((w) => {
+    return weapons.filter((w) => {
       // 카테고리
       if (category && w.category !== category) return false;
 
@@ -35,7 +38,13 @@ export default function WeaponListClient({ allWeapons }: Props) {
       if (attackType && w.attackType !== attackType) return false;
 
       // 속성
-      if (element && w.element !== element) return false;
+      if (element) {
+        if (element === "none") {
+          if (w.element != null) return false;
+        } else {
+          if (w.element !== element) return false;
+        }
+      }
 
       // 검색어
       if (keyword) {
@@ -59,16 +68,33 @@ export default function WeaponListClient({ allWeapons }: Props) {
 
       return true;
     });
-  }, [allWeapons, category, weaponType, attackType, element, keyword]);
+  }, [weapons, category, weaponType, attackType, element, keyword]);
+
+  // --- 무기 삭제 ---
+  const handleDelete = async (id: number) => {
+    if (!confirm("정말 삭제하시겠습니까?")) return;
+
+    try {
+      await deleteWeapon(id);
+      setWeapons((prev) => prev.filter((w) => w.id !== id));
+    } catch {
+      alert("삭제에 실패했습니다.");
+    }
+  };
 
   if (filteredWeapons.length === 0) {
     return <div className="py-20 text-center text-gray-400">조건에 맞는 무기가 없습니다.</div>;
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
       {filteredWeapons.map((weapon) => (
-        <WeaponCard key={weapon.id} weapon={weapon} />
+        <WeaponCard
+          key={weapon.id}
+          weapon={weapon}
+          isAdmin={isAdmin}
+          onDelete={() => handleDelete(weapon.id)}
+        />
       ))}
     </div>
   );

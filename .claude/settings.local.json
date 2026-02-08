@@ -10,7 +10,8 @@
       "Bash(del \"E:\\\\DJL\\\\react_work\\\\dna-tools\\\\backend\\\\dna-tools-api\\\\src\\\\main\\\\java\\\\com\\\\dna\\\\tools\\\\exception\\\\ImageException.java\")",
       "Bash(./gradlew build:*)",
       "Bash(git mv:*)",
-      "WebFetch(domain:boarhat.gg)"
+      "WebFetch(domain:boarhat.gg)",
+      "Bash(ls:*)"
     ]
   }
 }

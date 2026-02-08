@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { getAdminMe } from "@/api/admin";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -12,7 +11,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const isAdmin = await getAdminMe();
   return (
     <html lang="ko">
       <body className={`bg-[#070b18] text-white`}>{children}</body>
