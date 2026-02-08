@@ -124,6 +124,6 @@ export const WEAPON_ELEMENT_FIELD: Field = {
   key: "element",
   label: "속성",
   kind: "select",
-  options: [{ value: "", label: "무속성" }, ...ELEMENT_OPTIONS],
-  placeholder: "속성 선택",
+  options: ELEMENT_OPTIONS,
+  placeholder: "무속성",
 };
