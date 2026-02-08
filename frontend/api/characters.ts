@@ -1,3 +1,4 @@
+"use server";
 import { CharacterDetail, CharacterListItem } from "@/domains/characters/types";
 
 export async function getCharacterDetail(slug: string): Promise<CharacterDetail> {
