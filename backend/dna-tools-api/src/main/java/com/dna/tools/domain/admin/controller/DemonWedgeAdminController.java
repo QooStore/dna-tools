@@ -8,35 +8,35 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dna.tools.domain.admin.dto.WeaponSaveRequest;
-import com.dna.tools.domain.admin.service.WeaponAdminService;
+import com.dna.tools.domain.admin.dto.DemonWedgeSaveRequest;
+import com.dna.tools.domain.admin.service.DemonWedgeAdminService;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/lee/weapons")
-public class WeaponAdminController {
+@RequestMapping("/lee/demon-wedges")
+public class DemonWedgeAdminController {
 
-    private final WeaponAdminService weaponAdminService;
+    private final DemonWedgeAdminService demonWedgeAdminService;
 
     // @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public void create(@RequestBody WeaponSaveRequest request) {
-        weaponAdminService.create(request);
+    public void create(@RequestBody DemonWedgeSaveRequest request) {
+        demonWedgeAdminService.create(request);
     }
 
     // @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{slug}")
     public void update(
             @PathVariable String slug,
-            @RequestBody WeaponSaveRequest request) {
-        weaponAdminService.updateBySlug(slug, request);
+            @RequestBody DemonWedgeSaveRequest request) {
+        demonWedgeAdminService.updateBySlug(slug, request);
     }
 
     // @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public void delete(@PathVariable long id) {
-        weaponAdminService.deleteWeapon(id);
+        demonWedgeAdminService.delete(id);
     }
 }
