@@ -71,3 +71,34 @@ export interface WeaponListItem {
   // 액티브
   activeSkillDescription: string | null;
 }
+
+// --- 무기 상세 (수정 폼용) ---
+export interface WeaponDetail {
+  id: number;
+  slug: string;
+  name: string;
+  image: string | null;
+
+  category: string;
+  weaponType: string;
+  attackType: string;
+  element: string | null;
+
+  attack: number;
+  critRate: number;
+  critDamage: number;
+  attackSpeed: number;
+  triggerProbability: number;
+
+  chargeAttackSpeed: number | null;
+  fallAttackSpeed: number | null;
+
+  multiShot: number | null;
+  maxAmmo: number | null;
+  ammoConversionRate: number | null;
+
+  passiveStat: string | null;
+  passiveValue: number | null;
+
+  activeSkillDescription: string | null;
+}

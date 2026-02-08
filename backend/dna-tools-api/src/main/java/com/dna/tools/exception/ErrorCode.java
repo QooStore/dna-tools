@@ -19,6 +19,10 @@ public enum ErrorCode {
     CHARACTER_NOT_FOUND(HttpStatus.NOT_FOUND, "캐릭터를 찾을 수 없습니다"),
     CHARACTER_SLUG_DUPLICATE(HttpStatus.CONFLICT, "이미 사용 중인 slug입니다"),
 
+    // 무기
+    WEAPON_NOT_FOUND(HttpStatus.NOT_FOUND, "무기를 찾을 수 없습니다"),
+    WEAPON_SLUG_DUPLICATE(HttpStatus.CONFLICT, "이미 사용 중인 무기 slug입니다"),
+
     // 인증
     AUTH_USER_NOT_FOUND(HttpStatus.UNAUTHORIZED, "존재하지 않는 관리자입니다"),
     AUTH_INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "비밀번호가 올바르지 않습니다");

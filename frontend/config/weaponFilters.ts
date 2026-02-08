@@ -52,6 +52,7 @@ export const WEAPON_FILTERS: FilterGroup[] = [
       { value: "electro", label: "번개" },
       { value: "lumino", label: "빛" },
       { value: "umbro", label: "어둠" },
+      { value: "none", label: "무속성" },
     ],
   },
 ];

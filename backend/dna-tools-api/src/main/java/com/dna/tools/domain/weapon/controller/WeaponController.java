@@ -1,5 +1,6 @@
 package com.dna.tools.domain.weapon.controller;
 
+import com.dna.tools.domain.weapon.dto.WeaponDetailResponse;
 import com.dna.tools.domain.weapon.dto.WeaponListResponse;
 import com.dna.tools.domain.weapon.service.WeaponService;
 
@@ -20,5 +21,10 @@ public class WeaponController {
     @GetMapping
     public List<WeaponListResponse> getAllWeapons() {
         return weaponService.getAllWeapons();
+    }
+
+    @GetMapping("/{slug}")
+    public WeaponDetailResponse getWeaponBySlug(@PathVariable String slug) {
+        return weaponService.getWeaponBySlug(slug);
     }
 }
