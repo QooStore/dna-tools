@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 
 import { CharacterSaveRequest } from "@/domains/characterForm";
 import { WeaponSaveRequest } from "@/domains/weaponForm";
+import { DemonWedgeSaveRequest } from "@/domains/demonWedgeForm";
 
 async function authHeaders(): Promise<Record<string, string>> {
   const cookieStore = await cookies();
@@ -82,5 +83,34 @@ export async function deleteWeapon(id: number) {
 
   if (!res.ok) {
     throw new Error("무기 삭제 실패");
+  }
+}
+
+export async function adminSaveDemonWedge(payload: DemonWedgeSaveRequest, slug?: string) {
+  const url = slug
+    ? `${process.env.NEXT_PUBLIC_API_URL}/lee/demon-wedges/${slug}`
+    : `${process.env.NEXT_PUBLIC_API_URL}/lee/demon-wedges`;
+
+  const method = slug ? "PUT" : "POST";
+
+  const res = await fetch(url, {
+    method,
+    headers: { "Content-Type": "application/json", ...(await authHeaders()) },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    throw new Error(await res.text());
+  }
+}
+
+export async function deleteDemonWedge(id: number) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/lee/demon-wedges/${id}`, {
+    method: "DELETE",
+    headers: await authHeaders(),
+  });
+
+  if (!res.ok) {
+    throw new Error("악마의 쐐기 삭제 실패");
   }
 }

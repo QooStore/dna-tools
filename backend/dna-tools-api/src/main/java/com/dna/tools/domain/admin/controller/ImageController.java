@@ -18,6 +18,7 @@ public class ImageController {
 
     private final ImageUploadService imageUploadService;
 
+    // @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/image")
     public ImageUploadResponse uploadImage(@RequestPart("file") MultipartFile file) {
         String url = imageUploadService.upload(file);

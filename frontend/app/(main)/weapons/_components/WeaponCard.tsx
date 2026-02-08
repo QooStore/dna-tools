@@ -61,10 +61,7 @@ export default function WeaponCard({ weapon, isAdmin = false, onDelete }: Weapon
             "
           >
             <AdminActionButton variant="delete" onClick={() => onDelete?.()} />
-            <AdminActionButton
-              variant="edit"
-              onClick={() => router.push(`/weapons/${weapon.slug}/edit`)}
-            />
+            <AdminActionButton variant="edit" onClick={() => router.push(`/weapons/${weapon.slug}/edit`)} />
           </div>
         )}
 
@@ -108,7 +105,6 @@ export default function WeaponCard({ weapon, isAdmin = false, onDelete }: Weapon
           <div className="mt-4 border-t border-white/10 pt-3 text-sm text-white/65">
             <div className="mb-2 flex items-center gap-2">
               <span className="rounded-md bg-cyan-500/20 px-2.5 py-0.5 text-xs font-semibold text-cyan-300">스킬</span>
-              {weapon.passiveStat && <span className="font-semibold text-amber-300">+{weapon.passiveValue}%</span>}
             </div>
 
             <p

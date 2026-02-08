@@ -78,3 +78,24 @@ export const TARGET_STAT_OPTIONS = [
   { value: "ATK", label: "공격력" },
   { value: "SKILL_EFFICIENCY", label: "스킬 효율" },
 ] as const;
+
+export const EQUIP_TYPE_OPTIONS = [
+  { value: "character", label: "캐릭터" },
+  { value: "meleeWeapon", label: "근거리 무기" },
+  { value: "rangedWeapon", label: "원거리 무기" },
+  { value: "consonanceWeapon", label: "동조 무기" },
+] as const;
+
+export const TENDENCY_OPTIONS = [
+  { value: "triangle", label: "◬" },
+  { value: "diamond", label: "◊" },
+  { value: "crescent", label: "☽" },
+  { value: "circle", label: "⊙" },
+] as const;
+
+export const RARITY_OPTIONS = [
+  { value: "2", label: "★2" },
+  { value: "3", label: "★3" },
+  { value: "4", label: "★4" },
+  { value: "5", label: "★5" },
+] as const;
