@@ -46,3 +46,6 @@ next-env.d.ts
 # Gradle
 /backend/dna-tools-api/.gradle
 /backend/dna-tools-api/build
+
+# logs
+logs/
