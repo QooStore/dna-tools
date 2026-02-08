@@ -1,279 +1,31 @@
-2026-02-07T16:43:34.670+09:00  INFO 7684 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : Starting DnaToolsApiApplication using Java 21.0.8 with PID 7684 (E:\DJL\react_work\dna-tools\backend\dna-tools-api\build\classes\java\main started by User in E:\DJL\react_work\dna-tools)
-2026-02-07T16:43:34.674+09:00 DEBUG 7684 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : Running with Spring Boot v3.5.9, Spring v6.2.15
-2026-02-07T16:43:34.675+09:00  INFO 7684 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : No active profile set, falling back to 1 default profile: "default"
-2026-02-07T16:43:34.742+09:00  INFO 7684 --- [dna-tools-api] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
-2026-02-07T16:43:34.742+09:00  INFO 7684 --- [dna-tools-api] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
-2026-02-07T16:43:35.460+09:00  INFO 7684 --- [dna-tools-api] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-02-07T16:43:35.521+09:00  INFO 7684 --- [dna-tools-api] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 53 ms. Found 4 JPA repository interfaces.
-2026-02-07T16:43:36.247+09:00  INFO 7684 --- [dna-tools-api] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
-2026-02-07T16:43:36.263+09:00  INFO 7684 --- [dna-tools-api] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2026-02-07T16:43:36.263+09:00  INFO 7684 --- [dna-tools-api] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.50]
-2026-02-07T16:43:36.295+09:00  INFO 7684 --- [dna-tools-api] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2026-02-07T16:43:36.296+09:00  INFO 7684 --- [dna-tools-api] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1552 ms
-2026-02-07T16:43:36.373+09:00 DEBUG 7684 --- [dna-tools-api] [restartedMain] c.d.t.s.jwt.JwtAuthenticationFilter      : Filter 'jwtAuthenticationFilter' configured for use
-2026-02-07T16:43:36.602+09:00  INFO 7684 --- [dna-tools-api] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2026-02-07T16:43:36.630+09:00  INFO 7684 --- [dna-tools-api] [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.39.Final
-2026-02-07T16:43:36.653+09:00  INFO 7684 --- [dna-tools-api] [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2026-02-07T16:43:36.860+09:00  INFO 7684 --- [dna-tools-api] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-02-07T16:43:36.882+09:00  INFO 7684 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2026-02-07T16:43:37.072+09:00  INFO 7684 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@60cf6828
-2026-02-07T16:43:37.074+09:00  INFO 7684 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2026-02-07T16:43:37.118+09:00  INFO 7684 --- [dna-tools-api] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
-	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
-	Database driver: undefined/unknown
-	Database version: 8.0.44
-	Autocommit mode: undefined/unknown
-	Isolation level: undefined/unknown
-	Minimum pool size: undefined/unknown
-	Maximum pool size: undefined/unknown
-2026-02-07T16:43:37.702+09:00  INFO 7684 --- [dna-tools-api] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-02-07T16:43:37.702+09:00  INFO 7684 --- [dna-tools-api] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-02-07T16:43:38.055+09:00  INFO 7684 --- [dna-tools-api] [restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
-2026-02-07T16:43:38.490+09:00  WARN 7684 --- [dna-tools-api] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-02-07T16:43:38.732+09:00  WARN 7684 --- [dna-tools-api] [restartedMain] .s.s.UserDetailsServiceAutoConfiguration : 
-
-Using generated security password: 88c5f5ce-6783-47a8-8160-44e09dfd3cae
-
-This generated password is for development use only. Your security configuration must be updated before running your application in production.
-
-2026-02-07T16:43:38.747+09:00  INFO 7684 --- [dna-tools-api] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
-2026-02-07T16:43:39.078+09:00  INFO 7684 --- [dna-tools-api] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
-2026-02-07T16:43:39.095+09:00  INFO 7684 --- [dna-tools-api] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
-2026-02-07T16:43:39.102+09:00  INFO 7684 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : Started DnaToolsApiApplication in 4.883 seconds (process running for 5.251)
-2026-02-07T16:44:31.756+09:00  INFO 7684 --- [dna-tools-api] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-02-07T16:44:31.756+09:00  INFO 7684 --- [dna-tools-api] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
-2026-02-07T16:44:31.757+09:00  INFO 7684 --- [dna-tools-api] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
-2026-02-07T17:00:00.007+09:00  INFO 7684 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 시작
-2026-02-07T17:00:00.016+09:00  INFO 7684 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 완료. 삭제 건수=0
-2026-02-07T17:07:37.816+09:00  INFO 22660 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : Starting DnaToolsApiApplication using Java 21.0.8 with PID 22660 (E:\DJL\react_work\dna-tools\backend\dna-tools-api\build\classes\java\main started by User in E:\DJL\react_work\dna-tools)
-2026-02-07T17:07:37.819+09:00 DEBUG 22660 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : Running with Spring Boot v3.5.9, Spring v6.2.15
-2026-02-07T17:07:37.820+09:00  INFO 22660 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : No active profile set, falling back to 1 default profile: "default"
-2026-02-07T17:07:37.868+09:00  INFO 22660 --- [dna-tools-api] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
-2026-02-07T17:07:37.868+09:00  INFO 22660 --- [dna-tools-api] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
-2026-02-07T17:07:38.492+09:00  INFO 22660 --- [dna-tools-api] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-02-07T17:07:38.540+09:00  INFO 22660 --- [dna-tools-api] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 42 ms. Found 4 JPA repository interfaces.
-2026-02-07T17:07:39.192+09:00  INFO 22660 --- [dna-tools-api] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
-2026-02-07T17:07:39.208+09:00  INFO 22660 --- [dna-tools-api] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2026-02-07T17:07:39.208+09:00  INFO 22660 --- [dna-tools-api] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.50]
-2026-02-07T17:07:39.239+09:00  INFO 22660 --- [dna-tools-api] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2026-02-07T17:07:39.240+09:00  INFO 22660 --- [dna-tools-api] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1372 ms
-2026-02-07T17:07:39.322+09:00 DEBUG 22660 --- [dna-tools-api] [restartedMain] c.d.t.s.jwt.JwtAuthenticationFilter      : Filter 'jwtAuthenticationFilter' configured for use
-2026-02-07T17:07:39.514+09:00  INFO 22660 --- [dna-tools-api] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2026-02-07T17:07:39.542+09:00  INFO 22660 --- [dna-tools-api] [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.39.Final
-2026-02-07T17:07:39.557+09:00  INFO 22660 --- [dna-tools-api] [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2026-02-07T17:07:39.783+09:00  INFO 22660 --- [dna-tools-api] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-02-07T17:07:39.811+09:00  INFO 22660 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2026-02-07T17:07:40.033+09:00  INFO 22660 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3c5bd14f
-2026-02-07T17:07:40.035+09:00  INFO 22660 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2026-02-07T17:07:40.085+09:00  INFO 22660 --- [dna-tools-api] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
-	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
-	Database driver: undefined/unknown
-	Database version: 8.0.44
-	Autocommit mode: undefined/unknown
-	Isolation level: undefined/unknown
-	Minimum pool size: undefined/unknown
-	Maximum pool size: undefined/unknown
-2026-02-07T17:07:40.670+09:00  INFO 22660 --- [dna-tools-api] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-02-07T17:07:40.681+09:00  INFO 22660 --- [dna-tools-api] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-02-07T17:07:41.007+09:00  INFO 22660 --- [dna-tools-api] [restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
-2026-02-07T17:07:41.482+09:00  WARN 22660 --- [dna-tools-api] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-02-07T17:07:41.677+09:00  WARN 22660 --- [dna-tools-api] [restartedMain] .s.s.UserDetailsServiceAutoConfiguration : 
-
-Using generated security password: ecd370cf-428c-4e91-ade0-2cdc6530d8ac
-
-This generated password is for development use only. Your security configuration must be updated before running your application in production.
-
-2026-02-07T17:07:41.692+09:00  INFO 22660 --- [dna-tools-api] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
-2026-02-07T17:07:41.924+09:00  INFO 22660 --- [dna-tools-api] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
-2026-02-07T17:07:41.941+09:00  INFO 22660 --- [dna-tools-api] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
-2026-02-07T17:07:41.948+09:00  INFO 22660 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : Started DnaToolsApiApplication in 4.473 seconds (process running for 4.809)
-2026-02-07T17:07:44.875+09:00  INFO 22660 --- [dna-tools-api] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-02-07T17:07:44.875+09:00  INFO 22660 --- [dna-tools-api] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
-2026-02-07T17:07:44.881+09:00  INFO 22660 --- [dna-tools-api] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 0 ms
-2026-02-07T17:27:32.937+09:00  INFO 18016 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : Starting DnaToolsApiApplication using Java 21.0.8 with PID 18016 (E:\DJL\react_work\dna-tools\backend\dna-tools-api\build\classes\java\main started by User in E:\DJL\react_work\dna-tools)
-2026-02-07T17:27:32.939+09:00 DEBUG 18016 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : Running with Spring Boot v3.5.9, Spring v6.2.15
-2026-02-07T17:27:32.941+09:00  INFO 18016 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : No active profile set, falling back to 1 default profile: "default"
-2026-02-07T17:27:32.986+09:00  INFO 18016 --- [dna-tools-api] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
-2026-02-07T17:27:32.987+09:00  INFO 18016 --- [dna-tools-api] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
-2026-02-07T17:27:33.581+09:00  INFO 18016 --- [dna-tools-api] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-02-07T17:27:33.634+09:00  INFO 18016 --- [dna-tools-api] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 44 ms. Found 4 JPA repository interfaces.
-2026-02-07T17:27:34.370+09:00  INFO 18016 --- [dna-tools-api] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
-2026-02-07T17:27:34.390+09:00  INFO 18016 --- [dna-tools-api] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2026-02-07T17:27:34.390+09:00  INFO 18016 --- [dna-tools-api] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.50]
-2026-02-07T17:27:34.420+09:00  INFO 18016 --- [dna-tools-api] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2026-02-07T17:27:34.420+09:00  INFO 18016 --- [dna-tools-api] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1432 ms
-2026-02-07T17:27:34.503+09:00 DEBUG 18016 --- [dna-tools-api] [restartedMain] c.d.t.s.jwt.JwtAuthenticationFilter      : Filter 'jwtAuthenticationFilter' configured for use
-2026-02-07T17:27:34.722+09:00  INFO 18016 --- [dna-tools-api] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2026-02-07T17:27:34.751+09:00  INFO 18016 --- [dna-tools-api] [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.39.Final
-2026-02-07T17:27:34.776+09:00  INFO 18016 --- [dna-tools-api] [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2026-02-07T17:27:35.017+09:00  INFO 18016 --- [dna-tools-api] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-02-07T17:27:35.041+09:00  INFO 18016 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2026-02-07T17:27:35.248+09:00  INFO 18016 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@822b2fe
-2026-02-07T17:27:35.249+09:00  INFO 18016 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2026-02-07T17:27:35.291+09:00  INFO 18016 --- [dna-tools-api] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
-	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
-	Database driver: undefined/unknown
-	Database version: 8.0.44
-	Autocommit mode: undefined/unknown
-	Isolation level: undefined/unknown
-	Minimum pool size: undefined/unknown
-	Maximum pool size: undefined/unknown
-2026-02-07T17:27:35.884+09:00  INFO 18016 --- [dna-tools-api] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-02-07T17:27:35.887+09:00  INFO 18016 --- [dna-tools-api] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-02-07T17:27:36.223+09:00  INFO 18016 --- [dna-tools-api] [restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
-2026-02-07T17:27:36.671+09:00  WARN 18016 --- [dna-tools-api] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-02-07T17:27:36.897+09:00  WARN 18016 --- [dna-tools-api] [restartedMain] .s.s.UserDetailsServiceAutoConfiguration : 
-
-Using generated security password: f6a928d9-491b-4918-9da9-c06253e77871
-
-This generated password is for development use only. Your security configuration must be updated before running your application in production.
-
-2026-02-07T17:27:36.921+09:00  INFO 18016 --- [dna-tools-api] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
-2026-02-07T17:27:37.164+09:00  INFO 18016 --- [dna-tools-api] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
-2026-02-07T17:27:37.182+09:00  INFO 18016 --- [dna-tools-api] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
-2026-02-07T17:27:37.189+09:00  INFO 18016 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : Started DnaToolsApiApplication in 4.764 seconds (process running for 5.169)
-2026-02-07T17:35:26.521+09:00  INFO 18016 --- [dna-tools-api] [http-nio-8080-exec-1] o.apache.coyote.http11.Http11Processor   : Error parsing HTTP request header
- Note: further occurrences of HTTP request parsing errors will be logged at DEBUG level.
-
-java.lang.IllegalArgumentException: Invalid character found in method name [0x160x030x010x000xee0x010x000x000xea0x030x03E0xb60xb60xdf0xfa0xb20x100xb50xf3o0xc90x910x9fS0xa8j0x9f0xf8"0xf3;0x930xee0xc6v0xd9S0xe70x9d0xd7Q0x15 ]. HTTP method names must be tokens
-	at org.apache.coyote.http11.Http11InputBuffer.parseRequestLine(Http11InputBuffer.java:402) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
-	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:272) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
-	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
-	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
-	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1774) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
-	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
-	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:973) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
-	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:491) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
-	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
-	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
-
-2026-02-07T18:00:00.023+09:00  INFO 18016 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 시작
-2026-02-07T18:00:00.077+09:00  INFO 18016 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 완료. 삭제 건수=0
-2026-02-07T18:08:20.160+09:00  INFO 18016 --- [dna-tools-api] [http-nio-8080-exec-3] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-02-07T18:08:20.160+09:00  INFO 18016 --- [dna-tools-api] [http-nio-8080-exec-3] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
-2026-02-07T18:08:20.160+09:00  INFO 18016 --- [dna-tools-api] [http-nio-8080-exec-3] o.s.web.servlet.DispatcherServlet        : Completed initialization in 0 ms
-2026-02-07T19:00:00.010+09:00  INFO 18016 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 시작
-2026-02-07T19:00:00.029+09:00  INFO 18016 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 완료. 삭제 건수=0
-2026-02-07T20:00:00.014+09:00  INFO 18016 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 시작
-2026-02-07T20:00:00.023+09:00  INFO 18016 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 완료. 삭제 건수=0
-2026-02-07T20:36:19.981+09:00  INFO 32916 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : Starting DnaToolsApiApplication using Java 21.0.8 with PID 32916 (E:\DJL\react_work\dna-tools\backend\dna-tools-api\build\classes\java\main started by User in E:\DJL\react_work\dna-tools)
-2026-02-07T20:36:19.985+09:00 DEBUG 32916 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : Running with Spring Boot v3.5.9, Spring v6.2.15
-2026-02-07T20:36:19.985+09:00  INFO 32916 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : No active profile set, falling back to 1 default profile: "default"
-2026-02-07T20:36:20.033+09:00  INFO 32916 --- [dna-tools-api] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
-2026-02-07T20:36:20.033+09:00  INFO 32916 --- [dna-tools-api] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
-2026-02-07T20:36:20.680+09:00  INFO 32916 --- [dna-tools-api] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-02-07T20:36:20.731+09:00  INFO 32916 --- [dna-tools-api] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 45 ms. Found 5 JPA repository interfaces.
-2026-02-07T20:36:21.460+09:00  INFO 32916 --- [dna-tools-api] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
-2026-02-07T20:36:21.480+09:00  INFO 32916 --- [dna-tools-api] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2026-02-07T20:36:21.480+09:00  INFO 32916 --- [dna-tools-api] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.50]
-2026-02-07T20:36:21.520+09:00  INFO 32916 --- [dna-tools-api] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2026-02-07T20:36:21.520+09:00  INFO 32916 --- [dna-tools-api] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1485 ms
-2026-02-07T20:36:21.605+09:00 DEBUG 32916 --- [dna-tools-api] [restartedMain] c.d.t.s.jwt.JwtAuthenticationFilter      : Filter 'jwtAuthenticationFilter' configured for use
-2026-02-07T20:36:21.811+09:00  INFO 32916 --- [dna-tools-api] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2026-02-07T20:36:21.843+09:00  INFO 32916 --- [dna-tools-api] [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.39.Final
-2026-02-07T20:36:21.874+09:00  INFO 32916 --- [dna-tools-api] [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2026-02-07T20:36:22.114+09:00  INFO 32916 --- [dna-tools-api] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-02-07T20:36:22.146+09:00  INFO 32916 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2026-02-07T20:36:22.390+09:00  INFO 32916 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@23bf5b07
-2026-02-07T20:36:22.393+09:00  INFO 32916 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2026-02-07T20:36:22.458+09:00  INFO 32916 --- [dna-tools-api] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
-	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
-	Database driver: undefined/unknown
-	Database version: 8.0.44
-	Autocommit mode: undefined/unknown
-	Isolation level: undefined/unknown
-	Minimum pool size: undefined/unknown
-	Maximum pool size: undefined/unknown
-2026-02-07T20:36:23.236+09:00  INFO 32916 --- [dna-tools-api] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-02-07T20:36:23.239+09:00  INFO 32916 --- [dna-tools-api] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-02-07T20:36:23.640+09:00  INFO 32916 --- [dna-tools-api] [restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
-2026-02-07T20:36:24.172+09:00  WARN 32916 --- [dna-tools-api] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-02-07T20:36:24.385+09:00  WARN 32916 --- [dna-tools-api] [restartedMain] .s.s.UserDetailsServiceAutoConfiguration : 
-
-Using generated security password: c29f1229-162b-4de5-9982-632f9697f298
-
-This generated password is for development use only. Your security configuration must be updated before running your application in production.
-
-2026-02-07T20:36:24.402+09:00  INFO 32916 --- [dna-tools-api] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
-2026-02-07T20:36:24.706+09:00  INFO 32916 --- [dna-tools-api] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
-2026-02-07T20:36:24.729+09:00  INFO 32916 --- [dna-tools-api] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
-2026-02-07T20:36:24.736+09:00  INFO 32916 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : Started DnaToolsApiApplication in 5.089 seconds (process running for 5.4)
-2026-02-07T20:36:57.308+09:00  INFO 32916 --- [dna-tools-api] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-02-07T20:36:57.308+09:00  INFO 32916 --- [dna-tools-api] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
-2026-02-07T20:36:57.309+09:00  INFO 32916 --- [dna-tools-api] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
-2026-02-07T21:00:00.010+09:00  INFO 32916 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 시작
-2026-02-07T21:00:00.016+09:00  INFO 32916 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 완료. 삭제 건수=0
-2026-02-07T21:44:08.976+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : Starting DnaToolsApiApplication using Java 21.0.8 with PID 31552 (E:\DJL\react_work\dna-tools\backend\dna-tools-api\build\classes\java\main started by User in E:\DJL\react_work\dna-tools)
-2026-02-07T21:44:08.979+09:00 DEBUG 31552 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : Running with Spring Boot v3.5.9, Spring v6.2.15
-2026-02-07T21:44:08.979+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : No active profile set, falling back to 1 default profile: "default"
-2026-02-07T21:44:09.028+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
-2026-02-07T21:44:09.028+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
-2026-02-07T21:44:09.675+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-02-07T21:44:09.738+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 58 ms. Found 5 JPA repository interfaces.
-2026-02-07T21:44:10.485+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
-2026-02-07T21:44:10.510+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2026-02-07T21:44:10.510+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.50]
-2026-02-07T21:44:10.542+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2026-02-07T21:44:10.543+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1514 ms
-2026-02-07T21:44:10.649+09:00 DEBUG 31552 --- [dna-tools-api] [restartedMain] c.d.t.s.jwt.JwtAuthenticationFilter      : Filter 'jwtAuthenticationFilter' configured for use
-2026-02-07T21:44:10.836+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2026-02-07T21:44:10.859+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.39.Final
-2026-02-07T21:44:10.880+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2026-02-07T21:44:11.110+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-02-07T21:44:11.137+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2026-02-07T21:44:11.334+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@69c125ee
-2026-02-07T21:44:11.335+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2026-02-07T21:44:11.381+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
-	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
-	Database driver: undefined/unknown
-	Database version: 8.0.44
-	Autocommit mode: undefined/unknown
-	Isolation level: undefined/unknown
-	Minimum pool size: undefined/unknown
-	Maximum pool size: undefined/unknown
-2026-02-07T21:44:11.987+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-02-07T21:44:11.989+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-02-07T21:44:12.344+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
-2026-02-07T21:44:12.803+09:00  WARN 31552 --- [dna-tools-api] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-02-07T21:44:13.042+09:00  WARN 31552 --- [dna-tools-api] [restartedMain] .s.s.UserDetailsServiceAutoConfiguration : 
-
-Using generated security password: 9a128e18-aed7-4767-a10f-2ccdd6ed1fba
-
-This generated password is for development use only. Your security configuration must be updated before running your application in production.
-
-2026-02-07T21:44:13.057+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
-2026-02-07T21:44:13.423+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
-2026-02-07T21:44:13.441+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
-2026-02-07T21:44:13.448+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : Started DnaToolsApiApplication in 4.84 seconds (process running for 5.235)
-2026-02-07T21:44:15.985+09:00  INFO 31552 --- [dna-tools-api] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-02-07T21:44:15.985+09:00  INFO 31552 --- [dna-tools-api] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
-2026-02-07T21:44:15.987+09:00  INFO 31552 --- [dna-tools-api] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 0 ms
-2026-02-07T22:00:00.008+09:00  INFO 31552 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 시작
-2026-02-07T22:00:00.015+09:00  INFO 31552 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 완료. 삭제 건수=0
-2026-02-07T22:15:11.433+09:00  INFO 31552 --- [dna-tools-api] [File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 6 class path changes (0 additions, 6 deletions, 0 modifications)
-2026-02-07T22:15:11.435+09:00  INFO 31552 --- [dna-tools-api] [Thread-5] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
-2026-02-07T22:15:11.440+09:00  INFO 31552 --- [dna-tools-api] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
-2026-02-07T22:15:11.442+09:00  INFO 31552 --- [dna-tools-api] [Thread-5] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
-2026-02-07T22:15:11.445+09:00  INFO 31552 --- [dna-tools-api] [Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
-2026-02-07T22:15:11.448+09:00  INFO 31552 --- [dna-tools-api] [Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
-2026-02-07T22:15:11.522+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : Starting DnaToolsApiApplication using Java 21.0.8 with PID 31552 (E:\DJL\react_work\dna-tools\backend\dna-tools-api\build\classes\java\main started by User in E:\DJL\react_work\dna-tools)
-2026-02-07T22:15:11.522+09:00 DEBUG 31552 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : Running with Spring Boot v3.5.9, Spring v6.2.15
-2026-02-07T22:15:11.522+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : No active profile set, falling back to 1 default profile: "default"
-2026-02-07T22:15:11.681+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-02-07T22:15:11.699+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 17 ms. Found 4 JPA repository interfaces.
-2026-02-07T22:15:11.767+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
-2026-02-07T22:15:11.767+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2026-02-07T22:15:11.768+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.50]
-2026-02-07T22:15:11.775+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2026-02-07T22:15:11.776+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 251 ms
-2026-02-07T22:15:11.784+09:00 DEBUG 31552 --- [dna-tools-api] [restartedMain] c.d.t.s.jwt.JwtAuthenticationFilter      : Filter 'jwtAuthenticationFilter' configured for use
-2026-02-07T22:15:11.803+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2026-02-07T22:15:11.804+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2026-02-07T22:15:11.810+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-02-07T22:15:11.810+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
-2026-02-07T22:15:11.822+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection com.mysql.cj.jdbc.ConnectionImpl@6bde9689
-2026-02-07T22:15:11.822+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
-2026-02-07T22:15:11.824+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+2026-02-08T00:00:00.007+09:00  INFO 29772 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 시작
+2026-02-08T00:00:00.015+09:00  INFO 29772 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 완료. 삭제 건수=0
+2026-02-08T01:00:00.008+09:00  INFO 29772 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 시작
+2026-02-08T01:00:00.023+09:00  INFO 29772 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 완료. 삭제 건수=0
+2026-02-08T01:21:55.775+09:00  INFO 29772 --- [dna-tools-api] [File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 13 class path changes (0 additions, 13 deletions, 0 modifications)
+2026-02-08T01:21:55.785+09:00  INFO 29772 --- [dna-tools-api] [Thread-5] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2026-02-08T01:21:55.791+09:00  INFO 29772 --- [dna-tools-api] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2026-02-08T01:21:55.796+09:00  INFO 29772 --- [dna-tools-api] [Thread-5] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-02-08T01:21:55.802+09:00  INFO 29772 --- [dna-tools-api] [Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-02-08T01:21:55.807+09:00  INFO 29772 --- [dna-tools-api] [Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-02-08T01:21:55.941+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : Starting DnaToolsApiApplication using Java 21.0.8 with PID 29772 (E:\DJL\react_work\dna-tools\backend\dna-tools-api\build\classes\java\main started by User in E:\DJL\react_work\dna-tools)
+2026-02-08T01:21:55.942+09:00 DEBUG 29772 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : Running with Spring Boot v3.5.9, Spring v6.2.15
+2026-02-08T01:21:55.944+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : No active profile set, falling back to 1 default profile: "default"
+2026-02-08T01:21:56.145+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-02-08T01:21:56.168+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 21 ms. Found 5 JPA repository interfaces.
+2026-02-08T01:21:56.260+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-02-08T01:21:56.262+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-02-08T01:21:56.262+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.50]
+2026-02-08T01:21:56.273+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-02-08T01:21:56.273+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 323 ms
+2026-02-08T01:21:56.289+09:00 DEBUG 29772 --- [dna-tools-api] [restartedMain] c.d.t.s.jwt.JwtAuthenticationFilter      : Filter 'jwtAuthenticationFilter' configured for use
+2026-02-08T01:21:56.321+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-02-08T01:21:56.324+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-02-08T01:21:56.332+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-02-08T01:21:56.333+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2026-02-08T01:21:56.349+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection com.mysql.cj.jdbc.ConnectionImpl@1f6eb421
+2026-02-08T01:21:56.349+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2026-02-08T01:21:56.351+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
 	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-2)']
 	Database driver: undefined/unknown
 	Database version: 8.0.44
@@ -281,20 +33,211 @@ This generated password is for development use only. Your security configuration
 	Isolation level: undefined/unknown
 	Minimum pool size: undefined/unknown
 	Maximum pool size: undefined/unknown
-2026-02-07T22:15:11.937+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-02-07T22:15:11.937+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-02-07T22:15:12.023+09:00  WARN 31552 --- [dna-tools-api] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-02-07T22:15:12.055+09:00  WARN 31552 --- [dna-tools-api] [restartedMain] .s.s.UserDetailsServiceAutoConfiguration : 
+2026-02-08T01:21:56.534+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-02-08T01:21:56.534+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-02-08T01:21:56.676+09:00  WARN 29772 --- [dna-tools-api] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-02-08T01:21:56.726+09:00  WARN 29772 --- [dna-tools-api] [restartedMain] .s.s.UserDetailsServiceAutoConfiguration : 
 
-Using generated security password: 4cac2e85-0021-4776-a01d-06a10184a8a1
+Using generated security password: 6a881288-f448-4b23-8364-9d40f3bf4fd1
 
 This generated password is for development use only. Your security configuration must be updated before running your application in production.
 
-2026-02-07T22:15:12.056+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
-2026-02-07T22:15:12.097+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
-2026-02-07T22:15:12.103+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
-2026-02-07T22:15:12.105+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : Started DnaToolsApiApplication in 0.603 seconds (process running for 1863.892)
-2026-02-07T22:15:12.106+09:00  INFO 31552 --- [dna-tools-api] [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
-2026-02-07T22:17:45.604+09:00  INFO 31552 --- [dna-tools-api] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-02-07T22:17:45.604+09:00  INFO 31552 --- [dna-tools-api] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
-2026-02-07T22:17:45.604+09:00  INFO 31552 --- [dna-tools-api] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 0 ms
+2026-02-08T01:21:56.727+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-02-08T01:21:56.779+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2026-02-08T01:21:56.785+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2026-02-08T01:21:56.786+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : Started DnaToolsApiApplication in 0.883 seconds (process running for 9049.796)
+2026-02-08T01:21:56.788+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2026-02-08T01:21:58.204+09:00  INFO 29772 --- [dna-tools-api] [File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 18 class path changes (18 additions, 0 deletions, 0 modifications)
+2026-02-08T01:21:58.205+09:00  INFO 29772 --- [dna-tools-api] [Thread-7] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2026-02-08T01:21:58.210+09:00  INFO 29772 --- [dna-tools-api] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2026-02-08T01:21:58.212+09:00  INFO 29772 --- [dna-tools-api] [Thread-7] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-02-08T01:21:58.212+09:00  INFO 29772 --- [dna-tools-api] [Thread-7] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown initiated...
+2026-02-08T01:21:58.215+09:00  INFO 29772 --- [dna-tools-api] [Thread-7] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown completed.
+2026-02-08T01:21:58.300+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : Starting DnaToolsApiApplication using Java 21.0.8 with PID 29772 (E:\DJL\react_work\dna-tools\backend\dna-tools-api\build\classes\java\main started by User in E:\DJL\react_work\dna-tools)
+2026-02-08T01:21:58.300+09:00 DEBUG 29772 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : Running with Spring Boot v3.5.9, Spring v6.2.15
+2026-02-08T01:21:58.300+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : No active profile set, falling back to 1 default profile: "default"
+2026-02-08T01:21:58.456+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-02-08T01:21:58.476+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 18 ms. Found 5 JPA repository interfaces.
+2026-02-08T01:21:58.527+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-02-08T01:21:58.528+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-02-08T01:21:58.528+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.50]
+2026-02-08T01:21:58.537+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-02-08T01:21:58.537+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 235 ms
+2026-02-08T01:21:58.546+09:00 DEBUG 29772 --- [dna-tools-api] [restartedMain] c.d.t.s.jwt.JwtAuthenticationFilter      : Filter 'jwtAuthenticationFilter' configured for use
+2026-02-08T01:21:58.561+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-02-08T01:21:58.562+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-02-08T01:21:58.567+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-02-08T01:21:58.567+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Starting...
+2026-02-08T01:21:58.581+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-3 - Added connection com.mysql.cj.jdbc.ConnectionImpl@68b41275
+2026-02-08T01:21:58.581+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Start completed.
+2026-02-08T01:21:58.583+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-3)']
+	Database driver: undefined/unknown
+	Database version: 8.0.44
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-02-08T01:21:58.684+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-02-08T01:21:58.685+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-02-08T01:21:58.776+09:00  WARN 29772 --- [dna-tools-api] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-02-08T01:21:58.810+09:00  WARN 29772 --- [dna-tools-api] [restartedMain] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 255ff4bb-9feb-44af-9360-f95542aa6b4d
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-02-08T01:21:58.811+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-02-08T01:21:58.846+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2026-02-08T01:21:58.850+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2026-02-08T01:21:58.852+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : Started DnaToolsApiApplication in 0.569 seconds (process running for 9051.861)
+2026-02-08T01:21:58.853+09:00  INFO 29772 --- [dna-tools-api] [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2026-02-08T01:23:55.001+09:00  INFO 29772 --- [dna-tools-api] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-02-08T01:23:55.002+09:00  INFO 29772 --- [dna-tools-api] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-02-08T01:23:55.002+09:00  INFO 29772 --- [dna-tools-api] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 0 ms
+2026-02-08T16:26:13.639+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : Starting DnaToolsApiApplication using Java 21.0.8 with PID 21076 (E:\DJL\react_work\dna-tools\backend\dna-tools-api\build\classes\java\main started by User in E:\DJL\react_work\dna-tools)
+2026-02-08T16:26:13.642+09:00 DEBUG 21076 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : Running with Spring Boot v3.5.9, Spring v6.2.15
+2026-02-08T16:26:13.642+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : No active profile set, falling back to 1 default profile: "default"
+2026-02-08T16:26:13.693+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-02-08T16:26:13.693+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-02-08T16:26:14.334+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-02-08T16:26:14.390+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 50 ms. Found 5 JPA repository interfaces.
+2026-02-08T16:26:15.060+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-02-08T16:26:15.083+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-02-08T16:26:15.084+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.50]
+2026-02-08T16:26:15.121+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-02-08T16:26:15.121+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1428 ms
+2026-02-08T16:26:15.209+09:00 DEBUG 21076 --- [dna-tools-api] [restartedMain] c.d.t.s.jwt.JwtAuthenticationFilter      : Filter 'jwtAuthenticationFilter' configured for use
+2026-02-08T16:26:15.421+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-02-08T16:26:15.445+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.39.Final
+2026-02-08T16:26:15.474+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-02-08T16:26:15.707+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-02-08T16:26:15.744+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-02-08T16:26:15.968+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@69c125ee
+2026-02-08T16:26:15.969+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-02-08T16:26:16.020+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.44
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-02-08T16:26:16.694+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-02-08T16:26:16.696+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-02-08T16:26:17.089+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-02-08T16:26:17.590+09:00  WARN 21076 --- [dna-tools-api] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-02-08T16:26:17.824+09:00  WARN 21076 --- [dna-tools-api] [restartedMain] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 3778c693-2643-4ab0-9bd5-33c65bf2f967
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-02-08T16:26:17.846+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-02-08T16:26:18.214+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2026-02-08T16:26:18.246+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2026-02-08T16:26:18.256+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : Started DnaToolsApiApplication in 4.988 seconds (process running for 5.398)
+2026-02-08T16:27:24.846+09:00  INFO 21076 --- [dna-tools-api] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-02-08T16:27:24.851+09:00  INFO 21076 --- [dna-tools-api] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-02-08T16:27:24.852+09:00  INFO 21076 --- [dna-tools-api] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-02-08T16:36:27.225+09:00  INFO 21076 --- [dna-tools-api] [File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (0 additions, 1 deletion, 0 modifications)
+2026-02-08T16:36:27.227+09:00  INFO 21076 --- [dna-tools-api] [Thread-5] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2026-02-08T16:36:27.233+09:00  INFO 21076 --- [dna-tools-api] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2026-02-08T16:36:27.235+09:00  INFO 21076 --- [dna-tools-api] [Thread-5] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-02-08T16:36:27.237+09:00  INFO 21076 --- [dna-tools-api] [Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-02-08T16:36:27.241+09:00  INFO 21076 --- [dna-tools-api] [Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-02-08T16:36:27.321+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : Starting DnaToolsApiApplication using Java 21.0.8 with PID 21076 (E:\DJL\react_work\dna-tools\backend\dna-tools-api\build\classes\java\main started by User in E:\DJL\react_work\dna-tools)
+2026-02-08T16:36:27.322+09:00 DEBUG 21076 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : Running with Spring Boot v3.5.9, Spring v6.2.15
+2026-02-08T16:36:27.322+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] com.dna.tools.DnaToolsApiApplication     : No active profile set, falling back to 1 default profile: "default"
+2026-02-08T16:36:27.472+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-02-08T16:36:27.489+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 16 ms. Found 5 JPA repository interfaces.
+2026-02-08T16:36:27.552+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-02-08T16:36:27.552+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-02-08T16:36:27.553+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.50]
+2026-02-08T16:36:27.560+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-02-08T16:36:27.560+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 237 ms
+2026-02-08T16:36:27.568+09:00 DEBUG 21076 --- [dna-tools-api] [restartedMain] c.d.t.s.jwt.JwtAuthenticationFilter      : Filter 'jwtAuthenticationFilter' configured for use
+2026-02-08T16:36:27.586+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-02-08T16:36:27.588+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-02-08T16:36:27.593+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-02-08T16:36:27.593+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2026-02-08T16:36:27.606+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection com.mysql.cj.jdbc.ConnectionImpl@41847981
+2026-02-08T16:36:27.606+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2026-02-08T16:36:27.608+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-2)']
+	Database driver: undefined/unknown
+	Database version: 8.0.44
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-02-08T16:36:27.731+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-02-08T16:36:27.732+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-02-08T16:36:27.771+09:00  WARN 21076 --- [dna-tools-api] [restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'characterAdminController' defined in file [E:\DJL\react_work\dna-tools\backend\dna-tools-api\build\classes\java\main\com\dna\tools\domain\admin\controller\CharacterAdminController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'characterAdminService': Resolution of declared constructors on bean Class [com.dna.tools.domain.admin.service.CharacterAdminService] from ClassLoader [org.springframework.boot.devtools.restart.classloader.RestartClassLoader@7b5dd3a3] failed
+2026-02-08T16:36:27.771+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-02-08T16:36:27.772+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown initiated...
+2026-02-08T16:36:27.814+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown completed.
+2026-02-08T16:36:27.814+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2026-02-08T16:36:27.818+09:00  INFO 21076 --- [dna-tools-api] [restartedMain] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-02-08T16:36:27.829+09:00 ERROR 21076 --- [dna-tools-api] [restartedMain] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'characterAdminController' defined in file [E:\DJL\react_work\dna-tools\backend\dna-tools-api\build\classes\java\main\com\dna\tools\domain\admin\controller\CharacterAdminController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'characterAdminService': Resolution of declared constructors on bean Class [com.dna.tools.domain.admin.service.CharacterAdminService] from ClassLoader [org.springframework.boot.devtools.restart.classloader.RestartClassLoader@7b5dd3a3] failed
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:804) ~[spring-beans-6.2.15.jar:6.2.15]
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:240) ~[spring-beans-6.2.15.jar:6.2.15]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1395) ~[spring-beans-6.2.15.jar:6.2.15]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1232) ~[spring-beans-6.2.15.jar:6.2.15]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:569) ~[spring-beans-6.2.15.jar:6.2.15]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529) ~[spring-beans-6.2.15.jar:6.2.15]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.15.jar:6.2.15]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373) ~[spring-beans-6.2.15.jar:6.2.15]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.15.jar:6.2.15]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202) ~[spring-beans-6.2.15.jar:6.2.15]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1228) ~[spring-beans-6.2.15.jar:6.2.15]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1194) ~[spring-beans-6.2.15.jar:6.2.15]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1130) ~[spring-beans-6.2.15.jar:6.2.15]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:990) ~[spring-context-6.2.15.jar:6.2.15]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:627) ~[spring-context-6.2.15.jar:6.2.15]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.5.9.jar:3.5.9]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752) ~[spring-boot-3.5.9.jar:3.5.9]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439) ~[spring-boot-3.5.9.jar:3.5.9]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318) ~[spring-boot-3.5.9.jar:3.5.9]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361) ~[spring-boot-3.5.9.jar:3.5.9]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350) ~[spring-boot-3.5.9.jar:3.5.9]
+	at com.dna.tools.DnaToolsApiApplication.main(DnaToolsApiApplication.java:12) ~[main/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50) ~[spring-boot-devtools-3.5.9.jar:3.5.9]
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'characterAdminService': Resolution of declared constructors on bean Class [com.dna.tools.domain.admin.service.CharacterAdminService] from ClassLoader [org.springframework.boot.devtools.restart.classloader.RestartClassLoader@7b5dd3a3] failed
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:384) ~[spring-beans-6.2.15.jar:6.2.15]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineConstructorsFromBeanPostProcessors(AbstractAutowireCapableBeanFactory.java:1334) ~[spring-beans-6.2.15.jar:6.2.15]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1229) ~[spring-beans-6.2.15.jar:6.2.15]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:569) ~[spring-beans-6.2.15.jar:6.2.15]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529) ~[spring-beans-6.2.15.jar:6.2.15]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.15.jar:6.2.15]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373) ~[spring-beans-6.2.15.jar:6.2.15]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.15.jar:6.2.15]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202) ~[spring-beans-6.2.15.jar:6.2.15]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1708) ~[spring-beans-6.2.15.jar:6.2.15]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1653) ~[spring-beans-6.2.15.jar:6.2.15]
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:913) ~[spring-beans-6.2.15.jar:6.2.15]
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:791) ~[spring-beans-6.2.15.jar:6.2.15]
+	... 24 common frames omitted
+Caused by: java.lang.NoClassDefFoundError: com/dna/tools/domain/image/service/ImageUsageService
+	at java.base/java.lang.Class.getDeclaredConstructors0(Native Method) ~[na:na]
+	at java.base/java.lang.Class.privateGetDeclaredConstructors(Class.java:3549) ~[na:na]
+	at java.base/java.lang.Class.getDeclaredConstructors(Class.java:2727) ~[na:na]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:379) ~[spring-beans-6.2.15.jar:6.2.15]
+	... 36 common frames omitted
+Caused by: java.lang.ClassNotFoundException: com.dna.tools.domain.image.service.ImageUsageService
+	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:641) ~[na:na]
+	at java.base/jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(ClassLoaders.java:188) ~[na:na]
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:526) ~[na:na]
+	at java.base/java.lang.Class.forName0(Native Method) ~[na:na]
+	at java.base/java.lang.Class.forName(Class.java:534) ~[na:na]
+	at java.base/java.lang.Class.forName(Class.java:513) ~[na:na]
+	at org.springframework.boot.devtools.restart.classloader.RestartClassLoader.loadClass(RestartClassLoader.java:121) ~[spring-boot-devtools-3.5.9.jar:3.5.9]
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:526) ~[na:na]
+	... 40 common frames omitted
+
