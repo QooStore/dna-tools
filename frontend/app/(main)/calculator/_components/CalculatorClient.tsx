@@ -8,6 +8,8 @@ import {
   ModalTarget,
   ReferenceData,
   SlotCategory,
+  BuildStats,
+  EMPTY_BUILD_STATS,
 } from "@/domains/calculator/types";
 import { getCharacterDetail } from "@/api/characters";
 import { CharacterListItem } from "@/domains/characters/types";
@@ -24,6 +26,9 @@ type Props = {
 export default function CalculatorClient({ referenceData }: Props) {
   const [buildA, setBuildA] = useState<BuildState>({ ...EMPTY_BUILD });
   const [buildB, setBuildB] = useState<BuildState>({ ...EMPTY_BUILD });
+
+  const [statsA, setStatsA] = useState<BuildStats>(JSON.parse(JSON.stringify(EMPTY_BUILD_STATS)));
+  const [statsB, setStatsB] = useState<BuildStats>(JSON.parse(JSON.stringify(EMPTY_BUILD_STATS)));
 
   const [settings, setSettings] = useState<SharedSettings>({
     currentHpPercent: 100,
@@ -166,6 +171,9 @@ export default function CalculatorClient({ referenceData }: Props) {
           label="Build A"
           accent="cyan"
           build={buildA}
+          stats={statsA}
+          onStatsChange={setStatsA}
+          currentHpPercent={settings.currentHpPercent}
           onOpenModal={(cat, idx) => openModal({ build: "A", slotCategory: cat, slotIndex: idx })}
           onClear={(cat, idx) => handleClear("A", cat, idx)}
         />
@@ -173,6 +181,9 @@ export default function CalculatorClient({ referenceData }: Props) {
           label="Build B"
           accent="amber"
           build={buildB}
+          stats={statsB}
+          onStatsChange={setStatsB}
+          currentHpPercent={settings.currentHpPercent}
           onOpenModal={(cat, idx) => openModal({ build: "B", slotCategory: cat, slotIndex: idx })}
           onClear={(cat, idx) => handleClear("B", cat, idx)}
         />

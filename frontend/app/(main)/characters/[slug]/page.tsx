@@ -8,14 +8,16 @@ import StatCard from "@/components/ui/StatCard";
 
 import { getCharacterDetail } from "@/api/characters";
 import { formatWeaponStat } from "@/lib/utils";
-import type { WeaponStatKey } from "@/domains/weapons/type";
 import { CharacterDetail } from "@/domains/characters/types";
 import { ELEMENT_GLOW_STYLES } from "@/config/elementStyles";
+import { ConsonanceWeaponStats } from "@/domains/weapons/type";
+import { CHARACTER_DETAILS_CONSONANCE_WEAPON } from "@/config/fields";
 import { LABELS } from "@/config/labels";
 
 export default async function CharacterDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const param = await params;
   const character: CharacterDetail = await getCharacterDetail(param.slug);
+  console.log("character ==> ", character.consonanceWeapon);
   const elementStyle = ELEMENT_GLOW_STYLES[character.elementCode as keyof typeof ELEMENT_GLOW_STYLES];
 
   return (
@@ -73,8 +75,11 @@ export default async function CharacterDetailPage({ params }: { params: Promise<
       {character.consonanceWeapon && (
         <ContentSection title="동조 무기">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {Object.entries(character.consonanceWeapon).map(([key, value]) => {
-              return <StatCard key={key} label={LABELS.weapon[key]} value={formatWeaponStat(key as WeaponStatKey, value)} />;
+            {CHARACTER_DETAILS_CONSONANCE_WEAPON.map(({ key, label }) => {
+              const value = character.consonanceWeapon?.[key as keyof ConsonanceWeaponStats];
+              if (value == null) return null;
+
+              return <StatCard key={key} label={label} value={formatWeaponStat(key, value)} />;
             })}
           </div>
         </ContentSection>
