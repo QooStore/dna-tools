@@ -47,3 +47,6 @@ This generated password is for development use only. Your security configuration
 2026-02-11T06:48:50.172+09:00  INFO 9052 --- [dna-tools-api] [http-nio-8080-exec-9] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
 2026-02-11T07:00:00.014+09:00  INFO 9052 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 시작
 2026-02-11T07:00:00.031+09:00  INFO 9052 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 완료. 삭제 건수=0
+2026-02-14T21:36:22.198+09:00  INFO 1984 --- [dna-tools-api] [http-nio-8080-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-02-14T21:36:22.198+09:00  INFO 1984 --- [dna-tools-api] [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-02-14T21:36:22.200+09:00  INFO 1984 --- [dna-tools-api] [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
