@@ -20,7 +20,8 @@ export interface BaseStats {
 
 export interface Skill {
   name: string;
-  type: "대미지" | "버프" | "패시브";
+  type: string;
+  typeName: string;
   description: string;
 }
 

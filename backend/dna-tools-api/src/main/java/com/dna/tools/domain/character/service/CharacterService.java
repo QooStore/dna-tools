@@ -39,7 +39,8 @@ public class CharacterService {
                                 "MELEEWEAPON",
                                 "RANGEDWEAPON",
                                 "ATTACK_TYPE",
-                                "WORD"));
+                                "WORD",
+                                "CATEGORY"));
 
                 return characterDetailMapper.toResponse(character, labels);
         }

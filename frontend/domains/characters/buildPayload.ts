@@ -25,7 +25,7 @@ export function buildCharacterPayload(form: CharacterFormState): CharacterSaveRe
       : undefined,
 
     consonanceWeapon:
-      !isBlank(form.consonanceWeapon.weaponType) && !isBlank(form.consonanceWeapon.category)
+      form.consonanceWeapon && !isBlank(form.consonanceWeapon.weaponType) && !isBlank(form.consonanceWeapon.category)
         ? {
             category: form.consonanceWeapon.category,
             weaponType: form.consonanceWeapon.weaponType,

@@ -4,13 +4,14 @@ export type MeleeWeaponType = "greatsword" | "sword" | "dualBlades" | "katana" |
 
 export type RangedWeaponType = "bow" | "grenadeLauncher" | "dualPistols" | "assaultRifle" | "pistol" | "shotgun";
 
-export type WeaponStatKey = "attack" | "critRate" | "critDamage" | "attackSpeed" | "triggerProbability";
-
 export type ConsonanceWeaponStats =
   | {
       category: "melee";
+      categoryLabel: string;
       weaponType: MeleeWeaponType;
+      weaponTypeLabel: string;
       attackType: "slash" | "spike" | "smash";
+      attackTypeLabel: string;
 
       attack: number;
       critRate: number;
@@ -20,14 +21,18 @@ export type ConsonanceWeaponStats =
     }
   | {
       category: "ranged";
+      categoryLabel: string;
       weaponType: RangedWeaponType;
+      weaponTypeLabel: string;
       attackType: "slash" | "spike" | "smash";
+      attackTypeLabel: string;
 
       attack: number;
       critRate: number;
       critDamage: number;
       attackSpeed: number;
       triggerProbability: number;
+      multishot: number;
     };
 
 // --- 무기 목록 ---

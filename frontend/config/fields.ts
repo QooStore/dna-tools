@@ -30,6 +30,18 @@ export type Field =
       placeholder?: string;
     };
 
+export const CHARACTER_DETAILS_CONSONANCE_WEAPON: readonly Field[] = [
+  { key: "categoryLabel", label: "카테고리", kind: "text" },
+  { key: "weaponTypeLabel", label: "무기 타입", kind: "text" },
+  { key: "attackTypeLabel", label: "공격 타입", kind: "text" },
+  { key: "attack", label: "공격력", kind: "number" },
+  { key: "critRate", label: "치명타 확률", kind: "number" },
+  { key: "critDamage", label: "치명타 피해", kind: "number" },
+  { key: "attackSpeed", label: "공격 속도", kind: "number" },
+  { key: "triggerProbability", label: "발동 확률", kind: "number" },
+  { key: "multishot", label: "최대 탄약", kind: "number" },
+];
+
 export const STATS_FIELDS: readonly Field[] = [
   { key: "attack", label: "공격력", kind: "number" },
   { key: "hp", label: "체력", kind: "number" },
