@@ -55,11 +55,16 @@ public class CharacterDetailMapper {
                         ConsonanceWeaponEntity weapon, LabelContext labels) {
                 if (weapon == null)
                         return null;
+                // 무기 타입 라벨: category에 따라 MELEEWEAPON 또는 RANGEDWEAPON에서 조회
+                String weaponTypeCodeType = "melee".equals(weapon.getCategory()) ? "MELEEWEAPON" : "RANGEDWEAPON";
 
                 return new ConsonanceWeaponResponse(
                                 weapon.getCategory(),
+                                labels.label("CATEGORY", weapon.getCategory()),
                                 weapon.getWeaponType(),
+                                labels.label(weaponTypeCodeType, weapon.getWeaponType()),
                                 weapon.getAttackType(),
+                                labels.label("ATTACK_TYPE", weapon.getAttackType()),
                                 weapon.getAttack(),
                                 weapon.getCritRate(),
                                 weapon.getCritDamage(),

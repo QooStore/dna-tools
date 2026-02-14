@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import { DemonWedgeListItem } from "@/domains/demonWedges/type";
 import { WedgeTab, SlotCategory } from "@/domains/calculator/types";
 import WedgeSlot from "./WedgeSlot";
 
 type Props = {
+  activeTab: WedgeTab;
+  onTabChange: (tab: WedgeTab) => void;
   characterWedges: (DemonWedgeListItem | null)[];
   meleeWedges: (DemonWedgeListItem | null)[];
   rangedWedges: (DemonWedgeListItem | null)[];
@@ -29,6 +30,8 @@ const TAB_TITLES: Record<WedgeTab, string> = {
 };
 
 export default function WedgeTabPanel({
+  activeTab,
+  onTabChange,
   characterWedges,
   meleeWedges,
   rangedWedges,
@@ -36,7 +39,6 @@ export default function WedgeTabPanel({
   onOpenModal,
   onClear,
 }: Props) {
-  const [activeTab, setActiveTab] = useState<WedgeTab>("character");
 
   const getWedges = (): (DemonWedgeListItem | null)[] => {
     switch (activeTab) {
@@ -66,7 +68,7 @@ export default function WedgeTabPanel({
         {TABS.map((tab) => (
           <button
             key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
+            onClick={() => onTabChange(tab.key)}
             className={`
               rounded-md px-2 py-2 text-sm font-medium transition
               ${activeTab === tab.key

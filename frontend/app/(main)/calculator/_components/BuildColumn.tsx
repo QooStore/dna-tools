@@ -1,9 +1,11 @@
 "use client";
 
-import { BuildState, SlotCategory } from "@/domains/calculator/types";
+import { useState } from "react";
+import { BuildState, SlotCategory, WedgeTab, BuildStats } from "@/domains/calculator/types";
 import { CharacterDetail } from "@/domains/characters/types";
 import ItemSlot from "./ItemSlot";
 import WedgeTabPanel from "./WedgeTabPanel";
+import StatsForm from "./StatsForm";
 
 const STAT_LABELS: Record<string, string> = {
   ATK: "공격력",
@@ -19,11 +21,15 @@ type Props = {
   label: string;
   accent: "cyan" | "amber";
   build: BuildState;
+  stats: BuildStats;
+  onStatsChange: (stats: BuildStats) => void;
+  currentHpPercent: number;
   onOpenModal: (cat: SlotCategory, index?: number) => void;
   onClear: (cat: SlotCategory, index?: number) => void;
 };
 
-export default function BuildColumn({ label, accent, build, onOpenModal, onClear }: Props) {
+export default function BuildColumn({ label, accent, build, stats, onStatsChange, currentHpPercent, onOpenModal, onClear }: Props) {
+  const [activeTab, setActiveTab] = useState<WedgeTab>("character");
   const borderColor = accent === "cyan" ? "border-cyan-400/20" : "border-amber-400/20";
   const titleColor = accent === "cyan" ? "text-cyan-300" : "text-amber-300";
 
@@ -109,12 +115,24 @@ export default function BuildColumn({ label, accent, build, onOpenModal, onClear
       {/* 악마의 쐐기 탭 패널 */}
       <section>
         <WedgeTabPanel
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
           characterWedges={build.characterWedges}
           meleeWedges={build.meleeWedges}
           rangedWedges={build.rangedWedges}
           consonanceWedges={build.consonanceWedges}
           onOpenModal={onOpenModal}
           onClear={onClear}
+        />
+      </section>
+
+      {/* 스탯 입력 폼 */}
+      <section>
+        <StatsForm
+          activeTab={activeTab}
+          stats={stats}
+          onChange={onStatsChange}
+          currentHpPercent={currentHpPercent}
         />
       </section>
     </div>

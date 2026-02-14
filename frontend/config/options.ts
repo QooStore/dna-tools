@@ -64,8 +64,10 @@ export const FEATURE_OPTIONS = [
 ];
 
 export const SKILL_TYPE_OPTIONS = [
+  { value: "damage", label: "대미지" },
   { value: "buff", label: "버프" },
   { value: "passive", label: "패시브" },
+  { value: "heal", label: "치료" },
 ];
 
 export const PASSIVE_UPGRADE_TYPE_OPTIONS = [
@@ -75,8 +77,14 @@ export const PASSIVE_UPGRADE_TYPE_OPTIONS = [
 ] as const;
 
 export const TARGET_STAT_OPTIONS = [
-  { value: "ATK", label: "공격력" },
-  { value: "SKILL_EFFICIENCY", label: "스킬 효율" },
+  { value: "attack_per", label: "공격력%" },
+  { value: "skillEfficiency", label: "스킬 효율" },
+  { value: "skillDuration", label: "스킬 지속" },
+  { value: "skillRange", label: "스킬 범위" },
+  { value: "skillDmg", label: "스킬 대미지" },
+  { value: "weaponDmg", label: "무기 대미지" },
+  { value: "attackSpeed", label: "공격 속도" },
+  { value: "skillIntensity", label: "스킬 위력" },
 ] as const;
 
 export const EQUIP_TYPE_OPTIONS = [
