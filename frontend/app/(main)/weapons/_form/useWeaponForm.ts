@@ -20,7 +20,8 @@ const emptyForm: WeaponFormState = {
   chargeAttackSpeed: 0,
   fallAttackSpeed: 0,
 
-  multiShot: 0,
+  multishot: 0,
+  magCapacity: 0,
   maxAmmo: 0,
   ammoConversionRate: 0,
 

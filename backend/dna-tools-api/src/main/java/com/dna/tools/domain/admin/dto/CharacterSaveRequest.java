@@ -35,7 +35,7 @@ public class CharacterSaveRequest {
 
     @Getter
     public static class Stats {
-        private int attack;
+        private BigDecimal attack;
         private int hp;
         private int defense;
         private int maxMentality;
@@ -53,6 +53,7 @@ public class CharacterSaveRequest {
         private BigDecimal critDamage;
         private BigDecimal attackSpeed;
         private BigDecimal triggerProbability;
+        private BigDecimal multishot;
     }
 
     @Getter

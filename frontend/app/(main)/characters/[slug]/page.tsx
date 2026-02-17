@@ -17,7 +17,6 @@ import { LABELS } from "@/config/labels";
 export default async function CharacterDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const param = await params;
   const character: CharacterDetail = await getCharacterDetail(param.slug);
-  console.log("character ==> ", character.consonanceWeapon);
   const elementStyle = ELEMENT_GLOW_STYLES[character.elementCode as keyof typeof ELEMENT_GLOW_STYLES];
 
   return (
@@ -50,9 +49,15 @@ export default async function CharacterDetailPage({ params }: { params: Promise<
           <div className="max-w-xl space-y-4">
             <h1 className="text-5xl font-bold">{character.name}</h1>
 
-            <div className="text-sm text-white/70">
-              {character.meleeProficiencyLabel} · {character.rangedProficiencyLabel}
-            </div>
+            {character.meleeProficiencyLabel && character.rangedProficiencyLabel && (
+              <div className="text-sm text-white/70">
+                {character.meleeProficiencyLabel} · {character.rangedProficiencyLabel}
+              </div>
+            )}
+
+            {!(character.meleeProficiencyLabel && character.rangedProficiencyLabel) && (
+              <div className="text-sm text-white/70">모든 유형</div>
+            )}
 
             <div className="flex flex-wrap gap-2 pt-2">
               {character.features.map((feature) => (

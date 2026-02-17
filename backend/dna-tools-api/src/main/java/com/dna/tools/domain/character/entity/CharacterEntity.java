@@ -45,10 +45,10 @@ public class CharacterEntity {
     @Column(name = "list_image", nullable = false, length = 255)
     private String listImage;
 
-    @Column(name = "melee_proficiency", nullable = false, length = 20)
+    @Column(name = "melee_proficiency", length = 20)
     private String meleeProficiency;
 
-    @Column(name = "ranged_proficiency", nullable = false, length = 20)
+    @Column(name = "ranged_proficiency", length = 20)
     private String rangedProficiency;
 
     @Column(name = "created_at", updatable = false, insertable = false)
@@ -59,7 +59,8 @@ public class CharacterEntity {
             CascadeType.REMOVE }, orphanRemoval = true)
     private CharacterStatsEntity stats;
 
-    @OneToOne(mappedBy = "character", fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, orphanRemoval = true)
+    @OneToOne(mappedBy = "character", fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST,
+            CascadeType.REMOVE }, orphanRemoval = true)
     private ConsonanceWeaponEntity consonanceWeapon;
 
     @OneToMany(mappedBy = "character", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

@@ -37,13 +37,13 @@ export default function WeaponCard({ weapon, isAdmin = false, onDelete }: Weapon
   return (
     <div className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0b1020]/90 transition hover:border-cyan-400/50 hover:shadow-2xl hover:shadow-black/50">
       {/* 이미지 영역 */}
-      <div className="relative aspect-[3/4] px-6 pt-6 overflow-hidden">
+      <div className="relative aspect-[3/4] flex items-center overflow-hidden">
         {weapon.image ? (
           <Image
             src={weapon.image}
             alt={weapon.name}
             fill
-            className="object-contain transition-transform duration-300 group-hover:scale-105"
+            className="object-cover object-center p-6 transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
           <div className="flex h-full items-center justify-center text-4xl text-white/20">🗡</div>
@@ -137,10 +137,8 @@ function buildStats(w: WeaponListItem) {
     { label: "발동 확률", value: `${w.triggerProbability}%` },
   ];
 
-  if (w.chargeAttackSpeed != null) stats.push({ label: "차지 공속", value: `${w.chargeAttackSpeed * 100}%` });
-  if (w.fallAttackSpeed != null) stats.push({ label: "낙하 공속", value: `${w.fallAttackSpeed * 100}%` });
-
-  if (w.multiShot != null) stats.push({ label: "다중 사격", value: w.multiShot });
+  if (w.multishot != null) stats.push({ label: "다중 사격", value: w.multishot });
+  if (w.magCapacity != null && w.magCapacity !== 0) stats.push({ label: "탄창 용량", value: w.magCapacity });
   if (w.maxAmmo != null) stats.push({ label: "최대 탄약", value: w.maxAmmo });
   if (w.ammoConversionRate != null) stats.push({ label: "탄약 전환율", value: `${w.ammoConversionRate}%` });
 
