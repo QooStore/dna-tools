@@ -189,3 +189,81 @@ java.lang.IllegalArgumentException: Invalid character found in method name [MGLN
 2026-02-17T13:00:00.017+09:00  INFO 12824 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 완료. 삭제 건수=0
 2026-02-17T14:00:00.013+09:00  INFO 12824 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 시작
 2026-02-17T14:00:00.025+09:00  INFO 12824 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 완료. 삭제 건수=0
+2026-02-17T15:00:00.009+09:00  INFO 12824 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 시작
+2026-02-17T15:00:00.014+09:00  INFO 12824 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 완료. 삭제 건수=0
+2026-02-17T16:00:00.017+09:00  INFO 12824 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 시작
+2026-02-17T16:00:00.024+09:00  INFO 12824 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 완료. 삭제 건수=0
+2026-02-17T16:12:24.851+09:00  INFO 12824 --- [dna-tools-api] [http-nio-8080-exec-4] o.apache.coyote.http11.Http11Processor   : Error parsing HTTP request header
+ Note: further occurrences of HTTP request parsing errors will be logged at DEBUG level.
+
+java.lang.IllegalArgumentException: Invalid character found in method name [0x160x030x010x00{0x010x000x00w0x030x030xb810xb90xac0xcc+0xee0x8900x0b0xfbpeWr0x1a0xed0x070xf7}0x8220xfd0xac0xfa0xef(0x17r0xcf>0x130x000x000x1a0xc0/0xc0+0xc00x110xc00x070xc00x130xc00x090xc00x140xc00x0a0x000x050x00/0x0050xc00x120x000x0a0x010x000x0040x000x050x000x050x010x000x000x000x000x000x0a0x000x080x000x060x000x170x000x180x000x190x000x0b0x000x020x010x000x000x0d0x000x100x000x0e0x040x010x040x030x020x010x020x030x040x010x050x010x060x010xff0x010x000x010x00...]. HTTP method names must be tokens
+	at org.apache.coyote.http11.Http11InputBuffer.parseRequestLine(Http11InputBuffer.java:402) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:272) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1774) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:973) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:491) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+
+2026-02-17T17:00:00.004+09:00  INFO 12824 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 시작
+2026-02-17T17:00:00.015+09:00  INFO 12824 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 완료. 삭제 건수=0
+2026-02-17T18:00:00.012+09:00  INFO 12824 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 시작
+2026-02-17T18:00:00.023+09:00  INFO 12824 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 완료. 삭제 건수=0
+2026-02-17T19:00:00.016+09:00  INFO 12824 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 시작
+2026-02-17T19:00:00.022+09:00  INFO 12824 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 완료. 삭제 건수=0
+2026-02-17T20:00:00.012+09:00  INFO 12824 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 시작
+2026-02-17T20:00:00.020+09:00  INFO 12824 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 완료. 삭제 건수=0
+2026-02-17T20:16:35.080+09:00  INFO 12824 --- [dna-tools-api] [http-nio-8080-exec-10] o.apache.coyote.http11.Http11Processor   : Error parsing HTTP request header
+ Note: further occurrences of HTTP request parsing errors will be logged at DEBUG level.
+
+java.lang.IllegalArgumentException: Invalid character found in the HTTP protocol [RTSP/1.00x0d0x0a0x0d0x0a...]
+	at org.apache.coyote.http11.Http11InputBuffer.parseRequestLine(Http11InputBuffer.java:553) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:272) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1774) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:973) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:491) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+
+2026-02-17T20:16:46.226+09:00  INFO 12824 --- [dna-tools-api] [http-nio-8080-exec-3] o.apache.coyote.http11.Http11Processor   : Error parsing HTTP request header
+ Note: further occurrences of HTTP request parsing errors will be logged at DEBUG level.
+
+java.lang.IllegalArgumentException: Invalid character found in method name [0x160x030x000x00i0x010x000x00e0x030x03U0x1c0xa70xe4random1random2random3random40x000x000x0c0x00/0x000x0a0x000x130x0090x000x040x000xff0x010x000x0000x000x0d0x00,0x00*0x000x010x000x030x000x020x060x010x060x030x060x020x020x010x020x030x020x020x030x010x030x030x030x020x040x010x040x030x040x020x010x010x010x030x010x020x050x010x050x030x050x02...]. HTTP method names must be tokens
+	at org.apache.coyote.http11.Http11InputBuffer.parseRequestLine(Http11InputBuffer.java:402) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:272) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1774) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:973) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:491) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+
+2026-02-17T21:00:00.016+09:00  INFO 12824 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 시작
+2026-02-17T21:00:00.028+09:00  INFO 12824 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 완료. 삭제 건수=0
+2026-02-17T22:00:00.003+09:00  INFO 12824 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 시작
+2026-02-17T22:00:00.010+09:00  INFO 12824 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 완료. 삭제 건수=0
+2026-02-17T22:00:20.352+09:00  INFO 12824 --- [dna-tools-api] [http-nio-8080-exec-10] o.apache.coyote.http11.Http11Processor   : Error parsing HTTP request header
+ Note: further occurrences of HTTP request parsing errors will be logged at DEBUG level.
+
+java.lang.IllegalArgumentException: Invalid character found in method name [0x160x030x010x010x0c0x010x000x010x080x030x030xdd40xbe0xd90xd70x160xbe0xbb$0x870xe20x9e0xfc?n0xdd0x83nMp1,0x830xe10xd70x010xff0x120xb50x090xe0" ]. HTTP method names must be tokens
+	at org.apache.coyote.http11.Http11InputBuffer.parseRequestLine(Http11InputBuffer.java:402) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:272) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1774) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:973) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:491) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.50.jar:10.1.50]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+
+2026-02-17T23:00:00.007+09:00  INFO 12824 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 시작
+2026-02-17T23:00:00.012+09:00  INFO 12824 --- [dna-tools-api] [scheduling-1] c.dna.tools.batch.OrphanImageCleanupJob  : 고아 이미지 정리 작업 완료. 삭제 건수=0

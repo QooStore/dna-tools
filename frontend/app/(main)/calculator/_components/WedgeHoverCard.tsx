@@ -2,66 +2,76 @@
 
 import type { DemonWedgeListItem } from "@/domains/demonWedges/type";
 
-function stars(n?: any): string {
-  const v = Number(n);
-  if (!Number.isFinite(v) || v <= 0) return "";
-  return "★".repeat(Math.min(5, Math.max(1, v)));
+const RARITY_BORDER: Record<number, string> = {
+  5: "border-amber-400/50",
+  4: "border-purple-400/40",
+  3: "border-blue-400/30",
+  2: "border-green-400/25",
+};
+
+const RARITY_STAR_COLOR: Record<number, string> = {
+  5: "text-amber-400",
+  4: "text-purple-400",
+  3: "text-blue-400",
+  2: "text-green-400",
+};
+
+function stars(n: number): string {
+  return "★".repeat(Math.min(5, Math.max(1, n)));
 }
 
 export default function WedgeHoverCard({ wedge }: { wedge: DemonWedgeListItem }) {
-  const w: any = wedge as any;
-  const stats: any[] = Array.isArray(w.stats) ? w.stats : [];
+  const borderCls = RARITY_BORDER[wedge.rarity] ?? "border-white/10";
+  const starColor = RARITY_STAR_COLOR[wedge.rarity] ?? "text-white/60";
 
   return (
-    <div className="rounded-xl border border-white/10 bg-slate-950/95 p-3 shadow-2xl">
-      <div className="flex items-start gap-2">
-        <div className="min-w-0">
-          <div className="truncate text-sm font-semibold text-white/90">{w.name}</div>
-          <div className="mt-0.5 text-xs text-white/60">{stars(w.rarity)}</div>
-        </div>
+    <div className={`rounded-xl border ${borderCls} bg-slate-950/95 p-3 shadow-2xl backdrop-blur-sm`}>
+      {/* 이름 + 레어도 */}
+      <div className="flex items-center justify-between gap-2">
+        <div className="truncate text-sm font-bold text-white/95">{wedge.name}</div>
+        <div className={`shrink-0 text-xs ${starColor}`}>{stars(wedge.rarity)}</div>
       </div>
 
-      {w.subEffect ? (
-        <div className="mt-2 text-xs text-white/75 leading-relaxed">
-          <span className="font-semibold text-white/85">Sub Effect:</span> {w.subEffect}
-        </div>
-      ) : null}
-
-      <div className="mt-2 space-y-1 text-xs text-white/70">
-        {w.restriction ? (
-          <div>
-            <span className="font-semibold text-white/80">Restriction:</span> {w.restriction}
-          </div>
-        ) : null}
-        {w.track != null ? (
-          <div>
-            <span className="font-semibold text-white/80">Track:</span> {String(w.track)}
-          </div>
-        ) : null}
-        {w.tolerance != null ? (
-          <div>
-            <span className="font-semibold text-white/80">Tolerance:</span> {String(w.tolerance)}
-          </div>
-        ) : null}
-        {w.source ? (
-          <div>
-            <span className="font-semibold text-white/80">Source:</span> {w.source}
-          </div>
-        ) : null}
+      {/* 태그: 장착타입, 성향, 내성, 속성 */}
+      <div className="mt-2 flex flex-wrap gap-1.5">
+        <Tag>{wedge.equipTypeLabel}</Tag>
+        {wedge.tendencyLabel && <Tag>{wedge.tendencyLabel}</Tag>}
+        <Tag className="bg-sky-500/20 text-sky-300">내성 {wedge.resistance}</Tag>
+        {wedge.elementLabel ? (
+          <Tag>{wedge.elementLabel}</Tag>
+        ) : (
+          <Tag className="bg-white/10 text-white/40">무속성</Tag>
+        )}
       </div>
 
-      {stats.length ? (
+      {/* 스탯 */}
+      {wedge.stats.length > 0 && (
+        <div className="mt-2 border-t border-white/10 pt-2 space-y-1">
+          {wedge.stats.map((s, idx) => (
+            <div key={idx} className="flex items-center justify-between text-xs text-white/75">
+              <span>{s.statTypeLabel}</span>
+              <span className="font-semibold text-white tabular-nums">
+                {s.statType?.includes("Range") ? `+${s.value}` : `${s.value}%`}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* 효과 설명 */}
+      {wedge.effectDescription && (
         <div className="mt-2 border-t border-white/10 pt-2">
-          <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-xs text-white/70">
-            {stats.slice(0, 6).map((s: any, idx) => (
-              <div key={idx} className="flex items-center justify-between gap-2">
-                <span className="truncate">{s.statType}</span>
-                <span className="font-semibold text-white/85">{String(s.value)}</span>
-              </div>
-            ))}
-          </div>
+          <p className="text-xs text-white/55 leading-snug">{wedge.effectDescription}</p>
         </div>
-      ) : null}
+      )}
     </div>
+  );
+}
+
+function Tag({ children, className }: { children: React.ReactNode; className?: string }) {
+  return (
+    <span className={`rounded-md px-2 py-0.5 text-[10px] font-semibold ${className ?? "bg-white/10 text-white/60"}`}>
+      {children}
+    </span>
   );
 }

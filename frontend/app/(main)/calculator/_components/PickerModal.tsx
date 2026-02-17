@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 type FilterGroup = {
   field: string;
@@ -34,6 +34,7 @@ export default function PickerModal<T extends BaseItem>({
   grid = "md",
   renderHoverCard,
   onItemHover,
+  itemClassName,
 }: {
   open: boolean;
   title: string;
@@ -45,9 +46,31 @@ export default function PickerModal<T extends BaseItem>({
   grid?: "sm" | "md" | "lg";
   renderHoverCard?: (item: T) => React.ReactNode;
   onItemHover?: (item: T) => void;
+  itemClassName?: (item: T) => string;
 }) {
   const [q, setQ] = useState("");
   const [activeFilters, setActiveFilters] = useState<Record<string, string>>({});
+  const [tooltipItem, setTooltipItem] = useState<T | null>(null);
+  const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(null);
+
+  const handleMouseEnter = useCallback(
+    (e: React.MouseEvent, item: T) => {
+      if (!renderHoverCard) return;
+      onItemHover?.(item);
+      const btnRect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      setTooltipItem(item);
+      setTooltipPos({
+        x: btnRect.left + btnRect.width / 2,
+        y: btnRect.top,
+      });
+    },
+    [renderHoverCard, onItemHover],
+  );
+
+  const handleMouseLeave = useCallback(() => {
+    setTooltipItem(null);
+    setTooltipPos(null);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -143,18 +166,24 @@ export default function PickerModal<T extends BaseItem>({
             {filtered.map((it: any) => {
               const img = getImageUrl(it);
               const selected = selectedSlug && it.slug === selectedSlug;
+              const extraCls = itemClassName?.(it) ?? "";
 
               return (
                 <button
                   key={it.slug}
-                  onMouseEnter={() => onItemHover?.(it)}
+                  onMouseEnter={(e) => handleMouseEnter(e, it)}
+                  onMouseLeave={handleMouseLeave}
                   onClick={() => {
                     onSelect(it.slug);
                     onClose();
                   }}
                   className={
                     "group relative overflow-hidden rounded-xl border text-left transition " +
-                    (selected ? "border-cyan-300/60 bg-cyan-400/10" : "border-white/10 bg-white/5 hover:bg-white/10")
+                    (selected
+                      ? "border-cyan-300/60 bg-cyan-400/10"
+                      : extraCls
+                        ? `${extraCls}`
+                        : "border-white/10 bg-white/5 hover:bg-white/10")
                   }
                 >
                   <div className="aspect-[3/4] w-full bg-black/30">
@@ -170,16 +199,24 @@ export default function PickerModal<T extends BaseItem>({
                   <div className="absolute inset-x-0 bottom-0 bg-black/60 px-2 py-1">
                     <div className="truncate text-xs font-semibold text-white/90">{it.name}</div>
                   </div>
-
-                  {renderHoverCard ? (
-                    <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 hidden w-[340px] -translate-x-1/2 -translate-y-1/2 group-hover:block">
-                      {renderHoverCard(it)}
-                    </div>
-                  ) : null}
                 </button>
               );
             })}
           </div>
+
+          {/* 툴팁 — fixed로 뷰포트 기준 렌더링하여 overflow 컨테이너에 잘리지 않음 */}
+          {renderHoverCard && tooltipItem && tooltipPos && (
+            <div
+              className="pointer-events-none fixed z-[60] w-[320px]"
+              style={{
+                left: `${tooltipPos.x}px`,
+                top: `${tooltipPos.y}px`,
+                transform: "translate(-50%, -100%) translateY(-8px)",
+              }}
+            >
+              {renderHoverCard(tooltipItem)}
+            </div>
+          )}
 
           <div className="flex items-center justify-between pt-2">
             <div className="text-xs text-white/50">총 {filtered.length}개</div>

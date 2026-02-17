@@ -185,8 +185,14 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
 
   const wedgeOptionsForTab = useMemo(() => {
     const equipType = tabToEquipType[build.activeTab];
-    return wedges.filter((w) => w.equipType === equipType);
-  }, [wedges, build.activeTab]);
+    const isKukulkanSlot = build.activeTab === "character" && picker?.type === "wedge" && picker.slotIndex === 8;
+    return wedges.filter((w) => {
+      if (w.equipType !== equipType) return false;
+      if (isKukulkanSlot && !w.isKukulkan) return false;
+      if (!isKukulkanSlot && build.activeTab === "character" && w.isKukulkan) return false;
+      return true;
+    });
+  }, [wedges, build.activeTab, picker]);
 
   const wedgeSlotItems = useMemo(() => {
     const slotSlugs = build.wedgeSlots[build.activeTab];
@@ -464,6 +470,16 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
         }))}
         grid="lg"
         renderHoverCard={(it: any) => <WedgeHoverCard wedge={it} />}
+        itemClassName={(it: any) => {
+          const r = it.rarity as number;
+          const colors: Record<number, string> = {
+            5: "border-amber-400/40 bg-gradient-to-b from-amber-400/20 to-transparent hover:from-amber-400/30",
+            4: "border-purple-400/30 bg-gradient-to-b from-purple-400/15 to-transparent hover:from-purple-400/25",
+            3: "border-blue-400/20 bg-gradient-to-b from-blue-400/10 to-transparent hover:from-blue-400/20",
+            2: "border-green-400/20 bg-gradient-to-b from-green-400/10 to-transparent hover:from-green-400/20",
+          };
+          return colors[r] ?? "border-white/10 bg-white/5 hover:bg-white/10";
+        }}
         onClose={() => setPicker(null)}
         onSelect={(slug) => {
           if (picker?.type !== "wedge") return;
