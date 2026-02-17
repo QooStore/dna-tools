@@ -68,6 +68,8 @@ export const SKILL_TYPE_OPTIONS = [
   { value: "buff", label: "버프" },
   { value: "passive", label: "패시브" },
   { value: "heal", label: "치료" },
+  { value: "summon", label: "소환" },
+  { value: "defense", label: "방어" },
 ];
 
 export const PASSIVE_UPGRADE_TYPE_OPTIONS = [
@@ -78,20 +80,48 @@ export const PASSIVE_UPGRADE_TYPE_OPTIONS = [
 
 export const TARGET_STAT_OPTIONS = [
   { value: "attack_per", label: "공격력%" },
+  { value: "elementAttack_per", label: "속성 공격력%" },
+  { value: "hp_per", label: "HP%" },
+  { value: "defense_per", label: "방어%" },
+  { value: "shield_per", label: "실드%" },
+  { value: "damage", label: "대미지%" },
   { value: "skillEfficiency", label: "스킬 효율" },
   { value: "skillDuration", label: "스킬 지속" },
   { value: "skillRange", label: "스킬 범위" },
   { value: "skillDmg", label: "스킬 대미지" },
-  { value: "weaponDmg", label: "무기 대미지" },
-  { value: "attackSpeed", label: "공격 속도" },
   { value: "skillIntensity", label: "스킬 위력" },
+  { value: "weaponAttack_per", label: "무기 공격력%" },
+  { value: "slashAttack_per", label: "베기 공격%" },
+  { value: "spikeAttack_per", label: "관통 공격%" },
+  { value: "smashAttack_per", label: "진동 공격%" },
+  { value: "weaponDmg", label: "무기 대미지" },
+  { value: "explosionRange", label: "폭발 범위" },
+  { value: "beamLength", label: "광선 길이" },
+  { value: "reloadSpeed", label: "장전 속도" },
+  { value: "critRate", label: "치명타 확률" },
+  { value: "critDamage", label: "치명타 피해" },
+  { value: "attackSpeed", label: "공격 속도" },
+  { value: "attackRange", label: "공격 범위" },
+  { value: "triggerProbability", label: "발동 확률" },
+  { value: "multishot", label: "다중 사격" },
+  { value: "magCapacity", label: "탄창 용량%" },
+  { value: "maxAmmo", label: "최대 탄약" },
+  { value: "ammoConversionRate", label: "탄환 전환율" },
+  { value: "resolve", label: "필사" },
+  { value: "morale", label: "격양" },
+  { value: "normalAttackDmg_per", label: "기본 공격 대미지%" },
+  { value: "plungeDmg", label: "낙하 공격 대미지%" },
+  { value: "plungeAttackSpeed", label: "낙하 공격 속도" },
+  { value: "slidingAttackDmg", label: "슬라이딩 공격 대미지%" },
+  { value: "slidingAttackSpeed", label: "슬라이딩 공격 속도" },
 ] as const;
 
 export const EQUIP_TYPE_OPTIONS = [
   { value: "character", label: "캐릭터" },
   { value: "meleeWeapon", label: "근거리 무기" },
   { value: "rangedWeapon", label: "원거리 무기" },
-  { value: "consonanceWeapon", label: "동조 무기" },
+  { value: "meleeConsonanceWeapon", label: "근거리 동조 무기" },
+  { value: "rangedConsonanceWeapon", label: "원거리 동조 무기" },
 ] as const;
 
 export const TENDENCY_OPTIONS = [

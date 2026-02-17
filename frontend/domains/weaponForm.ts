@@ -21,8 +21,9 @@ export interface WeaponFormState {
   fallAttackSpeed: number;
 
   // 원거리 전용
-  multiShot: number;
+  multishot: number;
   maxAmmo: number;
+  magCapacity: number;
   ammoConversionRate: number;
 
   // 패시브 스킬
@@ -52,8 +53,9 @@ export interface WeaponSaveRequest {
   chargeAttackSpeed?: number;
   fallAttackSpeed?: number;
 
-  multiShot?: number;
+  multishot?: number;
   maxAmmo?: number;
+  magCapacity?: number;
   ammoConversionRate?: number;
 
   passiveStat?: string;

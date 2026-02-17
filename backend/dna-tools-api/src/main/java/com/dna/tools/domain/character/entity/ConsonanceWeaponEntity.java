@@ -47,6 +47,9 @@ public class ConsonanceWeaponEntity {
     @Column(name = "trigger_probability", nullable = false, precision = 5, scale = 2)
     private BigDecimal triggerProbability;
 
+    @Column(name = "multishot", precision = 5, scale = 2)
+    private BigDecimal multishot;
+
     public ConsonanceWeaponEntity(
             CharacterEntity character,
             String category,
@@ -56,7 +59,8 @@ public class ConsonanceWeaponEntity {
             BigDecimal critRate,
             BigDecimal critDamage,
             BigDecimal attackSpeed,
-            BigDecimal triggerProbability) {
+            BigDecimal triggerProbability,
+            BigDecimal multishot) {
         this.character = character;
         this.category = category;
         this.weaponType = weaponType;
@@ -66,6 +70,7 @@ public class ConsonanceWeaponEntity {
         this.critDamage = critDamage;
         this.attackSpeed = attackSpeed;
         this.triggerProbability = triggerProbability;
+        this.multishot = multishot;
     }
 
     public void update(
@@ -76,7 +81,8 @@ public class ConsonanceWeaponEntity {
             BigDecimal critRate,
             BigDecimal critDamage,
             BigDecimal attackSpeed,
-            BigDecimal triggerProbability) {
+            BigDecimal triggerProbability,
+            BigDecimal multishot) {
         this.category = category;
         this.weaponType = weaponType;
         this.attackType = attackType;
@@ -85,6 +91,7 @@ public class ConsonanceWeaponEntity {
         this.critDamage = critDamage;
         this.attackSpeed = attackSpeed;
         this.triggerProbability = triggerProbability;
+        this.multishot = multishot;
     }
 
 }

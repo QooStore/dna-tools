@@ -69,7 +69,8 @@ public class CharacterDetailMapper {
                                 weapon.getCritRate(),
                                 weapon.getCritDamage(),
                                 weapon.getAttackSpeed(),
-                                weapon.getTriggerProbability());
+                                weapon.getTriggerProbability(),
+                                weapon.getMultishot());
         }
 
         private static List<CharacterFeatureResponse> toFeatures(

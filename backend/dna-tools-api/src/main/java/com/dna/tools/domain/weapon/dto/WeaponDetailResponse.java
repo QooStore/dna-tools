@@ -32,8 +32,9 @@ public class WeaponDetailResponse {
     private final BigDecimal fallAttackSpeed;
 
     // 원거리 전용
-    private final Integer multiShot;
+    private final Integer multishot;
     private final Integer maxAmmo;
+    private final Integer magCapacity;
     private final BigDecimal ammoConversionRate;
 
     // 패시브 스킬

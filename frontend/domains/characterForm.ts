@@ -16,6 +16,7 @@ export interface ConsonanceWeaponForm {
   critDamage: number;
   attackSpeed: number;
   triggerProbability: number;
+  multishot?: number;
 }
 
 export interface SkillForm {
