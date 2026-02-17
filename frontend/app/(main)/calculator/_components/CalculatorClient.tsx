@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import type { CharacterListItem } from "@/domains/characters/types";
 import type { WeaponListItem } from "@/domains/weapons/type";
@@ -13,12 +13,15 @@ import SlotCard from "./SlotCard";
 import PickerModal from "./PickerModal";
 import WedgeHoverCard from "./WedgeHoverCard";
 
+import type { CharacterDetail } from "@/domains/characters/types";
+import { fetchCharacterDetailClient, prefetchCharacterDetail } from "@/api/characters.client";
+
 import { CHARACTER_MODAL_FILTERS } from "@/config/characterFilters";
 import { WEAPON_FILTERS } from "@/config/weaponFilters";
 import { DEMON_WEDGE_FILTERS } from "@/config/demonWedgeFilters";
 
 import { ActiveTab, BuildId, BuildState, emptyBuildState, BuffFields, emptyBuffFields } from "./calculatorTypes";
-import { TAB_LABELS, applyWedgesToBuff, compute, sumBuffs, tabToEquipType } from "./calculatorLogic";
+import { TAB_LABELS, applyWedgesToBuff, tabToEquipType } from "./calculatorLogic";
 
 type Props = {
   characters: CharacterListItem[];
@@ -31,9 +34,32 @@ function num(v: string): number {
   return Number.isFinite(n) ? n : 0;
 }
 
-function format(n: number): string {
-  if (!Number.isFinite(n)) return "-";
-  return n.toLocaleString(undefined, { maximumFractionDigits: 2 });
+function applyCharacterDetail(prev: BuildState, detail: CharacterDetail): BuildState {
+  const nextAttack = detail?.stats?.attack ?? 0;
+  const nextResolve = detail?.stats?.resolve ?? 0;
+  const nextMorale = detail?.stats?.morale ?? 0;
+
+  const consonance = detail?.consonanceWeapon;
+
+  return {
+    ...prev,
+    base: {
+      ...prev.base,
+      character: {
+        ...prev.base.character,
+        baseAttack: nextAttack,
+        resolvePct: nextResolve,
+        moralePct: nextMorale,
+      },
+      consonanceWeapon: {
+        ...prev.base.consonanceWeapon,
+        attack: consonance?.attack ?? 0,
+        critRatePct: (consonance as any)?.critRate ?? 0,
+        critDamagePct: (consonance as any)?.critDamage ?? 0,
+        attackSpeed: (consonance as any)?.attackSpeed ?? 1,
+      },
+    },
+  };
 }
 
 const BUFF_FIELD_META: { key: keyof BuffFields; label: string }[] = [
@@ -83,7 +109,45 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
   const [buildB, setBuildB] = useState<BuildState>(() => emptyBuildState());
 
   const build = activeBuild === "A" ? buildA : buildB;
+  console.log("build ==> ", build);
   const setBuild = activeBuild === "A" ? setBuildA : setBuildB;
+
+  // 캐릭터 상세는 리스트에 없어서, 메인 캐릭터 선택 시 detail을 lazy-fetch 후 base stats에 자동 주입합니다.
+  useEffect(() => {
+    const slug = buildA.selections.characterSlug;
+    if (!slug) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const detail = await fetchCharacterDetailClient(slug);
+        if (cancelled) return;
+        setBuildA((prev) => applyCharacterDetail(prev, detail));
+      } catch {
+        // ignore
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [buildA.selections.characterSlug]);
+
+  useEffect(() => {
+    const slug = buildB.selections.characterSlug;
+    if (!slug) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const detail = await fetchCharacterDetailClient(slug);
+        if (cancelled) return;
+        setBuildB((prev) => applyCharacterDetail(prev, detail));
+      } catch {
+        // ignore
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [buildB.selections.characterSlug]);
 
   const meleeWeapons = useMemo(() => weapons.filter((w) => w.category === "melee"), [weapons]);
   const rangedWeapons = useMemo(() => weapons.filter((w) => w.category === "ranged"), [weapons]);
@@ -336,6 +400,11 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
           title: f.title,
           options: f.options,
         }))}
+        onItemHover={(it: any) => {
+          // 캐릭터 카드 hover 시 detail을 미리 받아서 선택 시 즉시 반영되게 함
+          if (picker?.type !== "character") return;
+          prefetchCharacterDetail(it.slug);
+        }}
         onClose={() => setPicker(null)}
         onSelect={(slug) => {
           if (picker?.type !== "character") return;
@@ -590,51 +659,6 @@ function BuffSectionForm({
           />
         ))}
       </div>
-    </div>
-  );
-}
-
-function ResultCard({ title, result }: { title: string; result: ReturnType<typeof compute> }) {
-  const totalBuff = result.totalBuff;
-  const totalBuffSimple = sumBuffs([totalBuff]);
-  return (
-    <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-      <div className="mb-2 text-sm font-semibold text-white/80">{title}</div>
-      <div className="text-2xl font-bold">
-        {format(result.estimatedDps)}
-        <span className="ml-2 text-sm font-medium text-white/60">DPS</span>
-      </div>
-      <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
-        <KeyValue k="최종 공격합" v={format(result.finalAttackTotal)} />
-        <KeyValue k="치확" v={`${format(result.critRatePct)}%`} />
-        <KeyValue k="치피" v={`${format(result.critDamagePct)}%`} />
-        <KeyValue k="치명 기대값" v={format(result.expectedCritMultiplier)} />
-        <KeyValue k="공격 속도" v={format(result.attackSpeed)} />
-        <KeyValue k="대미지 배수" v={format(result.damageMultiplier)} />
-      </div>
-
-      <div className="mt-4 border-t border-white/10 pt-3 text-xs text-white/55">
-        <div className="mb-2 font-semibold text-white/70">합산 버프(요약)</div>
-        <div className="grid grid-cols-2 gap-2">
-          <KeyValue k="캐릭터 공격%" v={`${format(totalBuffSimple.characterAttackPct)}%`} />
-          <KeyValue k="무기 공격%" v={`${format(totalBuffSimple.weaponAttackPct)}%`} />
-          <KeyValue k="속성 공격%" v={`${format(totalBuffSimple.elementAttackPct)}%`} />
-          <KeyValue k="대미지%" v={`${format(totalBuffSimple.damagePct)}%`} />
-          <KeyValue k="스킬 위력%" v={`${format(totalBuffSimple.skillPowerPct)}%`} />
-          <KeyValue k="스킬 대미지%" v={`${format(totalBuffSimple.skillDamagePct)}%`} />
-          <KeyValue k="치확%" v={`${format(totalBuffSimple.critRatePct)}%`} />
-          <KeyValue k="치피%" v={`${format(totalBuffSimple.critDamagePct)}%`} />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function KeyValue({ k, v }: { k: string; v: string }) {
-  return (
-    <div className="flex items-center justify-between rounded-lg bg-white/5 px-2 py-1 border border-white/10">
-      <div className="text-white/60">{k}</div>
-      <div className="font-medium text-white/90">{v}</div>
     </div>
   );
 }

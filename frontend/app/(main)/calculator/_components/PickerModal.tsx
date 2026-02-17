@@ -33,6 +33,7 @@ export default function PickerModal<T extends BaseItem>({
   filters,
   grid = "md",
   renderHoverCard,
+  onItemHover,
 }: {
   open: boolean;
   title: string;
@@ -43,6 +44,7 @@ export default function PickerModal<T extends BaseItem>({
   filters?: FilterGroup[];
   grid?: "sm" | "md" | "lg";
   renderHoverCard?: (item: T) => React.ReactNode;
+  onItemHover?: (item: T) => void;
 }) {
   const [q, setQ] = useState("");
   const [activeFilters, setActiveFilters] = useState<Record<string, string>>({});
@@ -145,6 +147,7 @@ export default function PickerModal<T extends BaseItem>({
               return (
                 <button
                   key={it.slug}
+                  onMouseEnter={() => onItemHover?.(it)}
                   onClick={() => {
                     onSelect(it.slug);
                     onClose();
