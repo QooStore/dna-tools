@@ -70,7 +70,8 @@ public class CharacterAdminService {
                     w.getCritRate(),
                     w.getCritDamage(),
                     w.getAttackSpeed(),
-                    w.getTriggerProbability()));
+                    w.getTriggerProbability(),
+                    w.getMultishot()));
         }
 
         // 1:N
@@ -193,7 +194,8 @@ public class CharacterAdminService {
                         w.getCritRate(),
                         w.getCritDamage(),
                         w.getAttackSpeed(),
-                        w.getTriggerProbability()));
+                        w.getTriggerProbability(),
+                        w.getMultishot()));
             } else {
                 character.getConsonanceWeapon().update(
                         w.getCategory(),
@@ -203,7 +205,8 @@ public class CharacterAdminService {
                         w.getCritRate(),
                         w.getCritDamage(),
                         w.getAttackSpeed(),
-                        w.getTriggerProbability());
+                        w.getTriggerProbability(),
+                        w.getMultishot());
             }
         }
 

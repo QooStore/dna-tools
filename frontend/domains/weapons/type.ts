@@ -33,6 +33,7 @@ export type ConsonanceWeaponStats =
       attackSpeed: number;
       triggerProbability: number;
       multishot: number;
+      magCapacity: number;
     };
 
 // --- 무기 목록 ---
@@ -64,8 +65,9 @@ export interface WeaponListItem {
   fallAttackSpeed: number | null;
 
   // 원거리 전용
-  multiShot: number | null;
+  multishot: number | null;
   maxAmmo: number | null;
+  magCapacity: number | null;
   ammoConversionRate: number | null;
 
   // 패시브
@@ -98,8 +100,9 @@ export interface WeaponDetail {
   chargeAttackSpeed: number | null;
   fallAttackSpeed: number | null;
 
-  multiShot: number | null;
+  multishot: number | null;
   maxAmmo: number | null;
+  magCapacity: number | null;
   ammoConversionRate: number | null;
 
   passiveStat: string | null;

@@ -1,5 +1,7 @@
 import InputComponent from "@/components/ui/FormInput";
 import LabelComponent from "@/components/ui/FormLabel";
+import SelectComponent from "@/components/ui/FormSelect";
+import { TARGET_STAT_OPTIONS } from "@/config/options";
 import { WeaponFormState } from "@/domains/weaponForm";
 import { numberValue } from "@/lib/utils";
 
@@ -20,9 +22,9 @@ export default function SkillSection({ form, setForm }: Props) {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-1">
           <LabelComponent>패시브 스탯</LabelComponent>
-          <InputComponent
+          <SelectComponent
             value={form.passiveStat}
-            placeholder="패시브 스탯명"
+            options={TARGET_STAT_OPTIONS}
             onChange={(v) => update("passiveStat", v)}
           />
         </div>

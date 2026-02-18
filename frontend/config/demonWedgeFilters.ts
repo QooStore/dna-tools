@@ -20,7 +20,8 @@ export const DEMON_WEDGE_FILTERS: FilterGroup[] = [
       { value: "character", label: "캐릭터" },
       { value: "meleeWeapon", label: "근거리 무기" },
       { value: "rangedWeapon", label: "원거리 무기" },
-      { value: "consonanceWeapon", label: "동조 무기" },
+      { value: "meleeConsonanceWeapon", label: "근거리 동조 무기" },
+      { value: "rangedConsonanceWeapon", label: "원거리 동조 무기" },
     ],
   },
   {

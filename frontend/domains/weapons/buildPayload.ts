@@ -27,7 +27,8 @@ export function buildWeaponPayload(form: WeaponFormState): WeaponSaveRequest {
     fallAttackSpeed: isMelee ? form.fallAttackSpeed : undefined,
 
     // 원거리 전용
-    multiShot: isRanged ? form.multiShot : undefined,
+    multishot: isRanged ? form.multishot : undefined,
+    magCapacity: isRanged ? form.magCapacity : undefined,
     maxAmmo: isRanged ? form.maxAmmo : undefined,
     ammoConversionRate: isRanged ? form.ammoConversionRate : undefined,
 

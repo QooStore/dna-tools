@@ -35,6 +35,7 @@ export function buildCharacterPayload(form: CharacterFormState): CharacterSaveRe
             critDamage: form.consonanceWeapon.critDamage,
             attackSpeed: form.consonanceWeapon.attackSpeed,
             triggerProbability: form.consonanceWeapon.triggerProbability,
+            multishot: form.consonanceWeapon.multishot,
           }
         : undefined,
 

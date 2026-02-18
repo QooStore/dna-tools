@@ -39,7 +39,7 @@ export const CHARACTER_DETAILS_CONSONANCE_WEAPON: readonly Field[] = [
   { key: "critDamage", label: "치명타 피해", kind: "number" },
   { key: "attackSpeed", label: "공격 속도", kind: "number" },
   { key: "triggerProbability", label: "발동 확률", kind: "number" },
-  { key: "multishot", label: "최대 탄약", kind: "number" },
+  { key: "multishot", label: "다중 사격", kind: "number" },
 ];
 
 export const STATS_FIELDS: readonly Field[] = [
@@ -78,6 +78,7 @@ export const WEAPON_FIELDS: readonly Field[] = [
   { key: "critDamage", label: "치명타 피해량 (%)", kind: "number" },
   { key: "attackSpeed", label: "공격 속도", kind: "number" },
   { key: "triggerProbability", label: "발동 확률 (%)", kind: "number" },
+  { key: "multishot", label: "다중 사격", kind: "number" },
 ];
 
 // --- 무기 폼 필드 ---
@@ -95,7 +96,8 @@ export const WEAPON_MELEE_FIELDS: readonly Field[] = [
 ];
 
 export const WEAPON_RANGED_FIELDS: readonly Field[] = [
-  { key: "multiShot", label: "다중 사격", kind: "number" },
+  { key: "multishot", label: "다중 사격", kind: "number" },
+  { key: "magCapacity", label: "탄창 용량", kind: "number" },
   { key: "maxAmmo", label: "최대 탄약", kind: "number" },
   { key: "ammoConversionRate", label: "탄약 전환율 (%)", kind: "number" },
 ];

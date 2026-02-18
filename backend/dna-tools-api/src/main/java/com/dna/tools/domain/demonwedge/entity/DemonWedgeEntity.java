@@ -36,10 +36,10 @@ public class DemonWedgeEntity {
     @Column(nullable = false)
     private Integer resistance;
 
-    @Column(nullable = false, length = 10)
+    @Column(length = 10)
     private String tendency;
 
-    @Column(name = "equip_type", nullable = false, length = 20)
+    @Column(name = "equip_type", nullable = false, length = 30)
     private String equipType;
 
     @Column(length = 10)

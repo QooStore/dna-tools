@@ -74,7 +74,7 @@ export default function DemonWedgeCard({ wedge, isAdmin = false, onDelete }: Pro
         {/* 태그 */}
         <div className="mb-4 flex flex-wrap justify-center gap-2">
           <Tag>{wedge.equipTypeLabel}</Tag>
-          <Tag>{wedge.tendencyLabel}</Tag>
+          {wedge.tendency && <Tag>{wedge.tendencyLabel}</Tag>}
           <Tag className="bg-sky-500/20 text-sky-300">내성 {wedge.resistance}</Tag>
           {wedge.element ? (
             <Tag className={ELEMENT_TAG_COLORS[wedge.element] ?? "bg-white/10 text-white/60"}>{wedge.elementLabel}</Tag>
@@ -89,7 +89,11 @@ export default function DemonWedgeCard({ wedge, isAdmin = false, onDelete }: Pro
             {wedge.stats.map((stat, i) => (
               <div key={i} className="flex justify-between text-white/75">
                 <span>{stat.statTypeLabel}</span>
-                <span className="font-semibold text-white tabular-nums">{stat.value}%</span>
+                {stat.statType?.includes("Range") ? (
+                  <span className="font-semibold text-white tabular-nums">+{stat.value}</span>
+                ) : (
+                  <span className="font-semibold text-white tabular-nums">{stat.value}%</span>
+                )}
               </div>
             ))}
           </div>

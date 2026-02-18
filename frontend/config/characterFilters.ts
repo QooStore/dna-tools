@@ -16,7 +16,7 @@ export const CHARACTER_FILTERS: FilterGroup[] = [
       { value: "All", label: "전체" },
       { value: "hydro", label: "물" },
       { value: "pyro", label: "불" },
-      { value: "anemo", label: "전체" },
+      { value: "anemo", label: "바람" },
       { value: "electro", label: "번개" },
       { value: "lumino", label: "빛" },
       { value: "umbro", label: "어둠" },
@@ -68,5 +68,21 @@ export const CHARACTER_FILTERS: FilterGroup[] = [
       { value: "maxSanity", label: "최대 정신력" },
     ],
     multi: true,
+  },
+];
+
+export const CHARACTER_MODAL_FILTERS: FilterGroup[] = [
+  {
+    field: "elementCode",
+    title: "속성",
+    options: [
+      { value: "All", label: "전체" },
+      { value: "hydro", label: "물" },
+      { value: "pyro", label: "불" },
+      { value: "anemo", label: "바람" },
+      { value: "electro", label: "번개" },
+      { value: "lumino", label: "빛" },
+      { value: "umbro", label: "어둠" },
+    ],
   },
 ];

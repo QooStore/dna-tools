@@ -66,11 +66,14 @@ public class WeaponEntity {
     private BigDecimal fallAttackSpeed;
 
     // --- 원거리 전용 ---
-    @Column(name = "multi_shot")
-    private Integer multiShot;
+    @Column(name = "multishot")
+    private Integer multishot;
 
     @Column(name = "max_ammo")
     private Integer maxAmmo;
+
+    @Column(name = "mag_capacity")
+    private Integer magCapacity;
 
     @Column(name = "ammo_conversion_rate", precision = 5, scale = 2)
     private BigDecimal ammoConversionRate;
@@ -96,7 +99,7 @@ public class WeaponEntity {
             BigDecimal attack, BigDecimal critRate, BigDecimal critDamage,
             BigDecimal attackSpeed, BigDecimal triggerProbability,
             BigDecimal chargeAttackSpeed, BigDecimal fallAttackSpeed,
-            Integer multiShot, Integer maxAmmo, BigDecimal ammoConversionRate,
+            Integer multishot, Integer maxAmmo, Integer magCapacity, BigDecimal ammoConversionRate,
             String passiveStat, BigDecimal passiveValue, String activeSkillDescription) {
         WeaponEntity w = new WeaponEntity();
         w.slug = slug;
@@ -113,8 +116,9 @@ public class WeaponEntity {
         w.triggerProbability = triggerProbability;
         w.chargeAttackSpeed = chargeAttackSpeed;
         w.fallAttackSpeed = fallAttackSpeed;
-        w.multiShot = multiShot;
+        w.multishot = multishot;
         w.maxAmmo = maxAmmo;
+        w.magCapacity = magCapacity;
         w.ammoConversionRate = ammoConversionRate;
         w.passiveStat = passiveStat;
         w.passiveValue = passiveValue;
@@ -129,7 +133,7 @@ public class WeaponEntity {
             BigDecimal attack, BigDecimal critRate, BigDecimal critDamage,
             BigDecimal attackSpeed, BigDecimal triggerProbability,
             BigDecimal chargeAttackSpeed, BigDecimal fallAttackSpeed,
-            Integer multiShot, Integer maxAmmo, BigDecimal ammoConversionRate,
+            Integer multishot, Integer maxAmmo, Integer magCapacity, BigDecimal ammoConversionRate,
             String passiveStat, BigDecimal passiveValue, String activeSkillDescription) {
         this.slug = slug;
         this.name = name;
@@ -145,8 +149,9 @@ public class WeaponEntity {
         this.triggerProbability = triggerProbability;
         this.chargeAttackSpeed = chargeAttackSpeed;
         this.fallAttackSpeed = fallAttackSpeed;
-        this.multiShot = multiShot;
+        this.multishot = multishot;
         this.maxAmmo = maxAmmo;
+        this.magCapacity = magCapacity;
         this.ammoConversionRate = ammoConversionRate;
         this.passiveStat = passiveStat;
         this.passiveValue = passiveValue;

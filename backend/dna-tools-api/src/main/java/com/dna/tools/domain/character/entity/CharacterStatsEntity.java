@@ -25,7 +25,7 @@ public class CharacterStatsEntity {
     private CharacterEntity character;
 
     @Column(nullable = false)
-    private int attack;
+    private BigDecimal attack;
 
     @Column(nullable = false)
     private int hp;
@@ -44,7 +44,7 @@ public class CharacterStatsEntity {
 
     public CharacterStatsEntity(
             CharacterEntity character,
-            int attack,
+            BigDecimal attack,
             int hp,
             int defense,
             int maxMentality,
@@ -60,7 +60,7 @@ public class CharacterStatsEntity {
     }
 
     public void update(
-            int attack,
+            BigDecimal attack,
             int hp,
             int defense,
             int maxMentality,

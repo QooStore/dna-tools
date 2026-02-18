@@ -29,8 +29,9 @@ public class WeaponSaveRequest {
     private BigDecimal fallAttackSpeed;
 
     // 원거리 전용
-    private Integer multiShot;
+    private Integer multishot;
     private Integer maxAmmo;
+    private Integer magCapacity;
     private BigDecimal ammoConversionRate;
 
     // 패시브 스킬

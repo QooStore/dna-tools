@@ -9,8 +9,10 @@ export default function Header() {
     <header className="sticky top-0 z-50 bg-[#0b1020]/80 backdrop-blur border-b border-white/10">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4">
         {/* 로고 = 홈 */}
-        <Link href="/" className="text-lg font-bold tracking-wide text-white hover:text-cyan-400 transition">
-          DNA TOOLS
+        <Link href="/" className="group relative text-xl font-extrabold tracking-widest transition">
+          <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent drop-shadow-[0_0_8px_rgba(56,189,248,0.4)] group-hover:drop-shadow-[0_0_12px_rgba(56,189,248,0.6)]">
+            DNA TOOLS
+          </span>
         </Link>
 
         {/* 메뉴 */}
