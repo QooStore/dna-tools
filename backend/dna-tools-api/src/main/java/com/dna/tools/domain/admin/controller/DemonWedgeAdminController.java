@@ -1,5 +1,6 @@
 package com.dna.tools.domain.admin.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,13 +21,13 @@ public class DemonWedgeAdminController {
 
     private final DemonWedgeAdminService demonWedgeAdminService;
 
-    // @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public void create(@RequestBody DemonWedgeSaveRequest request) {
         demonWedgeAdminService.create(request);
     }
 
-    // @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{slug}")
     public void update(
             @PathVariable String slug,
@@ -34,7 +35,7 @@ public class DemonWedgeAdminController {
         demonWedgeAdminService.updateBySlug(slug, request);
     }
 
-    // @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public void delete(@PathVariable long id) {
         demonWedgeAdminService.delete(id);

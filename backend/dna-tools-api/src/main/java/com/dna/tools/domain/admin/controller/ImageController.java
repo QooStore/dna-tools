@@ -1,5 +1,6 @@
 package com.dna.tools.domain.admin.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -18,7 +19,7 @@ public class ImageController {
 
     private final ImageUploadService imageUploadService;
 
-    // @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/image")
     public ImageUploadResponse uploadImage(@RequestPart("file") MultipartFile file) {
         String url = imageUploadService.upload(file);

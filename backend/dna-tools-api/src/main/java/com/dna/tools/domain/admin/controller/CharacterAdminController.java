@@ -21,19 +21,19 @@ public class CharacterAdminController {
 
     private final CharacterAdminService characterAdminService;
 
-    // @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public void deleteCharacter(@PathVariable long id) {
         characterAdminService.deleteCharacter(id);
     }
 
-    // @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public void create(@RequestBody CharacterSaveRequest request) {
         characterAdminService.create(request);
     }
 
-    // @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{slug}")
     public void update(
             @PathVariable String slug,

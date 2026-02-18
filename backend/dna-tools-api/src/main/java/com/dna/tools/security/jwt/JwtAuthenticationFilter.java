@@ -9,6 +9,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -48,6 +50,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             // SecurityContext에 등록
             SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            // Sliding session: 인증된 요청마다 토큰 갱신 (만료 시간 연장)
+            String newToken = jwtProvider.createToken(Long.parseLong(adminId), role);
+            long maxAgeSeconds = jwtProvider.getExpirationMs() / 1000;
+            ResponseCookie cookie = ResponseCookie.from("admin_token", newToken)
+                    .httpOnly(true)
+                    .secure(false)
+                    .sameSite("Lax")
+                    .path("/")
+                    .maxAge(maxAgeSeconds)
+                    .build();
+            response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         }
 
         // 요청을 다음 필터로 넘기기

@@ -43,6 +43,10 @@ public class JwtProvider {
                 secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
+    public long getExpirationMs() {
+        return expirationMs;
+    }
+
     /** 토큰 검증 */
     public boolean validateToken(String token) {
         try {
