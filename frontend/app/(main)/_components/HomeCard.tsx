@@ -12,7 +12,7 @@ export default function HomeCard({ title, href, image, highlight = false }: Home
     <Link
       href={href}
       className={`
-        group relative block overflow-hidden rounded-xl
+        group relative block w-[240px] overflow-hidden rounded-xl
         ${highlight ? "ring-2 ring-cyan-400/60" : "border border-white/10"}
         aspect-square
       `}

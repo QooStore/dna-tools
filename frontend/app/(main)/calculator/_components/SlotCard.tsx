@@ -1,27 +1,36 @@
 "use client";
 
-function getImageUrl(item: any): string | undefined {
-  return item?.listImage || item?.image;
-}
+type SlotItem = {
+  name: string;
+  listImage?: string;
+  image?: string | null;
+};
 
 export default function SlotCard({
   label,
   item,
   onClick,
   size = "md",
+  disabled = false,
 }: {
   label: string;
-  item?: any;
+  item?: SlotItem;
   onClick: () => void;
   size?: "sm" | "md";
+  disabled?: boolean;
 }) {
-  const img = item ? getImageUrl(item) : undefined;
+  const img = item?.listImage || item?.image;
 
   return (
-    <button onClick={onClick} className="group w-full">
+    <button
+      onClick={disabled ? undefined : onClick}
+      className={`group w-fit ${disabled ? "opacity-40 cursor-not-allowed" : ""}`}
+    >
       <div
         className={
-          "relative mx-auto overflow-hidden rounded-2xl border border-dashed border-white/25 bg-white/5 hover:bg-white/10 transition " +
+          "relative mx-auto overflow-hidden rounded-2xl border border-dashed transition " +
+          (disabled ? "border-white/10 bg-white/3" : "border-white/25 bg-white/5 hover:bg-white/10") +
+          " " +
           (size === "sm" ? "h-[160px] w-[120px]" : "h-[220px] w-[160px]")
         }
       >
@@ -30,7 +39,7 @@ export default function SlotCard({
           <img src={img} alt={item?.name ?? label} className="h-full w-full object-cover" />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-3xl text-white/80">+</div>
+            <div className="text-3xl text-white/80">{disabled ? "" : "+"}</div>
           </div>
         )}
         {/* overlay name */}
