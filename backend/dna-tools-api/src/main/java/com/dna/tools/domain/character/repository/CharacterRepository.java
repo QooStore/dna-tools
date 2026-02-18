@@ -26,6 +26,7 @@ public interface CharacterRepository extends JpaRepository<CharacterEntity, Long
                         select distinct c
                         from CharacterEntity c
                         left join fetch c.features
+                        order by c.id
                                         """)
         List<CharacterEntity> findAllCharacterList();
 }

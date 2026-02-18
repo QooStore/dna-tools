@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -74,7 +73,7 @@ public class CharacterDetailMapper {
         }
 
         private static List<CharacterFeatureResponse> toFeatures(
-                        Set<CharacterFeatureEntity> features, LabelContext labels) {
+                        List<CharacterFeatureEntity> features, LabelContext labels) {
                 return features.stream()
                                 .map(f -> new CharacterFeatureResponse(
                                                 f.getFeature(),
@@ -83,7 +82,7 @@ public class CharacterDetailMapper {
         }
 
         private static List<SkillResponse> toSkills(
-                        Set<SkillEntity> skills, LabelContext labels) {
+                        List<SkillEntity> skills, LabelContext labels) {
                 return skills.stream()
                                 .map(s -> new SkillResponse(
                                                 s.getName(),
@@ -94,7 +93,7 @@ public class CharacterDetailMapper {
         }
 
         private static List<IntronResponse> toIntrons(
-                        Set<IntronEntity> introns) {
+                        List<IntronEntity> introns) {
                 return introns.stream()
                                 .map(i -> new IntronResponse(
                                                 i.getStage(),
@@ -103,7 +102,7 @@ public class CharacterDetailMapper {
         }
 
         private static List<PassiveUpgradeResponse> toPassiveUpgrades(
-                        Set<PassiveUpgradeEntity> upgrades) {
+                        List<PassiveUpgradeEntity> upgrades) {
                 return upgrades.stream()
                                 .map(p -> new PassiveUpgradeResponse(
                                                 p.getUpgradeKey(),

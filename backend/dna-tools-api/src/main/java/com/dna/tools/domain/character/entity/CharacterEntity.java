@@ -6,10 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -65,19 +64,19 @@ public class CharacterEntity {
 
     @OneToMany(mappedBy = "character", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id ASC")
-    private Set<CharacterFeatureEntity> features = new HashSet<CharacterFeatureEntity>();
+    private List<CharacterFeatureEntity> features = new ArrayList<>();
 
     @OneToMany(mappedBy = "character", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id ASC")
-    private Set<SkillEntity> skills = new HashSet<SkillEntity>();
+    private List<SkillEntity> skills = new ArrayList<>();
 
     @OneToMany(mappedBy = "character", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("stage ASC")
-    private Set<IntronEntity> introns = new HashSet<IntronEntity>();
+    private List<IntronEntity> introns = new ArrayList<>();
 
     @OneToMany(mappedBy = "character", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id ASC")
-    private Set<PassiveUpgradeEntity> passiveUpgrades = new HashSet<PassiveUpgradeEntity>();
+    private List<PassiveUpgradeEntity> passiveUpgrades = new ArrayList<>();
 
     // ===== 생성 팩토리 (등록) =====
     public static CharacterEntity create(
