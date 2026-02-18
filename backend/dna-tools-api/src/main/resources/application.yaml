@@ -1,10 +1,12 @@
 spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
   application:
     name: dna-tools-api
   datasource:
-    url: jdbc:mysql://localhost:3306/dna
-    username: dna_user
-    password: dna1412
+    url: ${DB_URL:jdbc:mysql://localhost:3306/dna}
+    username: ${DB_USERNAME:dna_user}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -23,16 +25,16 @@ server:
   port: 8080
 
 jwt:
-  secret: dna-tools-jwt-secret-key-should-be-at-least-32-bytes!!
+  secret: ${JWT_SECRET}
   expiration: 3600000 # 1시간
 
 file:
   upload:
-    image-dir: ./uploads/images
+    image-dir: ${IMAGE_DIR:./uploads/images}
 
 app:
   image:
-    base-url: ""
+    base-url: ${IMAGE_BASE_URL:}
 
 logging:
   level:

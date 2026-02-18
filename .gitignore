@@ -50,5 +50,8 @@ next-env.d.ts
 # logs
 logs/
 
+# Spring local profile
+application-local.yaml
+
 # claude code
 .claude/settings.local.json
