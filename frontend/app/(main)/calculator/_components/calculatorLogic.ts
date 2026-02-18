@@ -1,6 +1,6 @@
 import type { DemonWedgeListItem } from "@/domains/demonWedges/type";
 import type { WeaponListItem } from "@/domains/weapons/type";
-import type { CharacterListItem } from "@/domains/characters/types";
+import type { CharacterListItem, CharacterPassiveUpgrade } from "@/domains/characters/types";
 import type { BuffFields, BuildState, CalcMode, ActiveTab } from "./calculatorTypes";
 import { emptyBuffFields } from "./calculatorTypes";
 
@@ -33,10 +33,13 @@ const STAT_TO_BUFF_FIELD: Record<string, keyof BuffFields> = {
   damage: "damagePct",
   weaponDmg: "weaponDamagePct",
   weaponAttack_per: "weaponAttackPct",
+  slashAttack_per: "weaponAttackPct",
+  smashAttack_per: "weaponAttackPct",
+  spikeAttack_per: "weaponAttackPct",
   critRate: "critRatePct",
   critDamage: "critDamagePct",
   attackSpeed: "attackSpeedPct",
-  // NOTE: extraDamagePct는 현재 DB statType에 직접 매핑되는 항목이 없어 수동 입력만 지원
+  additionalDmg: "extraDamagePct",
 };
 
 export function applyWedgesToBuff(
@@ -62,6 +65,28 @@ export function applyWedgesToBuff(
     }
   }
   return { buff, unsupported };
+}
+
+export function applyPassiveUpgradesToBuff(
+  passiveUpgrades: CharacterPassiveUpgrade[],
+  upgradeType: "STAT" | "COOP",
+): BuffFields {
+  const buff = emptyBuffFields();
+  for (const pu of passiveUpgrades) {
+    if (pu.upgradeType !== upgradeType || !pu.targetStat || pu.value == null) continue;
+    const key = STAT_TO_BUFF_FIELD[pu.targetStat];
+    if (!key) continue;
+    buff[key] += Number(pu.value);
+  }
+  return buff;
+}
+
+export function applyWeaponPassiveToBuff(passiveStat: string | null, passiveValue: number | null): BuffFields {
+  const buff = emptyBuffFields();
+  if (!passiveStat || passiveValue == null) return buff;
+  const key = STAT_TO_BUFF_FIELD[passiveStat];
+  if (key) buff[key] += Number(passiveValue);
+  return buff;
 }
 
 export function sumBuffs(sections: BuffFields[]): BuffFields {

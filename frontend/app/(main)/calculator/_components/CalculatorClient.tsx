@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import type { CharacterListItem } from "@/domains/characters/types";
 import type { WeaponListItem } from "@/domains/weapons/type";
@@ -21,7 +21,14 @@ import { WEAPON_FILTERS } from "@/config/weaponFilters";
 import { DEMON_WEDGE_FILTERS } from "@/config/demonWedgeFilters";
 
 import { ActiveTab, BuildId, BuildState, emptyBuildState, BuffFields, emptyBuffFields } from "./calculatorTypes";
-import { TAB_LABELS, applyWedgesToBuff, tabToEquipType } from "./calculatorLogic";
+import {
+  TAB_LABELS,
+  applyWedgesToBuff,
+  applyPassiveUpgradesToBuff,
+  applyWeaponPassiveToBuff,
+  sumBuffs,
+  tabToEquipType,
+} from "./calculatorLogic";
 
 type Props = {
   characters: CharacterListItem[];
@@ -60,6 +67,38 @@ function applyCharacterDetail(prev: BuildState, detail: CharacterDetail): BuildS
       },
     },
   };
+}
+
+type PassiveContrib = {
+  main: BuffFields;
+  ally1: BuffFields;
+  ally2: BuffFields;
+  meleeWeapon: BuffFields;
+  rangedWeapon: BuffFields;
+};
+const emptyPassiveContrib = (): PassiveContrib => ({
+  main: emptyBuffFields(),
+  ally1: emptyBuffFields(),
+  ally2: emptyBuffFields(),
+  meleeWeapon: emptyBuffFields(),
+  rangedWeapon: emptyBuffFields(),
+});
+
+function setPassiveContribAndApply(
+  contribRef: React.MutableRefObject<PassiveContrib>,
+  key: keyof PassiveContrib,
+  buff: BuffFields,
+  setBuildFn: React.Dispatch<React.SetStateAction<BuildState>>,
+) {
+  contribRef.current[key] = buff;
+  const combined = sumBuffs([
+    contribRef.current.main,
+    contribRef.current.ally1,
+    contribRef.current.ally2,
+    contribRef.current.meleeWeapon,
+    contribRef.current.rangedWeapon,
+  ]);
+  setBuildFn((prev) => ({ ...prev, buffs: { ...prev.buffs, passive: combined } }));
 }
 
 const BUFF_FIELD_META: { key: keyof BuffFields; label: string }[] = [
@@ -109,10 +148,14 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
   const [buildB, setBuildB] = useState<BuildState>(() => emptyBuildState());
 
   const build = activeBuild === "A" ? buildA : buildB;
-  console.log("build ==> ", build);
   const setBuild = activeBuild === "A" ? setBuildA : setBuildB;
 
-  // 캐릭터 상세는 리스트에 없어서, 메인 캐릭터 선택 시 detail을 lazy-fetch 후 base stats에 자동 주입합니다.
+  // 패시브 기여분 (메인 STAT + 협력 동료 COOP) 을 ref로 관리
+  const passiveContribA = useRef<PassiveContrib>(emptyPassiveContrib());
+  const passiveContribB = useRef<PassiveContrib>(emptyPassiveContrib());
+
+  // 메인 캐릭터 detail fetch → base stats + 패시브(STAT)
+  // 리셋은 onSelect 이벤트 핸들러에서 처리 (동기 setState in effect 방지)
   useEffect(() => {
     const slug = buildA.selections.characterSlug;
     if (!slug) return;
@@ -122,6 +165,12 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
         const detail = await fetchCharacterDetailClient(slug);
         if (cancelled) return;
         setBuildA((prev) => applyCharacterDetail(prev, detail));
+        setPassiveContribAndApply(
+          passiveContribA,
+          "main",
+          applyPassiveUpgradesToBuff(detail.passiveUpgrades ?? [], "STAT"),
+          setBuildA,
+        );
       } catch {
         // ignore
       }
@@ -140,6 +189,12 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
         const detail = await fetchCharacterDetailClient(slug);
         if (cancelled) return;
         setBuildB((prev) => applyCharacterDetail(prev, detail));
+        setPassiveContribAndApply(
+          passiveContribB,
+          "main",
+          applyPassiveUpgradesToBuff(detail.passiveUpgrades ?? [], "STAT"),
+          setBuildB,
+        );
       } catch {
         // ignore
       }
@@ -148,6 +203,99 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
       cancelled = true;
     };
   }, [buildB.selections.characterSlug]);
+
+  // 협력 동료 detail fetch → 패시브(COOP)
+  useEffect(() => {
+    const slug = buildA.selections.ally1Slug;
+    if (!slug) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const detail = await fetchCharacterDetailClient(slug);
+        if (cancelled) return;
+        setPassiveContribAndApply(
+          passiveContribA,
+          "ally1",
+          applyPassiveUpgradesToBuff(detail.passiveUpgrades ?? [], "COOP"),
+          setBuildA,
+        );
+      } catch {
+        // ignore
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [buildA.selections.ally1Slug]);
+
+  useEffect(() => {
+    const slug = buildA.selections.ally2Slug;
+    if (!slug) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const detail = await fetchCharacterDetailClient(slug);
+        if (cancelled) return;
+        setPassiveContribAndApply(
+          passiveContribA,
+          "ally2",
+          applyPassiveUpgradesToBuff(detail.passiveUpgrades ?? [], "COOP"),
+          setBuildA,
+        );
+      } catch {
+        // ignore
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [buildA.selections.ally2Slug]);
+
+  useEffect(() => {
+    const slug = buildB.selections.ally1Slug;
+    if (!slug) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const detail = await fetchCharacterDetailClient(slug);
+        if (cancelled) return;
+        setPassiveContribAndApply(
+          passiveContribB,
+          "ally1",
+          applyPassiveUpgradesToBuff(detail.passiveUpgrades ?? [], "COOP"),
+          setBuildB,
+        );
+      } catch {
+        // ignore
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [buildB.selections.ally1Slug]);
+
+  useEffect(() => {
+    const slug = buildB.selections.ally2Slug;
+    if (!slug) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const detail = await fetchCharacterDetailClient(slug);
+        if (cancelled) return;
+        setPassiveContribAndApply(
+          passiveContribB,
+          "ally2",
+          applyPassiveUpgradesToBuff(detail.passiveUpgrades ?? [], "COOP"),
+          setBuildB,
+        );
+      } catch {
+        // ignore
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [buildB.selections.ally2Slug]);
 
   const meleeWeapons = useMemo(() => weapons.filter((w) => w.category === "melee"), [weapons]);
   const rangedWeapons = useMemo(() => weapons.filter((w) => w.category === "ranged"), [weapons]);
@@ -203,13 +351,16 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
   const syncWedgeBuff = (tab: ActiveTab, wedgeSlugs: string[]) => {
     const { buff, unsupported } = applyWedgesToBuff(wedges, wedgeSlugs);
     const sectionKey = sectionKeyForTab(tab);
-    setBuild((prev) => ({
-      ...prev,
-      buffs: {
-        ...prev.buffs,
-        [sectionKey]: { ...buff, extraDamagePct: prev.buffs[sectionKey].extraDamagePct || 0 },
-      },
-    }));
+    setBuild((prev) => {
+      console.log("prev ==> ", prev);
+      return {
+        ...prev,
+        buffs: {
+          ...prev.buffs,
+          [sectionKey]: { ...buff, extraDamagePct: prev.buffs[sectionKey].extraDamagePct || 0 },
+        },
+      };
+    });
 
     // 미지원 statType이 있으면 콘솔에만 찍어둠 (UI 경고는 다음 단계에서 붙이기)
     if (unsupported.length) {
@@ -390,7 +541,7 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
       {/* 캐릭터 선택 모달 */}
       <PickerModal
         open={picker?.type === "character"}
-        title={picker?.type === "character" && picker.target === "main" ? "Select Main Character" : "Select Ally"}
+        title={picker?.type === "character" && picker.target === "main" ? "메인 캐릭터 선택" : "협력 동료 선택"}
         items={characters as any}
         selectedSlug={
           picker?.type === "character"
@@ -414,22 +565,52 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
         onClose={() => setPicker(null)}
         onSelect={(slug) => {
           if (picker?.type !== "character") return;
-          setBuild((prev) => ({
-            ...prev,
-            selections: {
-              ...prev.selections,
-              characterSlug: picker.target === "main" ? slug : prev.selections.characterSlug,
-              ally1Slug: picker.target === "ally1" ? slug : prev.selections.ally1Slug,
-              ally2Slug: picker.target === "ally2" ? slug : prev.selections.ally2Slug,
-            },
-          }));
+          if (picker.target === "main") {
+            const contribRef = activeBuild === "A" ? passiveContribA : passiveContribB;
+            // 같은 캐릭터 재선택 시 무시
+            if (build.selections.characterSlug === slug) return;
+            // 캐릭터 변경 → 무기·동료·쐐기 전부 초기화
+            contribRef.current = emptyPassiveContrib();
+            setBuild((prev) => {
+              const empty = emptyBuildState();
+              return {
+                ...empty,
+                selections: { ...empty.selections, characterSlug: slug },
+                activeTab: prev.activeTab,
+              };
+            });
+          } else {
+            // 같은 동료 재선택 시 무시
+            const currentSlug = picker.target === "ally1" ? build.selections.ally1Slug : build.selections.ally2Slug;
+            if (currentSlug === slug) return;
+            // 동료 변경 시 이전 COOP 기여분 즉시 초기화 (새 값은 effect에서 비동기 적용)
+            const allyKey = picker.target === "ally1" ? "ally1" : "ally2";
+            const contribRef = activeBuild === "A" ? passiveContribA : passiveContribB;
+            contribRef.current[allyKey] = emptyBuffFields();
+            const combinedPassive = sumBuffs([
+              contribRef.current.main,
+              contribRef.current.ally1,
+              contribRef.current.ally2,
+              contribRef.current.meleeWeapon,
+              contribRef.current.rangedWeapon,
+            ]);
+            setBuild((prev) => ({
+              ...prev,
+              selections: {
+                ...prev.selections,
+                ally1Slug: picker.target === "ally1" ? slug : prev.selections.ally1Slug,
+                ally2Slug: picker.target === "ally2" ? slug : prev.selections.ally2Slug,
+              },
+              buffs: { ...prev.buffs, passive: combinedPassive },
+            }));
+          }
         }}
       />
 
       {/* 무기 선택 모달 */}
       <PickerModal
         open={picker?.type === "weapon"}
-        title={picker?.type === "weapon" && picker.target === "melee" ? "Select Melee Weapon" : "Select Ranged Weapon"}
+        title={picker?.type === "weapon" && picker.target === "melee" ? "근접 무기 선택" : "원거리 무기 선택"}
         items={(picker?.type === "weapon" && picker.target === "melee" ? meleeWeapons : rangedWeapons) as any}
         selectedSlug={
           picker?.type === "weapon"
@@ -446,6 +627,27 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
         onClose={() => setPicker(null)}
         onSelect={(slug) => {
           if (picker?.type !== "weapon") return;
+          // 같은 무기 재선택 시 무시
+          const currentSlug =
+            picker.target === "melee" ? build.selections.meleeWeaponSlug : build.selections.rangedWeaponSlug;
+          if (currentSlug === slug) return;
+
+          const w = weapons.find((x) => x.slug === slug);
+          const baseWeapon = w
+            ? { attack: w.attack, critRatePct: w.critRate, critDamagePct: w.critDamage, attackSpeed: w.attackSpeed }
+            : { attack: 0, critRatePct: 0, critDamagePct: 0, attackSpeed: 1 };
+          const weaponKey = picker.target === "melee" ? "meleeWeapon" : "rangedWeapon";
+          const contribRef = activeBuild === "A" ? passiveContribA : passiveContribB;
+          contribRef.current[weaponKey] = w
+            ? applyWeaponPassiveToBuff(w.passiveStat, w.passiveValue)
+            : emptyBuffFields();
+          const combinedPassive = sumBuffs([
+            contribRef.current.main,
+            contribRef.current.ally1,
+            contribRef.current.ally2,
+            contribRef.current.meleeWeapon,
+            contribRef.current.rangedWeapon,
+          ]);
           setBuild((prev) => ({
             ...prev,
             selections: {
@@ -453,6 +655,8 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
               meleeWeaponSlug: picker.target === "melee" ? slug : prev.selections.meleeWeaponSlug,
               rangedWeaponSlug: picker.target === "ranged" ? slug : prev.selections.rangedWeaponSlug,
             },
+            base: { ...prev.base, [weaponKey]: baseWeapon },
+            buffs: { ...prev.buffs, passive: combinedPassive },
           }));
         }}
       />
@@ -460,7 +664,7 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
       {/* 쐐기 선택 모달 */}
       <PickerModal
         open={picker?.type === "wedge"}
-        title="Select Demon Wedge"
+        title="악마의 쐐기 선택"
         items={wedgeOptionsForTab as any}
         selectedSlug={picker?.type === "wedge" ? build.wedgeSlots[picker.tab][picker.slotIndex] : undefined}
         filters={DEMON_WEDGE_FILTERS.filter((f) => f.field !== "equipType" && f.field !== "element").map((f) => ({
