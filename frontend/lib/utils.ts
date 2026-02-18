@@ -1,17 +1,15 @@
-import { WeaponStatKey } from "@/domains/weapons/type";
+const PERCENT_KEYS = new Set(["critRate", "critDamage", "triggerProbability"]);
 
-const PERCENT_KEYS: WeaponStatKey[] = ["critRate", "critDamage", "triggerProbability"] as const;
+const MULTIPLIER_KEYS = new Set(["attackSpeed"]);
 
-const MULTIPLIER_KEYS: WeaponStatKey[] = ["attackSpeed"] as const;
-
-export function formatWeaponStat(key: WeaponStatKey, value: string | number): string | number {
+export function formatWeaponStat(key: string, value: string | number): string | number {
   if (typeof value !== "number") return value;
 
-  if (MULTIPLIER_KEYS.includes(key)) {
+  if (MULTIPLIER_KEYS.has(key)) {
     return `${value * 100}%`;
   }
 
-  if (PERCENT_KEYS.includes(key)) {
+  if (PERCENT_KEYS.has(key)) {
     return `${value}%`;
   }
 

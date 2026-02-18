@@ -380,7 +380,6 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
 
     // 미지원 statType이 있으면 콘솔에만 찍어둠 (UI 경고는 다음 단계에서 붙이기)
     if (unsupported.length) {
-      // eslint-disable-next-line no-console
       console.warn("[Calculator] Unsupported wedge stat types:", unsupported);
     }
   };

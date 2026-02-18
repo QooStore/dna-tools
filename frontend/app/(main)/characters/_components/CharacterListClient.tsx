@@ -78,7 +78,7 @@ export default function CharacterListClient({ allCharacters, isAdmin }: Props) {
     try {
       await deleteCharacter(id);
       setCharacters((prev) => prev.filter((c) => c.id !== id));
-    } catch (e) {
+    } catch {
       alert("삭제에 실패했습니다.");
     }
   };
