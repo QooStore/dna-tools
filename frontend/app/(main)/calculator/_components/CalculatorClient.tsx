@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { MutableRefObject, Dispatch, SetStateAction } from "react";
 
 import type { CharacterListItem } from "@/domains/characters/types";
 import type { WeaponListItem } from "@/domains/weapons/type";
@@ -28,6 +29,10 @@ import {
   applyWeaponPassiveToBuff,
   sumBuffs,
   tabToEquipType,
+  computeOutputs,
+  RESONANCE_OPTIONS,
+  getResonanceBonus,
+  type OutputKey,
 } from "./calculatorLogic";
 
 type Props = {
@@ -50,6 +55,7 @@ function applyCharacterDetail(prev: BuildState, detail: CharacterDetail): BuildS
 
   return {
     ...prev,
+    consonanceCategory: consonance?.category ?? null,
     base: {
       ...prev.base,
       character: {
@@ -61,9 +67,9 @@ function applyCharacterDetail(prev: BuildState, detail: CharacterDetail): BuildS
       consonanceWeapon: {
         ...prev.base.consonanceWeapon,
         attack: consonance?.attack ?? 0,
-        critRatePct: (consonance as any)?.critRate ?? 0,
-        critDamagePct: (consonance as any)?.critDamage ?? 0,
-        attackSpeed: (consonance as any)?.attackSpeed ?? 1,
+        critRatePct: consonance?.critRate ?? 0,
+        critDamagePct: consonance?.critDamage ?? 0,
+        attackSpeed: consonance?.attackSpeed ?? 1,
       },
     },
   };
@@ -85,10 +91,10 @@ const emptyPassiveContrib = (): PassiveContrib => ({
 });
 
 function setPassiveContribAndApply(
-  contribRef: React.MutableRefObject<PassiveContrib>,
+  contribRef: MutableRefObject<PassiveContrib>,
   key: keyof PassiveContrib,
   buff: BuffFields,
-  setBuildFn: React.Dispatch<React.SetStateAction<BuildState>>,
+  setBuildFn: Dispatch<SetStateAction<BuildState>>,
 ) {
   contribRef.current[key] = buff;
   const combined = sumBuffs([
@@ -149,6 +155,13 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
 
   const build = activeBuild === "A" ? buildA : buildB;
   const setBuild = activeBuild === "A" ? setBuildA : setBuildB;
+
+  const [toast, setToast] = useState<string | null>(null);
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 2000);
+    return () => clearTimeout(t);
+  }, [toast]);
 
   // 패시브 기여분 (메인 STAT + 협력 동료 COOP) 을 ref로 관리
   const passiveContribA = useRef<PassiveContrib>(emptyPassiveContrib());
@@ -334,13 +347,16 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
   const wedgeOptionsForTab = useMemo(() => {
     const equipType = tabToEquipType[build.activeTab];
     const isKukulkanSlot = build.activeTab === "character" && picker?.type === "wedge" && picker.slotIndex === 8;
+    const charElement = selectedMain?.elementCode ?? null;
     return wedges.filter((w) => {
       if (w.equipType !== equipType) return false;
       if (isKukulkanSlot && !w.isKukulkan) return false;
       if (!isKukulkanSlot && build.activeTab === "character" && w.isKukulkan) return false;
+      // 캐릭터 쐐기: element가 있는 쐐기는 캐릭터 속성과 일치해야 함
+      if (build.activeTab === "character" && w.element && charElement && w.element !== charElement) return false;
       return true;
     });
-  }, [wedges, build.activeTab, picker]);
+  }, [wedges, build.activeTab, picker, selectedMain?.elementCode]);
 
   const wedgeSlotItems = useMemo(() => {
     const slotSlugs = build.wedgeSlots[build.activeTab];
@@ -383,6 +399,10 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
     </button>
   );
 
+  const computeData = useMemo(() => ({ characters, weapons }), [characters, weapons]);
+  const resultA = useMemo(() => computeOutputs(buildA, computeData), [buildA, computeData]);
+  const resultB = useMemo(() => computeOutputs(buildB, computeData), [buildB, computeData]);
+
   return (
     <div className="space-y-8">
       {/* 상단 컨트롤 */}
@@ -396,7 +416,12 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
             onClick={() => {
               const from = activeBuild === "A" ? buildA : buildB;
               const toSetter = activeBuild === "A" ? setBuildB : setBuildA;
+              const fromContrib = activeBuild === "A" ? passiveContribA : passiveContribB;
+              const toContrib = activeBuild === "A" ? passiveContribB : passiveContribA;
               toSetter(structuredClone(from));
+              toContrib.current = structuredClone(fromContrib.current);
+              const target = activeBuild === "A" ? "B" : "A";
+              setToast(`빌드 ${activeBuild} → 빌드 ${target} 복사 완료`);
             }}
             className="ml-2 px-3 py-2 rounded-lg text-sm border border-white/15 bg-white/5 text-white/70 hover:bg-white/10"
             title="현재 Build를 반대쪽으로 복사"
@@ -408,6 +433,34 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
 
       {/* 1) 상단 배치 영역 */}
       <ContentSection title="캐릭터 / 무기 선택">
+        {/* 레조넌스 레벨 */}
+        <div className="mb-6 flex items-center gap-3">
+          <label className="text-sm font-semibold text-white/80">수련 레벨</label>
+          <select
+            value={build.resonanceLevel}
+            onChange={(e) => setBuild((p) => ({ ...p, resonanceLevel: Number(e.target.value) }))}
+            className="h-10 rounded-lg border border-white/10 bg-white/5 px-3 text-sm text-white/80"
+          >
+            {RESONANCE_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value} className="text-black">
+                {o.label}
+              </option>
+            ))}
+          </select>
+          {(() => {
+            const b = getResonanceBonus(build.resonanceLevel);
+            const parts = [
+              b.atk > 0 && `공격 +${b.atk}%`,
+              b.def > 0 && `방어 +${b.def}%`,
+              b.hp > 0 && `HP +${b.hp}%`,
+              b.shield > 0 && `실드 +${b.shield}%`,
+            ].filter(Boolean);
+            return parts.length > 0 ? (
+              <span className="text-sm text-green-400">{parts.join(", ")}</span>
+            ) : null;
+          })()}
+        </div>
+
         {/* 슬롯 카드 클릭 → 모달 선택 */}
         <div className="flex flex-col items-center gap-10">
           <div className="text-center">
@@ -426,11 +479,13 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
               label="근접 무기"
               item={selectedMeleeWeapon}
               onClick={() => setPicker({ type: "weapon", target: "melee" })}
+              disabled={!build.selections.characterSlug}
             />
             <SlotCard
               label="원거리 무기"
               item={selectedRangedWeapon}
               onClick={() => setPicker({ type: "weapon", target: "ranged" })}
+              disabled={!build.selections.characterSlug}
             />
           </div>
 
@@ -441,11 +496,13 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
                 label="협력 동료 1"
                 item={selectedAlly1}
                 onClick={() => setPicker({ type: "character", target: "ally1" })}
+                disabled={!build.selections.characterSlug}
               />
               <SlotCard
                 label="협력 동료 2"
                 item={selectedAlly2}
                 onClick={() => setPicker({ type: "character", target: "ally2" })}
+                disabled={!build.selections.characterSlug}
               />
             </div>
           </div>
@@ -453,9 +510,18 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
       </ContentSection>
 
       {/* 2) 악마의 쐐기 탭 + 슬롯 선택 */}
+      {!build.selections.characterSlug ? (
+        <ContentSection title="악마의 쐐기 세팅">
+          <div className="py-8 text-center text-white/40">캐릭터를 먼저 선택해주세요</div>
+        </ContentSection>
+      ) : (
       <ContentSection title="악마의 쐐기 세팅">
         <div className="flex flex-wrap gap-2">
-          {(Object.keys(TAB_LABELS) as ActiveTab[]).map((tab) => (
+          {(Object.keys(TAB_LABELS) as ActiveTab[]).filter((tab) => {
+            if (tab === "meleeConsonanceWeapon") return build.consonanceCategory === "melee";
+            if (tab === "rangedConsonanceWeapon") return build.consonanceCategory === "ranged";
+            return true;
+          }).map((tab) => (
             <button
               key={tab}
               onClick={() => setBuild((prev) => ({ ...prev, activeTab: tab }))}
@@ -537,12 +603,13 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
           )}
         </div>
       </ContentSection>
+      )}
 
       {/* 캐릭터 선택 모달 */}
       <PickerModal
         open={picker?.type === "character"}
         title={picker?.type === "character" && picker.target === "main" ? "메인 캐릭터 선택" : "협력 동료 선택"}
-        items={characters as any}
+        items={characters}
         selectedSlug={
           picker?.type === "character"
             ? picker.target === "main"
@@ -557,7 +624,7 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
           title: f.title,
           options: f.options,
         }))}
-        onItemHover={(it: any) => {
+        onItemHover={(it) => {
           // 캐릭터 카드 hover 시 detail을 미리 받아서 선택 시 즉시 반영되게 함
           if (picker?.type !== "character") return;
           prefetchCharacterDetail(it.slug);
@@ -611,7 +678,7 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
       <PickerModal
         open={picker?.type === "weapon"}
         title={picker?.type === "weapon" && picker.target === "melee" ? "근접 무기 선택" : "원거리 무기 선택"}
-        items={(picker?.type === "weapon" && picker.target === "melee" ? meleeWeapons : rangedWeapons) as any}
+        items={picker?.type === "weapon" && picker.target === "melee" ? meleeWeapons : rangedWeapons}
         selectedSlug={
           picker?.type === "weapon"
             ? picker.target === "melee"
@@ -665,7 +732,7 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
       <PickerModal
         open={picker?.type === "wedge"}
         title="악마의 쐐기 선택"
-        items={wedgeOptionsForTab as any}
+        items={wedgeOptionsForTab}
         selectedSlug={picker?.type === "wedge" ? build.wedgeSlots[picker.tab][picker.slotIndex] : undefined}
         filters={DEMON_WEDGE_FILTERS.filter((f) => f.field !== "equipType" && f.field !== "element").map((f) => ({
           field: f.field,
@@ -673,8 +740,8 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
           options: f.options,
         }))}
         grid="lg"
-        renderHoverCard={(it: any) => <WedgeHoverCard wedge={it} />}
-        itemClassName={(it: any) => {
+        renderHoverCard={(it) => <WedgeHoverCard wedge={it as unknown as DemonWedgeListItem} />}
+        itemClassName={(it) => {
           const r = it.rarity as number;
           const colors: Record<number, string> = {
             5: "border-amber-400/40 bg-gradient-to-b from-amber-400/20 to-transparent hover:from-amber-400/30",
@@ -738,13 +805,17 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
           </div>
 
           {/* 동조 무기 */}
-          <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-            <div className="mb-4 text-sm font-semibold text-white/80">동조 무기(캐릭터 귀속)</div>
-            <BaseWeaponForm
-              value={build.base.consonanceWeapon}
-              onChange={(next) => setBuild((p) => ({ ...p, base: { ...p.base, consonanceWeapon: next } }))}
-            />
-          </div>
+          {build.consonanceCategory && (
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <div className="mb-4 text-sm font-semibold text-white/80">
+                동조 무기({build.consonanceCategory === "melee" ? "근접" : "원거리"})
+              </div>
+              <BaseWeaponForm
+                value={build.base.consonanceWeapon}
+                onChange={(next) => setBuild((p) => ({ ...p, base: { ...p.base, consonanceWeapon: next } }))}
+              />
+            </div>
+          )}
 
           {/* 근접 */}
           <div className="rounded-xl border border-white/10 bg-white/5 p-4">
@@ -769,7 +840,11 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
       {/* 4) Buff 섹션 */}
       <ContentSection title="버프">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          {BUFF_SECTIONS.map((s) => (
+          {BUFF_SECTIONS.filter((s) => {
+            if (s.key === "meleeConsonanceWedge") return build.consonanceCategory === "melee";
+            if (s.key === "rangedConsonanceWedge") return build.consonanceCategory === "ranged";
+            return true;
+          }).map((s) => (
             <BuffSectionForm
               key={s.key}
               title={s.label}
@@ -802,7 +877,78 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
       </ContentSection>
 
       {/* 5) 결과 비교 */}
-      <ContentSection title="결과 비교">결과 비교</ContentSection>
+      <ContentSection title="결과 비교">
+        <ResultCompare a={resultA} b={resultB} />
+      </ContentSection>
+
+      {/* 토스트 알림 */}
+      {toast && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-fade-in">
+          <div className="rounded-xl border border-cyan-400/30 bg-[#0b1020]/90 backdrop-blur px-5 py-3 text-sm text-cyan-200 shadow-lg shadow-cyan-500/10">
+            {toast}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const OUTPUT_META: { key: OutputKey; label: string }[] = [
+  { key: "skillDamage", label: "스킬 대미지" },
+  { key: "meleeWeaponDamage", label: "근접 무기 대미지" },
+  { key: "rangedWeaponDamage", label: "원거리 무기 대미지" },
+  { key: "meleeConsonanceWeaponDamage", label: "근접 동조 무기 대미지" },
+  { key: "rangedConsonanceWeaponDamage", label: "원거리 동조 무기 대미지" },
+];
+
+function fmt(n: number): string {
+  if (!Number.isFinite(n)) return "0";
+  const abs = Math.abs(n);
+  if (abs >= 1_000_000) return n.toLocaleString(undefined, { maximumFractionDigits: 0 });
+  if (abs >= 1000) return n.toLocaleString(undefined, { maximumFractionDigits: 1 });
+  return n.toLocaleString(undefined, { maximumFractionDigits: 2 });
+}
+
+function ResultCompare({ a, b }: { a: Record<OutputKey, number>; b: Record<OutputKey, number> }) {
+  return (
+    <div className="space-y-4">
+      <div className="overflow-x-auto rounded-xl border border-white/10">
+        <table className="min-w-[760px] w-full text-sm">
+          <thead className="bg-white/5">
+            <tr>
+              <th className="px-4 py-3 text-left font-semibold text-white/80">항목</th>
+              <th className="px-4 py-3 text-right font-semibold text-white/80">빌드 A</th>
+              <th className="px-4 py-3 text-right font-semibold text-white/80">빌드 B</th>
+              <th className="px-4 py-3 text-right font-semibold text-white/80">차이</th>
+              <th className="px-4 py-3 text-center font-semibold text-white/80">+</th>
+            </tr>
+          </thead>
+          <tbody>
+            {OUTPUT_META.map((m) => {
+              const av = a[m.key] ?? 0;
+              const bv = b[m.key] ?? 0;
+              const high = Math.max(av, bv);
+              const low = Math.min(av, bv);
+              const winner: "A" | "B" | "=" = av === bv ? "=" : av > bv ? "A" : "B";
+              const winClass = winner === "A" ? "text-cyan-200" : winner === "B" ? "text-fuchsia-200" : "text-white/60";
+
+              return (
+                <tr key={m.key} className="border-t border-white/10">
+                  <td className="px-4 py-3 text-white/80">{m.label}</td>
+                  <td className={`px-4 py-3 text-right ${winner === "A" ? "text-cyan-200" : "text-white/70"}`}>
+                    {fmt(av)}
+                  </td>
+                  <td className={`px-4 py-3 text-right ${winner === "B" ? "text-fuchsia-200" : "text-white/70"}`}>
+                    {fmt(bv)}
+                  </td>
+                  <td className="px-4 py-3 text-right text-white/70">{fmt(high - low)}</td>
+                  <td className={`px-4 py-3 text-center font-semibold ${winClass}`}>{winner}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

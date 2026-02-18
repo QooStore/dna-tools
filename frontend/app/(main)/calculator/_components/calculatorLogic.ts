@@ -1,7 +1,7 @@
 import type { DemonWedgeListItem } from "@/domains/demonWedges/type";
-import type { WeaponListItem } from "@/domains/weapons/type";
 import type { CharacterListItem, CharacterPassiveUpgrade } from "@/domains/characters/types";
-import type { BuffFields, BuildState, CalcMode, ActiveTab } from "./calculatorTypes";
+import type { WeaponListItem } from "@/domains/weapons/type";
+import type { BuffFields, BuildState, ActiveTab } from "./calculatorTypes";
 import { emptyBuffFields } from "./calculatorTypes";
 
 type WedgeEquipType = DemonWedgeListItem["equipType"]; // string
@@ -99,63 +99,53 @@ export function sumBuffs(sections: BuffFields[]): BuffFields {
   return out;
 }
 
-export function clamp(n: number, min: number, max: number): number {
-  if (Number.isNaN(n)) return min;
-  return Math.max(min, Math.min(max, n));
+// ── 레조넌스(수련) 보너스 테이블 ──
+export type ResonanceBonus = { atk: number; def: number; hp: number; shield: number };
+
+const RESONANCE_TABLE: { maxLevel: number; bonus: ResonanceBonus }[] = [
+  { maxLevel: 14, bonus: { shield: 0, def: 0, hp: 0, atk: 0 } },
+  { maxLevel: 19, bonus: { shield: 10, def: 0, hp: 0, atk: 0 } },
+  { maxLevel: 24, bonus: { shield: 15, def: 0, hp: 0, atk: 0 } },
+  { maxLevel: 29, bonus: { shield: 20, def: 20, hp: 0, atk: 0 } },
+  { maxLevel: 34, bonus: { shield: 25, def: 25, hp: 0, atk: 0 } },
+  { maxLevel: 39, bonus: { shield: 30, def: 30, hp: 30, atk: 0 } },
+  { maxLevel: 44, bonus: { shield: 40, def: 40, hp: 40, atk: 0 } },
+  { maxLevel: 49, bonus: { shield: 50, def: 50, hp: 50, atk: 50 } },
+  { maxLevel: 54, bonus: { shield: 75, def: 75, hp: 75, atk: 75 } },
+  { maxLevel: 59, bonus: { shield: 100, def: 100, hp: 100, atk: 100 } },
+  { maxLevel: 61, bonus: { shield: 150, def: 150, hp: 150, atk: 150 } },
+  { maxLevel: 63, bonus: { shield: 200, def: 200, hp: 200, atk: 200 } },
+  { maxLevel: 64, bonus: { shield: 250, def: 250, hp: 250, atk: 250 } },
+  { maxLevel: 65, bonus: { shield: 300, def: 300, hp: 300, atk: 300 } },
+];
+
+export function getResonanceBonus(level: number): ResonanceBonus {
+  for (const entry of RESONANCE_TABLE) {
+    if (level <= entry.maxLevel) return entry.bonus;
+  }
+  return { shield: 300, def: 300, hp: 300, atk: 300 };
 }
 
-export function findWeapon(weapons: WeaponListItem[], slug: string | "") {
-  if (!slug) return null;
-  return weapons.find((w) => w.slug === slug) ?? null;
-}
+// 레조넌스 레벨 선택지
+export const RESONANCE_OPTIONS = [
+  { value: 15, label: "Lv. 15–19" },
+  { value: 20, label: "Lv. 20–24" },
+  { value: 25, label: "Lv. 25–29" },
+  { value: 30, label: "Lv. 30–34" },
+  { value: 35, label: "Lv. 35–39" },
+  { value: 40, label: "Lv. 40–44" },
+  { value: 45, label: "Lv. 45–49" },
+  { value: 50, label: "Lv. 50–54" },
+  { value: 55, label: "Lv. 55–59" },
+  { value: 60, label: "Lv. 60–61" },
+  { value: 62, label: "Lv. 62–63" },
+  { value: 64, label: "Lv. 64" },
+  { value: 65, label: "Lv. 65" },
+];
 
-export function findCharacter(characters: CharacterListItem[], slug: string | "") {
-  if (!slug) return null;
-  return characters.find((c) => c.slug === slug) ?? null;
-}
-
-export type CalcResult = {
-  mode: CalcMode;
-  // Inputs
-  baseCharAttack: number;
-  weaponAttack: number;
-  consonanceAttack: number;
-  totalBuff: BuffFields;
-  // Derived
-  finalCharAttack: number;
-  finalWeaponAttack: number;
-  finalAttackTotal: number;
-  critRatePct: number;
-  critDamagePct: number;
-  expectedCritMultiplier: number;
-  attackSpeed: number;
-  damageMultiplier: number;
-  estimatedDps: number;
-};
-
-/**
- * 현재 프로젝트 DB/데이터만으로는 "정식 공식"을 100% 보장하기 어려워서,
- * 계산기는 아래의 "단순화된" 공식으로 1차 결과를 제공합니다.
- *
- * - 캐릭터 공격%는 캐릭터 기본 공격력에만 적용
- * - 무기 공격%는 무기(선택한 모드의 무기 + 동조무기)의 공격력에만 적용
- * - 대미지/스킬 위력/스킬 대미지는 전부 곱연산
- * - 치명 기대값: 1 + (치확 * 치피)
- * - 공격 속도: (기본 공격 속도) * (1 + 공격속도 버프%)
- */
-export function compute(build: BuildState, data: { weapons: WeaponListItem[] }, mode: CalcMode): CalcResult {
-  const wMelee = findWeapon(data.weapons, build.selections.meleeWeaponSlug);
-  const wRanged = findWeapon(data.weapons, build.selections.rangedWeaponSlug);
-
-  const baseCharAttack = Number(build.base.character.baseAttack) || 0;
-  const consonanceAttack = Number(build.base.consonanceWeapon.attack) || 0;
-
-  const weaponAttack =
-    mode === "melee"
-      ? Number(build.base.meleeWeapon.attack) || wMelee?.attack || 0
-      : Number(build.base.rangedWeapon.attack) || wRanged?.attack || 0;
-
-  const totalBuff = sumBuffs([
+// ── 버프 합산 (모든 섹션을 하나로) ──
+function totalBuffs(build: BuildState): BuffFields {
+  return sumBuffs([
     build.buffs.passive,
     build.buffs.characterWedge,
     build.buffs.meleeWeaponWedge,
@@ -163,57 +153,222 @@ export function compute(build: BuildState, data: { weapons: WeaponListItem[] }, 
     build.buffs.meleeConsonanceWedge,
     build.buffs.rangedConsonanceWedge,
   ]);
+}
 
-  const charAtkMult = 1 + (totalBuff.characterAttackPct || 0) / 100;
-  const weaponAtkMult = 1 + (totalBuff.weaponAttackPct || 0) / 100;
-  const elementMult = 1 + (totalBuff.elementAttackPct || 0) / 100;
-  const dmgMult = 1 + (totalBuff.damagePct || 0) / 100;
-  const skillPowerMult = 1 + (totalBuff.skillPowerPct || 0) / 100;
-  const skillDmgMult = 1 + (totalBuff.skillDamagePct || 0) / 100;
-  const weaponDmgMult = 1 + (totalBuff.weaponDamagePct || 0) / 100;
-  const extraDmgMult = 1 + (totalBuff.extraDamagePct || 0) / 100;
+// ── 필사 계수 ──
+// 필사 값 계수 = 필사% × 2 × ((1 - HP%) × 2 + 1) × (1 - HP%)
+// 필사 계수 = 1 + 필사 값 계수
+// HP 25% 이하는 동일 (clamp)
+function resolveCoeff(resolvePct: number, currentHpPct: number): number {
+  const hp = Math.max(25, currentHpPct) / 100; // 25% 이하는 25%로 취급
+  const lost = 1 - hp;
+  const valueCoeff = (resolvePct / 100) * 2 * (lost * 2 + 1) * lost;
+  return 1 + valueCoeff;
+}
 
-  const finalCharAttack = baseCharAttack * charAtkMult;
-  const finalWeaponAttack = (weaponAttack + consonanceAttack) * weaponAtkMult;
-  const finalAttackTotal = (finalCharAttack + finalWeaponAttack) * elementMult;
+// ── 격양 계수 ──
+// 격양 1% = 현재 HP 1%당 0.01% 증가
+// 격양 계수 = 1 + 격양% × 현재HP% / 10000
+function moraleCoeff(moralePct: number, currentHpPct: number): number {
+  return 1 + (moralePct * currentHpPct) / 10000;
+}
 
-  // 치명/공속은 "선택 모드"의 무기 + 동조무기를 더한 뒤 버프 적용
-  const baseCritRate =
-    mode === "melee"
-      ? Number(build.base.meleeWeapon.critRatePct) || wMelee?.critRate || 0
-      : Number(build.base.rangedWeapon.critRatePct) || wRanged?.critRate || 0;
-  const baseCritDamage =
-    mode === "melee"
-      ? Number(build.base.meleeWeapon.critDamagePct) || wMelee?.critDamage || 0
-      : Number(build.base.rangedWeapon.critDamagePct) || wRanged?.critDamage || 0;
-  const baseAttackSpeed =
-    mode === "melee"
-      ? Number(build.base.meleeWeapon.attackSpeed) || wMelee?.attackSpeed || 1
-      : Number(build.base.rangedWeapon.attackSpeed) || wRanged?.attackSpeed || 1;
+// ── 크리티컬 계수 (기대값) ──
+// 크리티컬 레벨: <200% → 1, 200~299% → 2, ≥300% → 3
+// 크리티컬 발동 시: 1 + critLevel × (critDamage%/100 - 1)
+// 기대값 = (1 - critProb) × 1 + critProb × 발동 시 계수
+function critCoeff(critRatePct: number, critDamagePct: number): number {
+  const critProb = Math.min(critRatePct, 100) / 100;
+  const critLevel = critRatePct < 200 ? 1 : critRatePct < 300 ? 2 : 3;
+  const onCrit = 1 + critLevel * (critDamagePct / 100 - 1);
+  return (1 - critProb) * 1 + critProb * onCrit;
+}
 
-  const critRatePct = clamp(baseCritRate + (totalBuff.critRatePct || 0), 0, 100);
-  const critDamagePct = Math.max(0, baseCritDamage + (totalBuff.critDamagePct || 0));
-  const expectedCritMultiplier = 1 + (critRatePct / 100) * (critDamagePct / 100);
+// ── 마스터리 ──
+// 캐릭터 숙련 무기 타입이 맞으면 120%, 아니면 100%
+// 각주(kezhou)는 모든 무기 120%
+function mastery(charSlug: string, charProficiency: string, weaponType: string): number {
+  if (charSlug === "kezhou") return 1.2;
+  return charProficiency === weaponType ? 1.2 : 1;
+}
 
-  const attackSpeed = Math.max(0.1, baseAttackSpeed * (1 + (totalBuff.attackSpeedPct ?? 0) / 100));
-  const damageMultiplier = dmgMult * skillPowerMult * skillDmgMult * weaponDmgMult * extraDmgMult;
+// ── 무기별 버프 합산 ──
+// 근접 무기: passive + characterWedge + meleeWeaponWedge
+// 원거리 무기: passive + characterWedge + rangedWeaponWedge
+// 근접 동조: passive + characterWedge + meleeConsonanceWedge
+// 원거리 동조: passive + characterWedge + rangedConsonanceWedge
+function weaponBuffs(build: BuildState, type: "melee" | "ranged" | "meleeConsonance" | "rangedConsonance"): BuffFields {
+  const wedgeKey = {
+    melee: "meleeWeaponWedge",
+    ranged: "rangedWeaponWedge",
+    meleeConsonance: "meleeConsonanceWedge",
+    rangedConsonance: "rangedConsonanceWedge",
+  }[type] as keyof BuildState["buffs"];
 
-  const estimatedDps = finalAttackTotal * expectedCritMultiplier * damageMultiplier * attackSpeed;
+  return sumBuffs([build.buffs.passive, build.buffs.characterWedge, build.buffs[wedgeKey]]);
+}
+
+// ── 결과 타입 ──
+export type OutputKey =
+  | "skillDamage"
+  | "meleeWeaponDamage"
+  | "rangedWeaponDamage"
+  | "meleeConsonanceWeaponDamage"
+  | "rangedConsonanceWeaponDamage";
+
+export type OutputResult = Record<OutputKey, number>;
+
+type ComputeData = {
+  characters: CharacterListItem[];
+  weapons: WeaponListItem[];
+};
+
+// ── 무기 대미지 계산 ──
+// 최종 무기 대미지 = 기본 무기 대미지 × 크리티컬 계수 × 추가 대미지 계수 × 무기 대미지 증감 계수 × 필사 계수 × 격양 계수
+//
+// 기본 무기 대미지 = [캐릭터 최종 스탯 + (무기 기본 공격 × (1 + 무기 공격%) × 마스터리)]
+// 캐릭터 최종 스탯 = 캐릭터 기본 공격 × (1 + 공격%) × (1 + 속성 공격%)
+// 추가 대미지 계수 = 1 + 추가 대미지% / 100
+// 무기 대미지 증감 계수 = 1 + (대미지% + 무기 대미지%) / 100
+function computeWeaponDamage(
+  build: BuildState,
+  buff: BuffFields,
+  weaponAttack: number,
+  critRate: number,
+  critDamage: number,
+  masteryMult: number,
+  currentHpPct: number,
+  totalResolvePct: number,
+  totalMoralePct: number,
+  isConsonance: boolean = false,
+): number {
+  const baseAttack = Number(build.base.character.baseAttack) || 0;
+
+  // 캐릭터 최종 스탯
+  const charFinalStat = baseAttack * (1 + buff.characterAttackPct / 100) * (1 + buff.elementAttackPct / 100);
+
+  // 무기 최종 공격
+  const weaponFinalAttack = weaponAttack * (1 + buff.weaponAttackPct / 100) * masteryMult;
+
+  // 기본 무기 대미지 (동조 무기는 스킬 위력 적용)
+  const baseWeaponDamage = (charFinalStat + weaponFinalAttack) * (isConsonance ? 1 + buff.skillPowerPct / 100 : 1);
+
+  // 계수들
+  // 크리 스탯은 무기 기본값에 버프가 곱 적용 (20% 기본 × 100% 버프 = 40%)
+  const totalCritRate = critRate * (1 + buff.critRatePct / 100);
+  const totalCritDamage = critDamage * (1 + buff.critDamagePct / 100);
+  const crit = critCoeff(totalCritRate, totalCritDamage);
+  const extraDamage = 1 + buff.extraDamagePct / 100;
+  const weaponDamageCoeff = 1 + (buff.damagePct + buff.weaponDamagePct) / 100;
+  const resolve = resolveCoeff(totalResolvePct, currentHpPct);
+  const morale = moraleCoeff(totalMoralePct, currentHpPct);
+
+  return baseWeaponDamage * crit * extraDamage * weaponDamageCoeff * resolve * morale;
+}
+
+// ── 스킬 대미지 계산 ──
+// 최종 스킬 대미지 = 기본 스킬 대미지 × 필사 계수 × 격양 계수 × 스킬 대미지 증감 계수
+// 기본 스킬 대미지 = 캐릭터 최종 스탯 × (배율 100% × (1 + 스킬 위력%/100))
+// 스킬 대미지 증감 계수 = 1 + (대미지% + 스킬 대미지%) / 100
+
+export function computeOutputs(build: BuildState, data: ComputeData): OutputResult {
+  const allBuff = totalBuffs(build);
+  // 레조넌스 ATK% → 캐릭터 공격%에 합산
+  allBuff.characterAttackPct += getResonanceBonus(build.resonanceLevel).atk;
+
+  const baseAttack = Number(build.base.character.baseAttack) || 0;
+  const currentHpPct = Number(build.base.character.currentHpPct) || 100;
+
+  // 필사/격양: 캐릭터 기본값 + 전체 버프 합산
+  const totalResolvePct = (Number(build.base.character.resolvePct) || 0) + allBuff.resolvePct;
+  const totalMoralePct = (Number(build.base.character.moralePct) || 0) + allBuff.moralePct;
+
+  // ── 스킬 대미지 ──
+  const finalStat = baseAttack * (1 + allBuff.characterAttackPct / 100) * (1 + allBuff.elementAttackPct / 100);
+  const baseSkillDamage = finalStat * (1 + allBuff.skillPowerPct / 100);
+  const skillDamageCoeff = 1 + (allBuff.damagePct + allBuff.skillDamagePct) / 100;
+  const skillDamage =
+    baseSkillDamage *
+    resolveCoeff(totalResolvePct, currentHpPct) *
+    moraleCoeff(totalMoralePct, currentHpPct) *
+    skillDamageCoeff;
+
+  // ── 마스터리 판정 ──
+  const charSlug = build.selections.characterSlug;
+  const char = charSlug ? data.characters.find((c) => c.slug === charSlug) : undefined;
+  const meleeWeapon = build.selections.meleeWeaponSlug
+    ? data.weapons.find((w) => w.slug === build.selections.meleeWeaponSlug)
+    : undefined;
+  const rangedWeapon = build.selections.rangedWeaponSlug
+    ? data.weapons.find((w) => w.slug === build.selections.rangedWeaponSlug)
+    : undefined;
+
+  const meleeMastery = char && meleeWeapon ? mastery(char.slug, char.meleeProficiency, meleeWeapon.weaponType) : 1;
+  const rangedMastery = char && rangedWeapon ? mastery(char.slug, char.rangedProficiency, rangedWeapon.weaponType) : 1;
+
+  // ── 근접 무기 대미지 ──
+  const meleeBuff = weaponBuffs(build, "melee");
+  const meleeWeaponDamage = computeWeaponDamage(
+    build,
+    meleeBuff,
+    Number(build.base.meleeWeapon.attack) || 0,
+    Number(build.base.meleeWeapon.critRatePct) || 0,
+    Number(build.base.meleeWeapon.critDamagePct) || 0,
+    meleeMastery,
+    currentHpPct,
+    totalResolvePct,
+    totalMoralePct,
+  );
+
+  // ── 원거리 무기 대미지 ──
+  const rangedBuff = weaponBuffs(build, "ranged");
+  const rangedWeaponDamage = computeWeaponDamage(
+    build,
+    rangedBuff,
+    Number(build.base.rangedWeapon.attack) || 0,
+    Number(build.base.rangedWeapon.critRatePct) || 0,
+    Number(build.base.rangedWeapon.critDamagePct) || 0,
+    rangedMastery,
+    currentHpPct,
+    totalResolvePct,
+    totalMoralePct,
+  );
+
+  // ── 근접 동조 무기 대미지 ──
+  const meleeConsBuff = weaponBuffs(build, "meleeConsonance");
+  const meleeConsonanceWeaponDamage = computeWeaponDamage(
+    build,
+    meleeConsBuff,
+    Number(build.base.consonanceWeapon.attack) || 0,
+    Number(build.base.consonanceWeapon.critRatePct) || 0,
+    Number(build.base.consonanceWeapon.critDamagePct) || 0,
+    1.2, // 동조 무기는 마스터리 120%
+    currentHpPct,
+    totalResolvePct,
+    totalMoralePct,
+    true, // 동조 무기: 스킬 위력 적용
+  );
+
+  // ── 원거리 동조 무기 대미지 ──
+  const rangedConsBuff = weaponBuffs(build, "rangedConsonance");
+  const rangedConsonanceWeaponDamage = computeWeaponDamage(
+    build,
+    rangedConsBuff,
+    Number(build.base.consonanceWeapon.attack) || 0,
+    Number(build.base.consonanceWeapon.critRatePct) || 0,
+    Number(build.base.consonanceWeapon.critDamagePct) || 0,
+    1.2,
+    currentHpPct,
+    totalResolvePct,
+    totalMoralePct,
+    true, // 동조 무기: 스킬 위력 적용
+  );
 
   return {
-    mode,
-    baseCharAttack,
-    weaponAttack,
-    consonanceAttack,
-    totalBuff,
-    finalCharAttack,
-    finalWeaponAttack,
-    finalAttackTotal,
-    critRatePct,
-    critDamagePct,
-    expectedCritMultiplier,
-    attackSpeed,
-    damageMultiplier,
-    estimatedDps,
+    skillDamage,
+    meleeWeaponDamage,
+    rangedWeaponDamage,
+    meleeConsonanceWeaponDamage,
+    rangedConsonanceWeaponDamage,
   };
 }

@@ -13,7 +13,17 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className={`bg-[#070b18] text-white`}>{children}</body>
+      <body className={`bg-[#070b18] text-white`}>
+        {/* 배경 이미지 레이어 */}
+        <div className="fixed inset-0 -z-10">
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: "url('/images/home/background_image.jpg')" }}
+          />
+          <div className="absolute inset-0 bg-[#070b18]/85" />
+        </div>
+        {children}
+      </body>
     </html>
   );
 }

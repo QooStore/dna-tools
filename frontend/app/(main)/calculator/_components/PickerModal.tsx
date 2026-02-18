@@ -9,14 +9,14 @@ type FilterGroup = {
   options: { value: string; label: string }[];
 };
 
-type BaseItem = {
+interface BaseItem {
   slug: string;
   name: string;
-  [k: string]: unknown;
-};
+}
 
-function getImageUrl(item: any): string | undefined {
-  return item?.listImage || item?.image;
+function getImageUrl(item: BaseItem): string | undefined {
+  const img = item as { listImage?: string; image?: string | null };
+  return img.listImage || img.image || undefined;
 }
 
 function normalize(str: string): string {
@@ -53,6 +53,12 @@ export default function PickerModal<T extends BaseItem>({
   const [tooltipItem, setTooltipItem] = useState<T | null>(null);
   const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(null);
 
+  const handleClose = useCallback(() => {
+    onClose();
+    setQ("");
+    setActiveFilters({});
+  }, [onClose]);
+
   const handleMouseEnter = useCallback(
     (e: React.MouseEvent, item: T) => {
       if (!renderHoverCard) return;
@@ -75,21 +81,15 @@ export default function PickerModal<T extends BaseItem>({
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") handleClose();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
-
-  useEffect(() => {
-    if (!open) return;
-    setQ("");
-    setActiveFilters({});
-  }, [open]);
+  }, [open, handleClose]);
 
   const filtered = useMemo(() => {
     const nq = normalize(q);
-    return items.filter((it: any) => {
+    return items.filter((it) => {
       if (nq) {
         const hay = normalize(`${it?.name ?? ""} ${it?.slug ?? ""}`);
         if (!hay.includes(nq)) return false;
@@ -99,7 +99,7 @@ export default function PickerModal<T extends BaseItem>({
         for (const g of filters) {
           const v = activeFilters[g.field];
           if (!v || v === "All") continue;
-          const fieldValue = it?.[g.field];
+          const fieldValue = (it as Record<string, unknown>)[g.field];
           // 다중 값(배열)도 처리
           if (Array.isArray(fieldValue)) {
             if (!fieldValue.includes(v)) return false;
@@ -123,12 +123,12 @@ export default function PickerModal<T extends BaseItem>({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
-      <div className="absolute inset-0 bg-black/70" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/70" onClick={handleClose} />
 
       <div className="relative w-full max-w-6xl rounded-t-2xl sm:rounded-2xl border border-white/10 bg-slate-950/90 shadow-2xl">
         <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between">
           <div className="text-lg font-semibold text-white/90">{title}</div>
-          <button onClick={onClose} className="rounded-md px-2 py-1 text-sm text-white/70 hover:bg-white/10">
+          <button onClick={handleClose} className="rounded-md px-2 py-1 text-sm text-white/70 hover:bg-white/10">
             닫기
           </button>
         </div>
@@ -163,7 +163,7 @@ export default function PickerModal<T extends BaseItem>({
           </div>
 
           <div className={`grid ${cols} gap-3 max-h-[70vh] overflow-auto pr-2`}>
-            {filtered.map((it: any) => {
+            {filtered.map((it) => {
               const img = getImageUrl(it);
               const selected = selectedSlug && it.slug === selectedSlug;
               const extraCls = itemClassName?.(it) ?? "";
@@ -175,7 +175,7 @@ export default function PickerModal<T extends BaseItem>({
                   onMouseLeave={handleMouseLeave}
                   onClick={() => {
                     onSelect(it.slug);
-                    onClose();
+                    handleClose();
                   }}
                   className={
                     "group relative overflow-hidden rounded-xl border text-left transition " +
@@ -223,7 +223,7 @@ export default function PickerModal<T extends BaseItem>({
             <button
               onClick={() => {
                 onSelect("");
-                onClose();
+                handleClose();
               }}
               className="rounded-lg bg-red-600/80 px-3 py-2 text-sm font-medium text-white hover:bg-red-600"
             >

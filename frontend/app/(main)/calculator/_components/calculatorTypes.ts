@@ -53,12 +53,16 @@ export type BuildSelections = {
 
 export type WedgeSlots = Record<ActiveTab, string[]>; // wedge slugs
 
+export type ConsonanceCategory = "melee" | "ranged" | null;
+
 export type BuildState = {
   selections: BuildSelections;
   activeTab: ActiveTab;
   wedgeSlots: WedgeSlots;
+  consonanceCategory: ConsonanceCategory;
+  resonanceLevel: number; // 수련 레벨 (0~65)
 
-  // “자동으로 불러온 값”을 사용자가 수정할 수 있게 하기 위해, 저장은 항상 이 입력값을 기준으로.
+  // "자동으로 불러온 값"을 사용자가 수정할 수 있게 하기 위해, 저장은 항상 이 입력값을 기준으로.
   base: {
     character: BaseCharacterInputs;
     consonanceWeapon: BaseWeaponInputs;
@@ -108,6 +112,8 @@ export const emptyBuildState = (): BuildState => ({
     ally2Slug: "",
   },
   activeTab: "character",
+  consonanceCategory: null,
+  resonanceLevel: 65,
   wedgeSlots: {
     // boarhat.gg 스타일 슬롯 수
     // - Character: 9 (4 + center + 4)
