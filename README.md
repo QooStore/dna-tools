@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Duet Night Abyss 팬메이드 DB & 대미지 기대값 계산기 (DNA Tools)
 
-## Getting Started
+모바일 게임 듀엣나이트 어비스의 캐릭터/무기/악마의 쐐기 데이터를 정리하고,  
+세팅에 따른 대미지 기대값을 계산, 비교할 수 있습니다.
 
-First, run the development server:
+## 주요 기능
+### 1) 게임 DB
+- 캐릭터/무기/악마의 쐐기 데이터 조회
+- 검색/필터/정렬 (데이터가 늘어나도 확장 가능하도록 설계)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### 2) 대미지 기대값 계산기
+- 캐릭터/무기/협력동료/악마의 쐐기 선택 -> 정해진 공식에 따른 대미지 기대값 계산
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3) 관리자
+- 데이터 등록/수정/삭제(CRUD)
+- 이미지 업로드/삭제 관리
+- 인증(JWT) 기반 관리자 접근 제어
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 기술 스택
+### Frontend
+- Next.js (App Router)
+- React
+- TailwindCSS
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Backend
+- Spring Boot (Gradle)
+- Spring Data JPA
+- MySQL
 
-## Learn More
+### Infra / Deployment (예정)
+- AWS (EC2)
 
-To learn more about Next.js, take a look at the following resources:
+## 아키텍처 개요
+- Next.js: 사용자 UI + 서버액션/클라이언트 API 호출
+- Springboot API: 게임 DB CRUD, 인증, 이미지 업로드
+- MySQL: 캐릭터/무기/악마의 쐐기/이미지 메타데이터 저장
+- 이미지 저장소: Local 저장소 기반 구현 + (추후) S3로 확장 가능하도록 interface 추상화
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 고지사항
+본 프로젝트는 비공식 팬메이드이며, 원작/제작사와 무관합니다.
+게임 관련 명칭/이미지/데이터는 정보 제공 목적이며, 요청 시 즉시 수정/삭제할 수 있습니다.
