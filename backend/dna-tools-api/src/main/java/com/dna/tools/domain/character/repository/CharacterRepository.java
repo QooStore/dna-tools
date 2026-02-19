@@ -10,14 +10,10 @@ import java.util.Optional;
 
 public interface CharacterRepository extends JpaRepository<CharacterEntity, Long> {
 
-        /** EntityGraph 연관 테이블 영속 상태 한번에 조회 */
+        /** 1:1 관계만 EntityGraph로 조회 (1:N은 @BatchSize로 별도 로딩) */
         @EntityGraph(attributePaths = {
                         "stats",
-                        "consonanceWeapon",
-                        "features",
-                        "skills",
-                        "introns",
-                        "passiveUpgrades"
+                        "consonanceWeapon"
         })
         Optional<CharacterEntity> findBySlug(String slug);
 

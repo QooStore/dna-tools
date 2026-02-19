@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -64,18 +65,22 @@ public class CharacterEntity {
 
     @OneToMany(mappedBy = "character", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id ASC")
+    @BatchSize(size = 30)
     private List<CharacterFeatureEntity> features = new ArrayList<>();
 
     @OneToMany(mappedBy = "character", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id ASC")
+    @BatchSize(size = 30)
     private List<SkillEntity> skills = new ArrayList<>();
 
     @OneToMany(mappedBy = "character", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("stage ASC")
+    @BatchSize(size = 30)
     private List<IntronEntity> introns = new ArrayList<>();
 
     @OneToMany(mappedBy = "character", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id ASC")
+    @BatchSize(size = 30)
     private List<PassiveUpgradeEntity> passiveUpgrades = new ArrayList<>();
 
     // ===== 생성 팩토리 (등록) =====
