@@ -16,7 +16,7 @@ export async function getAdminMe(): Promise<boolean> {
   if (!headers.Cookie) return false;
 
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/lee/me`, {
+    const res = await fetch(`${process.env.BACKEND_URL}/lee/me`, {
       method: "GET",
       headers,
       cache: "no-store",
@@ -29,7 +29,7 @@ export async function getAdminMe(): Promise<boolean> {
 }
 
 export async function deleteCharacter(id: number) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/lee/characters/${id}`, {
+  const res = await fetch(`${process.env.BACKEND_URL}/lee/characters/${id}`, {
     method: "DELETE",
     headers: await authHeaders(),
   });
@@ -41,8 +41,8 @@ export async function deleteCharacter(id: number) {
 
 export async function adminSaveCharacter(payload: CharacterSaveRequest, slug?: string) {
   const url = slug
-    ? `${process.env.NEXT_PUBLIC_API_URL}/lee/characters/${slug}`
-    : `${process.env.NEXT_PUBLIC_API_URL}/lee/characters`;
+    ? `${process.env.BACKEND_URL}/lee/characters/${slug}`
+    : `${process.env.BACKEND_URL}/lee/characters`;
 
   const method = slug ? "PUT" : "POST";
 
@@ -59,8 +59,8 @@ export async function adminSaveCharacter(payload: CharacterSaveRequest, slug?: s
 
 export async function adminSaveWeapon(payload: WeaponSaveRequest, slug?: string) {
   const url = slug
-    ? `${process.env.NEXT_PUBLIC_API_URL}/lee/weapons/${slug}`
-    : `${process.env.NEXT_PUBLIC_API_URL}/lee/weapons`;
+    ? `${process.env.BACKEND_URL}/lee/weapons/${slug}`
+    : `${process.env.BACKEND_URL}/lee/weapons`;
 
   const method = slug ? "PUT" : "POST";
 
@@ -76,7 +76,7 @@ export async function adminSaveWeapon(payload: WeaponSaveRequest, slug?: string)
 }
 
 export async function deleteWeapon(id: number) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/lee/weapons/${id}`, {
+  const res = await fetch(`${process.env.BACKEND_URL}/lee/weapons/${id}`, {
     method: "DELETE",
     headers: await authHeaders(),
   });
@@ -88,8 +88,8 @@ export async function deleteWeapon(id: number) {
 
 export async function adminSaveDemonWedge(payload: DemonWedgeSaveRequest, slug?: string) {
   const url = slug
-    ? `${process.env.NEXT_PUBLIC_API_URL}/lee/demon-wedges/${slug}`
-    : `${process.env.NEXT_PUBLIC_API_URL}/lee/demon-wedges`;
+    ? `${process.env.BACKEND_URL}/lee/demon-wedges/${slug}`
+    : `${process.env.BACKEND_URL}/lee/demon-wedges`;
 
   const method = slug ? "PUT" : "POST";
 
@@ -105,7 +105,7 @@ export async function adminSaveDemonWedge(payload: DemonWedgeSaveRequest, slug?:
 }
 
 export async function deleteDemonWedge(id: number) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/lee/demon-wedges/${id}`, {
+  const res = await fetch(`${process.env.BACKEND_URL}/lee/demon-wedges/${id}`, {
     method: "DELETE",
     headers: await authHeaders(),
   });

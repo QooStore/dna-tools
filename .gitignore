@@ -50,6 +50,9 @@ next-env.d.ts
 # logs
 logs/
 
+# uploaded images
+/uploads/
+
 # Spring local profile
 application-local.yaml
 

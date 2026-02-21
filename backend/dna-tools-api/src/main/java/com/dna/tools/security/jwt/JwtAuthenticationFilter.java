@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
+    private final boolean cookieSecure;
 
     @Override
     protected void doFilterInternal(
@@ -56,7 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             long maxAgeSeconds = jwtProvider.getExpirationMs() / 1000;
             ResponseCookie cookie = ResponseCookie.from("admin_token", newToken)
                     .httpOnly(true)
-                    .secure(false)
+                    .secure(cookieSecure)
                     .sameSite("Lax")
                     .path("/")
                     .maxAge(maxAgeSeconds)

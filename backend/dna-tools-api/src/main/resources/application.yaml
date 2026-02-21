@@ -35,6 +35,8 @@ file:
 app:
   image:
     base-url: ${IMAGE_BASE_URL:}
+  cookie:
+    secure: ${COOKIE_SECURE:false}
 
 logging:
   level:

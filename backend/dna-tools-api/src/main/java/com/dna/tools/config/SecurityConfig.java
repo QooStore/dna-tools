@@ -18,6 +18,7 @@ import com.dna.tools.security.jwt.JwtAuthenticationFilter;
 import com.dna.tools.security.jwt.JwtProvider;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 
 @Configuration
 @EnableWebSecurity
@@ -27,9 +28,12 @@ public class SecurityConfig {
 
     private final JwtProvider jwtProvider;
 
+    @Value("${app.cookie.secure}")
+    private boolean cookieSecure;
+
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(jwtProvider);
+        return new JwtAuthenticationFilter(jwtProvider, cookieSecure);
     }
 
     @Bean
@@ -53,7 +57,7 @@ public class SecurityConfig {
                 // 요청 권한 설정
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/lee/signin").permitAll()
-                        // .requestMatchers("/lee/**").hasRole("ADMIN")
+                        .requestMatchers("/lee/**").hasRole("ADMIN")
                         .anyRequest().permitAll())
                 // security 기본 인증 필터 UsernamePasswordAuthenticationFilter 대신 커스텀 필터 사용.
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

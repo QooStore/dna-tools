@@ -10,6 +10,7 @@ import com.dna.tools.domain.admin.dto.AdminLoginRequest;
 import com.dna.tools.domain.admin.service.AdminAuthService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 
 record LoginOkResponse(boolean success) {
 }
@@ -21,6 +22,9 @@ public class AdminAuthController {
 
         private final AdminAuthService adminAuthService;
 
+        @Value("${app.cookie.secure}")
+        private boolean cookieSecure;
+
         @PostMapping("/signin")
         public ResponseEntity<?> signin(
                         @RequestBody AdminLoginRequest request) {
@@ -29,7 +33,7 @@ public class AdminAuthController {
                 // 브라우저의 모든 요청에 자동으로 쿠키가 포함된다.
                 ResponseCookie cookie = ResponseCookie.from("admin_token", token) // 브라우저에 내려줄 HttpOnly쿠키 이름과 jwt 토큰 문자열
                                 .httpOnly(true) // httpOnly쿠키 설정
-                                .secure(false) // TODO: 운영 HTTPS면 true로 변경
+                                .secure(cookieSecure)
                                 .sameSite("Lax")
                                 .path("/")
                                 .maxAge(60 * 60) // 1시간(jwt.expiration과 동일하게 맞춤)
@@ -45,7 +49,7 @@ public class AdminAuthController {
         public ResponseEntity<?> signout() {
                 ResponseCookie cookie = ResponseCookie.from("admin_token", "")
                                 .httpOnly(true)
-                                .secure(false) // TODO: 운영 HTTPS면 true로 변경
+                                .secure(cookieSecure)
                                 .sameSite("Lax")
                                 .path("/")
                                 .maxAge(0) // 로그아웃 시 쿠키 삭제(만료)
