@@ -114,6 +114,7 @@ export const TARGET_STAT_OPTIONS = [
   { value: "plungeAttackSpeed", label: "낙하 공격 속도" },
   { value: "slidingAttackDmg", label: "슬라이딩 공격 대미지%" },
   { value: "slidingAttackSpeed", label: "슬라이딩 공격 속도" },
+  { value: "dmgReceived", label: "받는 대미지" },
 ] as const;
 
 export const EQUIP_TYPE_OPTIONS = [
