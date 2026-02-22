@@ -13,6 +13,7 @@ import ContentSection from "@/components/ui/ContentSection";
 import SlotCard from "./SlotCard";
 import PickerModal from "./PickerModal";
 import WedgeHoverCard from "./WedgeHoverCard";
+import WeaponHoverCard from "./WeaponHoverCard";
 
 import type { CharacterDetail } from "@/domains/characters/types";
 import { fetchCharacterDetailClient, prefetchCharacterDetail } from "@/api/characters.client";
@@ -736,6 +737,7 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
           title: f.title,
           options: f.options,
         }))}
+        renderHoverCard={(it) => <WeaponHoverCard weapon={it as unknown as WeaponListItem} />}
         onClose={() => setPicker(null)}
         onSelect={(slug) => {
           if (picker?.type !== "weapon") return;
