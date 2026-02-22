@@ -616,7 +616,7 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
               <div key={i} className={`rounded-2xl transition ${isPS ? "ring-1 ring-violet-400/70" : ""}`}>
                 <SlotCard
                   size="sm"
-                  label={isPS ? `${label} ✦` : label}
+                  label={label}
                   item={it}
                   onClick={handleClick}
                 />
