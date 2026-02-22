@@ -157,6 +157,7 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
   const setBuild = activeBuild === "A" ? setBuildA : setBuildB;
 
   const [toast, setToast] = useState<string | null>(null);
+  const [phaseShiftMode, setPhaseShiftMode] = useState(false);
   useEffect(() => {
     if (!toast) return;
     const t = setTimeout(() => setToast(null), 2000);
@@ -344,18 +345,21 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
     [weapons, build.selections.rangedWeaponSlug],
   );
 
-  // 탭별 내성 합계
+  // 탭별 내성 합계 (페이즈 시프트 슬롯은 올림(ceil) 절반 적용)
   const resistanceUsed = useMemo(() => {
     const result = {} as Record<ActiveTab, number>;
     for (const tab of Object.keys(build.wedgeSlots) as ActiveTab[]) {
-      result[tab] = build.wedgeSlots[tab].reduce((sum, slug) => {
+      result[tab] = build.wedgeSlots[tab].reduce((sum, slug, i) => {
         if (!slug) return sum;
         const w = wedges.find((x) => x.slug === slug);
-        return sum + (w?.resistance ?? 0);
+        if (!w) return sum;
+        const res = w.resistance ?? 0;
+        const isPS = build.phaseShiftSlots[tab]?.[i] ?? false;
+        return sum + (isPS ? Math.ceil(res / 2) : res);
       }, 0);
     }
     return result;
-  }, [build.wedgeSlots, wedges]);
+  }, [build.wedgeSlots, build.phaseShiftSlots, wedges]);
 
   const wedgeOptionsForTab = useMemo(() => {
     const equipType = tabToEquipType[build.activeTab];
@@ -527,7 +531,18 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
         </ContentSection>
       ) : (
       <ContentSection title="악마의 쐐기 세팅">
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => setPhaseShiftMode((p) => !p)}
+            className={`px-3 py-2 rounded-lg text-sm border transition ${
+              phaseShiftMode
+                ? "border-violet-400/60 bg-violet-400/15 text-violet-300"
+                : "border-white/15 bg-white/5 text-white/70 hover:bg-white/10"
+            }`}
+          >
+            페이즈 시프트 모듈{phaseShiftMode ? " (슬롯 클릭으로 적용/해제)" : ""}
+          </button>
+          <div className="h-5 w-px bg-white/15" />
           {(Object.keys(TAB_LABELS) as ActiveTab[]).filter((tab) => {
             if (tab === "meleeConsonanceWeapon") return build.consonanceCategory === "melee";
             if (tab === "rangedConsonanceWeapon") return build.consonanceCategory === "ranged";
@@ -546,11 +561,9 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
                 }`}
               >
                 {TAB_LABELS[tab]}
-                {limit > 0 && (
-                  <span className="ml-1.5 text-xs text-white/40">
-                    {used}/{limit}
-                  </span>
-                )}
+                <span className="ml-1.5 text-xs text-white/40">
+                  {used}/{limit}
+                </span>
               </button>
             );
           })}
@@ -566,8 +579,7 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
               <input
                 type="number"
                 min={0}
-                value={limit === 0 ? "" : limit}
-                placeholder="0"
+                value={limit}
                 onChange={(e) => {
                   const v = Number(e.target.value);
                   setBuild((prev) => ({
@@ -578,7 +590,7 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
                 className="w-20 h-9 rounded-lg border border-white/10 bg-white/5 px-3 text-sm text-white/80 text-center"
               />
               <span className="text-sm font-semibold text-white/50">
-                사용 {used}{limit > 0 ? ` / ${limit}` : ""}
+                사용 {used} / {limit}
               </span>
             </div>
           );
@@ -586,15 +598,31 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
 
         {/* boarhat 스타일 슬롯 배치 */}
         {(() => {
-          const wedgeSlotCard = (it: DemonWedgeListItem | undefined, i: number, label: string) => (
-            <SlotCard
-              key={i}
-              size="sm"
-              label={label}
-              item={it}
-              onClick={() => setPicker({ type: "wedge", tab: build.activeTab, slotIndex: i })}
-            />
-          );
+          const tab = build.activeTab;
+          const wedgeSlotCard = (it: DemonWedgeListItem | undefined, i: number, label: string) => {
+            const isPS = build.phaseShiftSlots[tab]?.[i] ?? false;
+            const handleClick = () => {
+              if (phaseShiftMode) {
+                setBuild((prev) => {
+                  const next = [...(prev.phaseShiftSlots[tab] ?? [])];
+                  next[i] = !next[i];
+                  return { ...prev, phaseShiftSlots: { ...prev.phaseShiftSlots, [tab]: next } };
+                });
+              } else {
+                setPicker({ type: "wedge", tab, slotIndex: i });
+              }
+            };
+            return (
+              <div key={i} className={`rounded-2xl transition ${isPS ? "ring-1 ring-violet-400/70" : ""}`}>
+                <SlotCard
+                  size="sm"
+                  label={isPS ? `${label} ✦` : label}
+                  item={it}
+                  onClick={handleClick}
+                />
+              </div>
+            );
+          };
 
           return (
             <div className="mt-6">
@@ -774,18 +802,19 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
           const tab = picker.tab;
           const idx = picker.slotIndex;
 
-          // 내성 사전 계산
+          // 내성 사전 계산 (해당 슬롯에 페이즈 시프트 적용 여부 반영)
           const limit = build.resistanceLimits[tab] ?? 0;
-          if (limit > 0) {
-            const currentSlug = build.wedgeSlots[tab][idx];
-            const currentResistance = currentSlug ? (wedges.find((w) => w.slug === currentSlug)?.resistance ?? 0) : 0;
-            const newResistance = wedges.find((w) => w.slug === slug)?.resistance ?? 0;
-            const newTotal = (resistanceUsed[tab] ?? 0) - currentResistance + newResistance;
-            if (newTotal > limit) {
-              setToast(`내성 초과! 배치 취소 (${newTotal} / ${limit})`);
-              setPicker(null);
-              return;
-            }
+          const isPS = build.phaseShiftSlots[tab]?.[idx] ?? false;
+          const currentSlug = build.wedgeSlots[tab][idx];
+          const rawCurrent = currentSlug ? (wedges.find((w) => w.slug === currentSlug)?.resistance ?? 0) : 0;
+          const currentResistance = isPS ? Math.ceil(rawCurrent / 2) : rawCurrent;
+          const rawNew = wedges.find((w) => w.slug === slug)?.resistance ?? 0;
+          const newResistance = isPS ? Math.ceil(rawNew / 2) : rawNew;
+          const newTotal = (resistanceUsed[tab] ?? 0) - currentResistance + newResistance;
+          if (newTotal > limit) {
+            setToast(`내성 초과! 배치 취소 (${newTotal} / ${limit})`);
+            setPicker(null);
+            return;
           }
 
           const next = [...build.wedgeSlots[tab]];

@@ -60,6 +60,7 @@ export type BuildState = {
   activeTab: ActiveTab;
   wedgeSlots: WedgeSlots;
   resistanceLimits: Record<ActiveTab, number>;
+  phaseShiftSlots: Record<ActiveTab, boolean[]>; // 페이즈 시프트 모듈 적용 슬롯
   consonanceCategory: ConsonanceCategory;
   resonanceLevel: number; // 수련 레벨 (0~65)
 
@@ -119,6 +120,13 @@ export const emptyBuildState = (): BuildState => ({
     rangedConsonanceWeapon: 100,
     meleeWeapon: 100,
     rangedWeapon: 100,
+  },
+  phaseShiftSlots: {
+    character: Array(9).fill(false),
+    meleeConsonanceWeapon: Array(4).fill(false),
+    rangedConsonanceWeapon: Array(4).fill(false),
+    meleeWeapon: Array(8).fill(false),
+    rangedWeapon: Array(8).fill(false),
   },
   consonanceCategory: null,
   resonanceLevel: 65,
