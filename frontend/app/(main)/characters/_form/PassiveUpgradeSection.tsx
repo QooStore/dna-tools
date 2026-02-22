@@ -3,7 +3,7 @@ import type React from "react";
 import InputComponent from "@/components/ui/FormInput";
 import LabelComponent from "@/components/ui/FormLabel";
 import SelectComponent from "@/components/ui/FormSelect";
-import { PASSIVE_UPGRADE_TYPE_OPTIONS, TARGET_STAT_OPTIONS } from "@/config/options";
+import { useCodeOptions } from "@/hooks/useCodeOptions";
 
 import { numberValue } from "@/lib/utils";
 import { CharacterFormState } from "@/domains/characterForm";
@@ -23,6 +23,8 @@ type Props = {
 };
 
 export default function PassiveUpgradeSection({ form, setForm }: Props) {
+  const passiveUpgradeTypeOptions = useCodeOptions("PASSIVE_UPGRADE_TYPE");
+  const statOptions = useCodeOptions("STAT");
   const upgrades = form?.passiveUpgrades ?? [];
 
   const addUpgrade = () => {
@@ -96,7 +98,7 @@ export default function PassiveUpgradeSection({ form, setForm }: Props) {
               <LabelComponent>업그레이드 타입</LabelComponent>
               <SelectComponent
                 value={p.upgradeType}
-                options={PASSIVE_UPGRADE_TYPE_OPTIONS}
+                options={passiveUpgradeTypeOptions}
                 onChange={(v) => updateUpgrade(index, "upgradeType", v as PassiveUpgradeItem["upgradeType"])}
               />
             </div>
@@ -108,7 +110,7 @@ export default function PassiveUpgradeSection({ form, setForm }: Props) {
                   <LabelComponent>대상 스탯</LabelComponent>
                   <SelectComponent
                     value={p.targetStat ?? ""}
-                    options={TARGET_STAT_OPTIONS}
+                    options={statOptions}
                     placeholder="스탯 선택"
                     onChange={(v) => updateUpgrade(index, "targetStat", v)}
                   />

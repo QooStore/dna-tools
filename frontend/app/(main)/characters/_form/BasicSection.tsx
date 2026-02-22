@@ -2,7 +2,7 @@ import FormImageUpload from "@/components/ui/FormImageUpload";
 import InputComponent from "@/components/ui/FormInput";
 import LabelComponent from "@/components/ui/FormLabel";
 import FormSelect from "@/components/ui/FormSelect";
-import { ELEMENT_OPTIONS, MELEE_PROFICIENCY_OPTIONS, RANGED_PROFICIENCY_OPTIONS } from "@/config/options";
+import { useCodeOptions } from "@/hooks/useCodeOptions";
 import { CharacterFormState } from "@/domains/characterForm";
 
 type Props = {
@@ -11,6 +11,10 @@ type Props = {
 };
 
 export default function BasicSection({ form, setForm }: Props) {
+  const elementOptions = useCodeOptions("ELEMENT");
+  const meleeOptions = useCodeOptions("MELEEWEAPON");
+  const rangedOptions = useCodeOptions("RANGEDWEAPON");
+
   const update = (key: string, value: string) => {
     setForm((prev) => ({
       ...prev,
@@ -45,7 +49,7 @@ export default function BasicSection({ form, setForm }: Props) {
               update("elementCode", value);
               update("elementImage", `/images/element_icon/${value}.png`);
             }}
-            options={ELEMENT_OPTIONS}
+            options={elementOptions}
           />
         </div>
       </div>
@@ -68,7 +72,7 @@ export default function BasicSection({ form, setForm }: Props) {
           <FormSelect
             value={form.meleeProficiency}
             onChange={(value) => update("meleeProficiency", value)}
-            options={MELEE_PROFICIENCY_OPTIONS}
+            options={meleeOptions}
           />
         </div>
         <div className="space-y-1">
@@ -76,7 +80,7 @@ export default function BasicSection({ form, setForm }: Props) {
           <FormSelect
             value={form.rangedProficiency}
             onChange={(value) => update("rangedProficiency", value)}
-            options={RANGED_PROFICIENCY_OPTIONS}
+            options={rangedOptions}
           />
         </div>
       </div>

@@ -2,7 +2,7 @@ import FormInput from "@/components/ui/FormInput";
 import SelectComponent from "@/components/ui/FormSelect";
 import FormLabel from "@/components/ui/FormLabel";
 import { DemonWedgeFormState, DemonWedgeStatForm } from "@/domains/demonWedgeForm";
-import { TARGET_STAT_OPTIONS } from "@/config/options";
+import { useCodeOptions } from "@/hooks/useCodeOptions";
 import { numberValue } from "@/lib/utils";
 
 type Props = {
@@ -11,6 +11,8 @@ type Props = {
 };
 
 export default function StatsSection({ form, setForm }: Props) {
+  const statOptions = useCodeOptions("STAT");
+
   const updateStat = (index: number, key: keyof DemonWedgeStatForm, value: string | number) => {
     setForm((prev) => {
       const next = [...prev.stats];
@@ -50,7 +52,7 @@ export default function StatsSection({ form, setForm }: Props) {
             <FormLabel>스탯 종류</FormLabel>
             <SelectComponent
               value={stat.statType}
-              options={TARGET_STAT_OPTIONS}
+              options={statOptions}
               onChange={(v) => updateStat(i, "statType", v)}
             />
           </div>

@@ -2,7 +2,8 @@ import FormImageUpload from "@/components/ui/FormImageUpload";
 import FormInput from "@/components/ui/FormInput";
 import FormLabel from "@/components/ui/FormLabel";
 import FormSelect from "@/components/ui/FormSelect";
-import { ELEMENT_OPTIONS, EQUIP_TYPE_OPTIONS, TENDENCY_OPTIONS, RARITY_OPTIONS } from "@/config/options";
+import { EQUIP_TYPE_OPTIONS } from "@/config/options";
+import { useCodeOptions } from "@/hooks/useCodeOptions";
 import { DemonWedgeFormState } from "@/domains/demonWedgeForm";
 import { numberValue } from "@/lib/utils";
 
@@ -12,6 +13,10 @@ type Props = {
 };
 
 export default function BasicSection({ form, setForm }: Props) {
+  const rarityOptions = useCodeOptions("RARITY");
+  const tendencyOptions = useCodeOptions("TENDENCY");
+  const elementOptions = useCodeOptions("ELEMENT");
+
   const update = (key: string, value: string | number | boolean) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
@@ -44,7 +49,7 @@ export default function BasicSection({ form, setForm }: Props) {
           <FormSelect
             value={String(form.rarity)}
             onChange={(v) => update("rarity", Number(v))}
-            options={RARITY_OPTIONS}
+            options={rarityOptions}
             placeholder="희귀도 선택"
           />
         </div>
@@ -66,7 +71,7 @@ export default function BasicSection({ form, setForm }: Props) {
           <FormSelect
             value={form.tendency}
             onChange={(v) => update("tendency", v)}
-            options={TENDENCY_OPTIONS}
+            options={tendencyOptions}
             placeholder="성향 선택"
           />
         </div>
@@ -88,7 +93,7 @@ export default function BasicSection({ form, setForm }: Props) {
           <FormSelect
             value={form.element}
             onChange={(v) => update("element", v)}
-            options={ELEMENT_OPTIONS}
+            options={elementOptions}
             placeholder="무속성"
           />
         </div>

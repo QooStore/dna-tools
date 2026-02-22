@@ -1,7 +1,7 @@
 import InputComponent from "@/components/ui/FormInput";
 import LabelComponent from "@/components/ui/FormLabel";
 import SelectComponent from "@/components/ui/FormSelect";
-import { TARGET_STAT_OPTIONS } from "@/config/options";
+import { useCodeOptions } from "@/hooks/useCodeOptions";
 import { WeaponFormState } from "@/domains/weaponForm";
 import { numberValue } from "@/lib/utils";
 
@@ -11,6 +11,8 @@ type Props = {
 };
 
 export default function SkillSection({ form, setForm }: Props) {
+  const statOptions = useCodeOptions("STAT");
+
   const update = (key: string, value: string | number) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
@@ -24,7 +26,7 @@ export default function SkillSection({ form, setForm }: Props) {
           <LabelComponent>패시브 스탯</LabelComponent>
           <SelectComponent
             value={form.passiveStat}
-            options={TARGET_STAT_OPTIONS}
+            options={statOptions}
             onChange={(v) => update("passiveStat", v)}
           />
         </div>

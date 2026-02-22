@@ -1,6 +1,6 @@
 import type React from "react";
 
-import { FEATURE_OPTIONS } from "@/config/options";
+import { useCodeOptions } from "@/hooks/useCodeOptions";
 import { CharacterFormState } from "@/domains/characterForm";
 
 type FeatureItem = {
@@ -13,6 +13,7 @@ type Props = {
 };
 
 export default function FeaturesSection({ form, setForm }: Props) {
+  const featureOptions = useCodeOptions("FEATURE");
   const features: FeatureItem[] = form?.features ?? [];
 
   const toggleFeature = (code: string) => {
@@ -35,7 +36,7 @@ export default function FeaturesSection({ form, setForm }: Props) {
       <h2 className="text-lg font-semibold">특징</h2>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        {FEATURE_OPTIONS.map(({ value, label }) => {
+        {featureOptions.map(({ value, label }) => {
           const checked = isChecked(value);
 
           return (

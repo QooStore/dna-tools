@@ -3,7 +3,7 @@ import type React from "react";
 import InputComponent from "@/components/ui/FormInput";
 import LabelComponent from "@/components/ui/FormLabel";
 import SelectComponent from "@/components/ui/FormSelect";
-import { SKILL_TYPE_OPTIONS } from "@/config/options";
+import { useCodeOptions } from "@/hooks/useCodeOptions";
 import { CharacterFormState, SkillForm } from "@/domains/characterForm";
 
 type SkillItem = {
@@ -18,6 +18,7 @@ type Props = {
 };
 
 export default function SkillSection({ form, setForm }: Props) {
+  const skillTypeOptions = useCodeOptions("SKILL_TYPE");
   const skills: SkillItem[] = form?.skills ?? [];
 
   const addSkill = () => {
@@ -80,7 +81,7 @@ export default function SkillSection({ form, setForm }: Props) {
               <LabelComponent>스킬 타입</LabelComponent>
               <SelectComponent
                 value={skill.type}
-                options={SKILL_TYPE_OPTIONS}
+                options={skillTypeOptions}
                 placeholder="스킬 타입 선택"
                 onChange={(v) => updateSkill(index, "type", v)}
               />
