@@ -53,6 +53,9 @@ logs/
 # uploaded images
 /uploads/
 
+# DB dumps
+dump-*.sql
+
 # Spring local profile
 application-local.yaml
 
