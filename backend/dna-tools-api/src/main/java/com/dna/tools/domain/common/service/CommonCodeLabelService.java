@@ -29,6 +29,15 @@ public class CommonCodeLabelService {
                         (a, b) -> a));
     }
 
+    // 캐시 없이 항상 DB에서 직접 조회 (selectbox 옵션용)
+    public Map<String, String> getAllLabelMapFresh(String codeType) {
+        return repository.findByCodeType(codeType).stream()
+                .collect(Collectors.toMap(
+                        CommonCodeLabelEntity::getCode,
+                        CommonCodeLabelEntity::getLabel,
+                        (a, b) -> a));
+    }
+
     // 여러 codeType을 한 번에 LabelContext로
     public LabelContext getLabelContext(List<String> codeTypes) {
 

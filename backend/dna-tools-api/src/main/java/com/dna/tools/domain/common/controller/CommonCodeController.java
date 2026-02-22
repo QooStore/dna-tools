@@ -21,7 +21,7 @@ public class CommonCodeController {
 
     @GetMapping("/{codeType}")
     public List<CodeOptionResponse> getOptions(@PathVariable String codeType) {
-        return commonCodeLabelService.getAllLabelMap(codeType.toUpperCase())
+        return commonCodeLabelService.getAllLabelMapFresh(codeType.toUpperCase())
                 .entrySet().stream()
                 .map(e -> new CodeOptionResponse(e.getKey(), e.getValue()))
                 .toList();
