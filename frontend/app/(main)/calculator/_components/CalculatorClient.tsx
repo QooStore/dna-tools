@@ -472,9 +472,7 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
               b.hp > 0 && `HP +${b.hp}%`,
               b.shield > 0 && `실드 +${b.shield}%`,
             ].filter(Boolean);
-            return parts.length > 0 ? (
-              <span className="text-sm text-green-400">{parts.join(", ")}</span>
-            ) : null;
+            return parts.length > 0 ? <span className="text-sm text-green-400">{parts.join(", ")}</span> : null;
           })()}
         </div>
 
@@ -531,141 +529,136 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
           <div className="py-8 text-center text-white/40">캐릭터를 먼저 선택해주세요</div>
         </ContentSection>
       ) : (
-      <ContentSection title="악마의 쐐기 세팅">
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            onClick={() => setPhaseShiftMode((p) => !p)}
-            className={`px-3 py-2 rounded-lg text-sm border transition ${
-              phaseShiftMode
-                ? "border-violet-400/60 bg-violet-400/15 text-violet-300"
-                : "border-white/15 bg-white/5 text-white/70 hover:bg-white/10"
-            }`}
-          >
-            페이즈 시프트 모듈{phaseShiftMode ? " (슬롯 클릭으로 적용/해제)" : ""}
-          </button>
-          <div className="h-5 w-px bg-white/15" />
-          {(Object.keys(TAB_LABELS) as ActiveTab[]).filter((tab) => {
-            if (tab === "meleeConsonanceWeapon") return build.consonanceCategory === "melee";
-            if (tab === "rangedConsonanceWeapon") return build.consonanceCategory === "ranged";
-            return true;
-          }).map((tab) => {
+        <ContentSection title="악마의 쐐기 세팅">
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => setPhaseShiftMode((p) => !p)}
+              className={`px-3 py-2 rounded-lg text-sm border transition ${
+                phaseShiftMode
+                  ? "border-violet-400/60 bg-violet-400/15 text-violet-300"
+                  : "border-white/15 bg-white/5 text-white/70 hover:bg-white/10"
+              }`}
+            >
+              페이즈 시프트 모듈{phaseShiftMode ? " (슬롯 클릭으로 적용/해제)" : ""}
+            </button>
+            <div className="h-5 w-px bg-white/15" />
+            {(Object.keys(TAB_LABELS) as ActiveTab[])
+              .filter((tab) => {
+                if (tab === "meleeConsonanceWeapon") return build.consonanceCategory === "melee";
+                if (tab === "rangedConsonanceWeapon") return build.consonanceCategory === "ranged";
+                return true;
+              })
+              .map((tab) => {
+                const used = resistanceUsed[tab] ?? 0;
+                const limit = build.resistanceLimits[tab] ?? 0;
+                return (
+                  <button
+                    key={tab}
+                    onClick={() => setBuild((prev) => ({ ...prev, activeTab: tab }))}
+                    className={`px-3 py-2 rounded-lg text-sm border transition ${
+                      build.activeTab === tab
+                        ? "border-cyan-300/60 bg-cyan-400/10 text-cyan-200"
+                        : "border-white/15 bg-white/5 text-white/70 hover:bg-white/10"
+                    }`}
+                  >
+                    {TAB_LABELS[tab]}
+                    <span className="ml-1.5 text-xs text-white/40">
+                      {used}/{limit}
+                    </span>
+                  </button>
+                );
+              })}
+          </div>
+
+          {/* 현재 탭 내성 입력 + 상태 + 초기화 */}
+          {(() => {
+            const tab = build.activeTab;
             const used = resistanceUsed[tab] ?? 0;
             const limit = build.resistanceLimits[tab] ?? 0;
             return (
-              <button
-                key={tab}
-                onClick={() => setBuild((prev) => ({ ...prev, activeTab: tab }))}
-                className={`px-3 py-2 rounded-lg text-sm border transition ${
-                  build.activeTab === tab
-                    ? "border-cyan-300/60 bg-cyan-400/10 text-cyan-200"
-                    : "border-white/15 bg-white/5 text-white/70 hover:bg-white/10"
-                }`}
-              >
-                {TAB_LABELS[tab]}
-                <span className="ml-1.5 text-xs text-white/40">
-                  {used}/{limit}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* 현재 탭 내성 입력 + 상태 + 초기화 */}
-        {(() => {
-          const tab = build.activeTab;
-          const used = resistanceUsed[tab] ?? 0;
-          const limit = build.resistanceLimits[tab] ?? 0;
-          return (
-            <div className="mt-4 flex items-center gap-3">
-              <span className="text-sm text-white/60">내성 한도</span>
-              <input
-                type="number"
-                min={0}
-                value={limit}
-                onChange={(e) => {
-                  const v = Number(e.target.value);
-                  setBuild((prev) => ({
-                    ...prev,
-                    resistanceLimits: { ...prev.resistanceLimits, [prev.activeTab]: v >= 0 ? v : 0 },
-                  }));
-                }}
-                className="w-20 h-9 rounded-lg border border-white/10 bg-white/5 px-3 text-sm text-white/80 text-center"
-              />
-              <span className="text-sm font-semibold text-white/50">
-                사용 {used} / {limit}
-              </span>
-              <button
-                onClick={() => {
-                  const slotCount = build.wedgeSlots[tab].length;
-                  const emptySlugs = Array(slotCount).fill("");
-                  const emptyPS = Array(slotCount).fill(false);
-                  setBuild((prev) => ({
-                    ...prev,
-                    wedgeSlots: { ...prev.wedgeSlots, [tab]: emptySlugs },
-                    phaseShiftSlots: { ...prev.phaseShiftSlots, [tab]: emptyPS },
-                  }));
-                  syncWedgeBuff(tab, emptySlugs);
-                }}
-                className="ml-auto px-3 py-1.5 rounded-lg text-xs border border-white/15 bg-white/5 text-white/60 hover:bg-white/10"
-              >
-                탭 초기화
-              </button>
-            </div>
-          );
-        })()}
-
-        {/* boarhat 스타일 슬롯 배치 */}
-        {(() => {
-          const tab = build.activeTab;
-          const wedgeSlotCard = (it: DemonWedgeListItem | undefined, i: number, label: string) => {
-            const isPS = build.phaseShiftSlots[tab]?.[i] ?? false;
-            const handleClick = () => {
-              if (phaseShiftMode) {
-                setBuild((prev) => {
-                  const next = [...(prev.phaseShiftSlots[tab] ?? [])];
-                  next[i] = !next[i];
-                  return { ...prev, phaseShiftSlots: { ...prev.phaseShiftSlots, [tab]: next } };
-                });
-              } else {
-                setPicker({ type: "wedge", tab, slotIndex: i });
-              }
-            };
-            return (
-              <div key={i} className={`rounded-2xl transition ${isPS ? "ring-1 ring-violet-400/70" : ""}`}>
-                <SlotCard
-                  size="sm"
-                  label={label}
-                  item={it}
-                  onClick={handleClick}
+              <div className="mt-4 flex items-center gap-3">
+                <span className="text-sm text-white/60">내성 한도</span>
+                <input
+                  type="number"
+                  min={0}
+                  value={limit}
+                  onChange={(e) => {
+                    const v = Number(e.target.value);
+                    setBuild((prev) => ({
+                      ...prev,
+                      resistanceLimits: { ...prev.resistanceLimits, [prev.activeTab]: v >= 0 ? v : 0 },
+                    }));
+                  }}
+                  className="w-20 h-9 rounded-lg border border-white/10 bg-white/5 px-3 text-sm text-white/80 text-center"
                 />
+                <span className="text-sm font-semibold text-white/50">
+                  사용 {used} / {limit}
+                </span>
+                <button
+                  onClick={() => {
+                    const slotCount = build.wedgeSlots[tab].length;
+                    const emptySlugs = Array(slotCount).fill("");
+                    setBuild((prev) => ({
+                      ...prev,
+                      wedgeSlots: { ...prev.wedgeSlots, [tab]: emptySlugs },
+                    }));
+                    syncWedgeBuff(tab, emptySlugs);
+                  }}
+                  className="ml-auto px-3 py-1.5 rounded-lg text-xs border border-white/15 bg-white/5 text-white/60 hover:bg-white/10"
+                >
+                  쐐기 초기화
+                </button>
               </div>
             );
-          };
+          })()}
 
-          return (
-            <div className="mt-6">
-              {build.activeTab === "character" ? (
-                <div className="grid grid-cols-4 gap-8 justify-items-center">
-                  {wedgeSlotItems.slice(0, 4).map((it, i) => wedgeSlotCard(it, i, `Slot ${i + 1}`))}
-                  <div className="col-span-4 flex justify-center py-4">
-                    {wedgeSlotCard(wedgeSlotItems[8], 8, "Slot 9")}
+          {/* boarhat 스타일 슬롯 배치 */}
+          {(() => {
+            const tab = build.activeTab;
+            const wedgeSlotCard = (it: DemonWedgeListItem | undefined, i: number, label: string) => {
+              const isPS = build.phaseShiftSlots[tab]?.[i] ?? false;
+              const handleClick = () => {
+                if (phaseShiftMode) {
+                  setBuild((prev) => {
+                    const next = [...(prev.phaseShiftSlots[tab] ?? [])];
+                    next[i] = !next[i];
+                    return { ...prev, phaseShiftSlots: { ...prev.phaseShiftSlots, [tab]: next } };
+                  });
+                } else {
+                  setPicker({ type: "wedge", tab, slotIndex: i });
+                }
+              };
+              return (
+                <div key={i} className={`rounded-2xl transition ${isPS ? "ring-1 ring-violet-400/70" : ""}`}>
+                  <SlotCard size="sm" label={label} item={it} onClick={handleClick} />
+                </div>
+              );
+            };
+
+            return (
+              <div className="mt-6">
+                {build.activeTab === "character" ? (
+                  <div className="grid grid-cols-4 gap-8 justify-items-center">
+                    {wedgeSlotItems.slice(0, 4).map((it, i) => wedgeSlotCard(it, i, `Slot ${i + 1}`))}
+                    <div className="col-span-4 flex justify-center py-4">
+                      {wedgeSlotCard(wedgeSlotItems[8], 8, "Slot 9")}
+                    </div>
+                    {wedgeSlotItems.slice(4, 8).map((it, i) => wedgeSlotCard(it, i + 4, `Slot ${i + 5}`))}
                   </div>
-                  {wedgeSlotItems.slice(4, 8).map((it, i) => wedgeSlotCard(it, i + 4, `Slot ${i + 5}`))}
-                </div>
-              ) : build.activeTab === "meleeConsonanceWeapon" || build.activeTab === "rangedConsonanceWeapon" ? (
-                <div className="grid grid-cols-4 gap-8 justify-items-center">
-                  {wedgeSlotItems.map((it, i) => wedgeSlotCard(it, i, `Slot ${i + 1}`))}
-                </div>
-              ) : (
-                <div className="grid grid-cols-4 gap-8 justify-items-center">
-                  {wedgeSlotItems.slice(0, 4).map((it, i) => wedgeSlotCard(it, i, `Slot ${i + 1}`))}
-                  {wedgeSlotItems.slice(4, 8).map((it, i) => wedgeSlotCard(it, i + 4, `Slot ${i + 5}`))}
-                </div>
-              )}
-            </div>
-          );
-        })()}
-      </ContentSection>
+                ) : build.activeTab === "meleeConsonanceWeapon" || build.activeTab === "rangedConsonanceWeapon" ? (
+                  <div className="grid grid-cols-4 gap-8 justify-items-center">
+                    {wedgeSlotItems.map((it, i) => wedgeSlotCard(it, i, `Slot ${i + 1}`))}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-4 gap-8 justify-items-center">
+                    {wedgeSlotItems.slice(0, 4).map((it, i) => wedgeSlotCard(it, i, `Slot ${i + 1}`))}
+                    {wedgeSlotItems.slice(4, 8).map((it, i) => wedgeSlotCard(it, i + 4, `Slot ${i + 5}`))}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+        </ContentSection>
       )}
 
       {/* 캐릭터 선택 모달 */}
