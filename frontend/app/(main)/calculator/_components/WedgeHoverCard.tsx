@@ -51,7 +51,7 @@ export default function WedgeHoverCard({ wedge }: { wedge: DemonWedgeListItem })
             <div key={idx} className="flex items-center justify-between text-xs text-white/75">
               <span>{s.statTypeLabel}</span>
               <span className="font-semibold text-white tabular-nums">
-                {s.statType?.includes("Range") && s.statType !== "skillRange" ? `+${s.value}` : `${s.value}%`}
+                {(s.statType?.includes("Range") && s.statType !== "skillRange") || s.statType === "dodgeAttempt" ? `+${s.value}` : `${s.value}%`}
               </span>
             </div>
           ))}

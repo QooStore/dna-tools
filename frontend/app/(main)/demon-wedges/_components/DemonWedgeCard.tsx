@@ -89,7 +89,8 @@ export default function DemonWedgeCard({ wedge, isAdmin = false, onDelete }: Pro
             {wedge.stats.map((stat, i) => (
               <div key={i} className="flex justify-between text-white/75">
                 <span>{stat.statTypeLabel}</span>
-                {stat.statType?.includes("Range") && stat.statType !== "skillRange" ? (
+                {(stat.statType?.includes("Range") && stat.statType !== "skillRange") ||
+                stat.statType === "dodgeAttempt" ? (
                   <span className="font-semibold text-white tabular-nums">+{stat.value}</span>
                 ) : (
                   <span className="font-semibold text-white tabular-nums">{stat.value}%</span>
