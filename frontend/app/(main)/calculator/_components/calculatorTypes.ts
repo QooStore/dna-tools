@@ -59,6 +59,7 @@ export type BuildState = {
   selections: BuildSelections;
   activeTab: ActiveTab;
   wedgeSlots: WedgeSlots;
+  resistanceLimits: Record<ActiveTab, number>;
   consonanceCategory: ConsonanceCategory;
   resonanceLevel: number; // 수련 레벨 (0~65)
 
@@ -112,6 +113,13 @@ export const emptyBuildState = (): BuildState => ({
     ally2Slug: "",
   },
   activeTab: "character",
+  resistanceLimits: {
+    character: 100,
+    meleeConsonanceWeapon: 100,
+    rangedConsonanceWeapon: 100,
+    meleeWeapon: 100,
+    rangedWeapon: 100,
+  },
   consonanceCategory: null,
   resonanceLevel: 65,
   wedgeSlots: {

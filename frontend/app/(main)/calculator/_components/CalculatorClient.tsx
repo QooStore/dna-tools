@@ -344,6 +344,19 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
     [weapons, build.selections.rangedWeaponSlug],
   );
 
+  // 탭별 내성 합계
+  const resistanceUsed = useMemo(() => {
+    const result = {} as Record<ActiveTab, number>;
+    for (const tab of Object.keys(build.wedgeSlots) as ActiveTab[]) {
+      result[tab] = build.wedgeSlots[tab].reduce((sum, slug) => {
+        if (!slug) return sum;
+        const w = wedges.find((x) => x.slug === slug);
+        return sum + (w?.resistance ?? 0);
+      }, 0);
+    }
+    return result;
+  }, [build.wedgeSlots, wedges]);
+
   const wedgeOptionsForTab = useMemo(() => {
     const equipType = tabToEquipType[build.activeTab];
     const isKukulkanSlot = build.activeTab === "character" && picker?.type === "wedge" && picker.slotIndex === 8;
@@ -461,36 +474,35 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
         </div>
 
         {/* 슬롯 카드 클릭 → 모달 선택 */}
-        <div className="flex flex-col items-center gap-10">
-          <div className="text-center">
+        <div className="flex flex-wrap justify-center items-end gap-8">
+          {/* 출전 캐릭터 */}
+          <div className="flex flex-col items-center gap-3">
             <div className="text-xl font-bold text-white/90">빌드 {activeBuild}</div>
-            <div className="mt-4">
-              <SlotCard
-                label="출전 캐릭터"
-                item={selectedMain}
-                onClick={() => setPicker({ type: "character", target: "main" })}
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-10">
             <SlotCard
-              label="근접 무기"
-              item={selectedMeleeWeapon}
-              onClick={() => setPicker({ type: "weapon", target: "melee" })}
-              disabled={!build.selections.characterSlug}
-            />
-            <SlotCard
-              label="원거리 무기"
-              item={selectedRangedWeapon}
-              onClick={() => setPicker({ type: "weapon", target: "ranged" })}
-              disabled={!build.selections.characterSlug}
+              label="출전 캐릭터"
+              item={selectedMain}
+              onClick={() => setPicker({ type: "character", target: "main" })}
             />
           </div>
 
-          <div className="text-center">
+          {/* 근접 / 원거리 무기 */}
+          <SlotCard
+            label="근접 무기"
+            item={selectedMeleeWeapon}
+            onClick={() => setPicker({ type: "weapon", target: "melee" })}
+            disabled={!build.selections.characterSlug}
+          />
+          <SlotCard
+            label="원거리 무기"
+            item={selectedRangedWeapon}
+            onClick={() => setPicker({ type: "weapon", target: "ranged" })}
+            disabled={!build.selections.characterSlug}
+          />
+
+          {/* 협력 동료 */}
+          <div className="flex flex-col items-center gap-3">
             <div className="text-xl font-bold text-white/90">협력 동료</div>
-            <div className="mt-6 grid grid-cols-2 gap-10">
+            <div className="flex gap-8">
               <SlotCard
                 label="협력 동료 1"
                 item={selectedAlly1}
@@ -520,87 +532,93 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
             if (tab === "meleeConsonanceWeapon") return build.consonanceCategory === "melee";
             if (tab === "rangedConsonanceWeapon") return build.consonanceCategory === "ranged";
             return true;
-          }).map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setBuild((prev) => ({ ...prev, activeTab: tab }))}
-              className={`px-3 py-2 rounded-lg text-sm border transition ${
-                build.activeTab === tab
-                  ? "border-cyan-300/60 bg-cyan-400/10 text-cyan-200"
-                  : "border-white/15 bg-white/5 text-white/70 hover:bg-white/10"
-              }`}
-            >
-              {TAB_LABELS[tab]}
-            </button>
-          ))}
+          }).map((tab) => {
+            const used = resistanceUsed[tab] ?? 0;
+            const limit = build.resistanceLimits[tab] ?? 0;
+            return (
+              <button
+                key={tab}
+                onClick={() => setBuild((prev) => ({ ...prev, activeTab: tab }))}
+                className={`px-3 py-2 rounded-lg text-sm border transition ${
+                  build.activeTab === tab
+                    ? "border-cyan-300/60 bg-cyan-400/10 text-cyan-200"
+                    : "border-white/15 bg-white/5 text-white/70 hover:bg-white/10"
+                }`}
+              >
+                {TAB_LABELS[tab]}
+                {limit > 0 && (
+                  <span className="ml-1.5 text-xs text-white/40">
+                    {used}/{limit}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
 
+        {/* 현재 탭 내성 입력 + 상태 */}
+        {(() => {
+          const used = resistanceUsed[build.activeTab] ?? 0;
+          const limit = build.resistanceLimits[build.activeTab] ?? 0;
+          return (
+            <div className="mt-4 flex items-center gap-3">
+              <span className="text-sm text-white/60">내성 한도</span>
+              <input
+                type="number"
+                min={0}
+                value={limit === 0 ? "" : limit}
+                placeholder="0"
+                onChange={(e) => {
+                  const v = Number(e.target.value);
+                  setBuild((prev) => ({
+                    ...prev,
+                    resistanceLimits: { ...prev.resistanceLimits, [prev.activeTab]: v >= 0 ? v : 0 },
+                  }));
+                }}
+                className="w-20 h-9 rounded-lg border border-white/10 bg-white/5 px-3 text-sm text-white/80 text-center"
+              />
+              <span className="text-sm font-semibold text-white/50">
+                사용 {used}{limit > 0 ? ` / ${limit}` : ""}
+              </span>
+            </div>
+          );
+        })()}
+
         {/* boarhat 스타일 슬롯 배치 */}
-        <div className="mt-6">
-          {build.activeTab === "character" ? (
-            <div className="grid grid-cols-4 gap-8 justify-items-center">
-              {wedgeSlotItems.slice(0, 4).map((it, i) => (
-                <SlotCard
-                  key={i}
-                  size="sm"
-                  label={`Slot ${i + 1}`}
-                  item={it}
-                  onClick={() => setPicker({ type: "wedge", tab: build.activeTab, slotIndex: i })}
-                />
-              ))}
-              <div className="col-span-4 flex justify-center py-4">
-                <SlotCard
-                  size="sm"
-                  label="Slot 9"
-                  item={wedgeSlotItems[8]}
-                  onClick={() => setPicker({ type: "wedge", tab: build.activeTab, slotIndex: 8 })}
-                />
-              </div>
-              {wedgeSlotItems.slice(4, 8).map((it, i) => (
-                <SlotCard
-                  key={i + 4}
-                  size="sm"
-                  label={`Slot ${i + 5}`}
-                  item={it}
-                  onClick={() => setPicker({ type: "wedge", tab: build.activeTab, slotIndex: i + 4 })}
-                />
-              ))}
+        {(() => {
+          const wedgeSlotCard = (it: DemonWedgeListItem | undefined, i: number, label: string) => (
+            <SlotCard
+              key={i}
+              size="sm"
+              label={label}
+              item={it}
+              onClick={() => setPicker({ type: "wedge", tab: build.activeTab, slotIndex: i })}
+            />
+          );
+
+          return (
+            <div className="mt-6">
+              {build.activeTab === "character" ? (
+                <div className="grid grid-cols-4 gap-8 justify-items-center">
+                  {wedgeSlotItems.slice(0, 4).map((it, i) => wedgeSlotCard(it, i, `Slot ${i + 1}`))}
+                  <div className="col-span-4 flex justify-center py-4">
+                    {wedgeSlotCard(wedgeSlotItems[8], 8, "Slot 9")}
+                  </div>
+                  {wedgeSlotItems.slice(4, 8).map((it, i) => wedgeSlotCard(it, i + 4, `Slot ${i + 5}`))}
+                </div>
+              ) : build.activeTab === "meleeConsonanceWeapon" || build.activeTab === "rangedConsonanceWeapon" ? (
+                <div className="grid grid-cols-4 gap-8 justify-items-center">
+                  {wedgeSlotItems.map((it, i) => wedgeSlotCard(it, i, `Slot ${i + 1}`))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-4 gap-8 justify-items-center">
+                  {wedgeSlotItems.slice(0, 4).map((it, i) => wedgeSlotCard(it, i, `Slot ${i + 1}`))}
+                  {wedgeSlotItems.slice(4, 8).map((it, i) => wedgeSlotCard(it, i + 4, `Slot ${i + 5}`))}
+                </div>
+              )}
             </div>
-          ) : build.activeTab === "meleeConsonanceWeapon" || build.activeTab === "rangedConsonanceWeapon" ? (
-            <div className="grid grid-cols-4 gap-8 justify-items-center">
-              {wedgeSlotItems.map((it, i) => (
-                <SlotCard
-                  key={i}
-                  size="sm"
-                  label={`Slot ${i + 1}`}
-                  item={it}
-                  onClick={() => setPicker({ type: "wedge", tab: build.activeTab, slotIndex: i })}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-4 gap-8 justify-items-center">
-              {wedgeSlotItems.slice(0, 4).map((it, i) => (
-                <SlotCard
-                  key={i}
-                  size="sm"
-                  label={`Slot ${i + 1}`}
-                  item={it}
-                  onClick={() => setPicker({ type: "wedge", tab: build.activeTab, slotIndex: i })}
-                />
-              ))}
-              {wedgeSlotItems.slice(4, 8).map((it, i) => (
-                <SlotCard
-                  key={i + 4}
-                  size="sm"
-                  label={`Slot ${i + 5}`}
-                  item={it}
-                  onClick={() => setPicker({ type: "wedge", tab: build.activeTab, slotIndex: i + 4 })}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+          );
+        })()}
       </ContentSection>
       )}
 
@@ -755,6 +773,21 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
           if (picker?.type !== "wedge") return;
           const tab = picker.tab;
           const idx = picker.slotIndex;
+
+          // 내성 사전 계산
+          const limit = build.resistanceLimits[tab] ?? 0;
+          if (limit > 0) {
+            const currentSlug = build.wedgeSlots[tab][idx];
+            const currentResistance = currentSlug ? (wedges.find((w) => w.slug === currentSlug)?.resistance ?? 0) : 0;
+            const newResistance = wedges.find((w) => w.slug === slug)?.resistance ?? 0;
+            const newTotal = (resistanceUsed[tab] ?? 0) - currentResistance + newResistance;
+            if (newTotal > limit) {
+              setToast(`내성 초과! 배치 취소 (${newTotal} / ${limit})`);
+              setPicker(null);
+              return;
+            }
+          }
+
           const next = [...build.wedgeSlots[tab]];
           next[idx] = slug;
           setBuild((prev) => ({
