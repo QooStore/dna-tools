@@ -51,7 +51,7 @@ export default function PickerModal<T extends BaseItem>({
   const [q, setQ] = useState("");
   const [activeFilters, setActiveFilters] = useState<Record<string, string>>({});
   const [tooltipItem, setTooltipItem] = useState<T | null>(null);
-  const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(null);
+  const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number; below: boolean } | null>(null);
 
   const handleClose = useCallback(() => {
     onClose();
@@ -64,10 +64,12 @@ export default function PickerModal<T extends BaseItem>({
       if (!renderHoverCard) return;
       onItemHover?.(item);
       const btnRect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      const below = btnRect.top < 350;
       setTooltipItem(item);
       setTooltipPos({
         x: btnRect.left + btnRect.width / 2,
-        y: btnRect.top,
+        y: below ? btnRect.bottom : btnRect.top,
+        below,
       });
     },
     [renderHoverCard, onItemHover],
@@ -211,7 +213,9 @@ export default function PickerModal<T extends BaseItem>({
               style={{
                 left: `${tooltipPos.x}px`,
                 top: `${tooltipPos.y}px`,
-                transform: "translate(-50%, -100%) translateY(-8px)",
+                transform: tooltipPos.below
+                  ? "translate(-50%, 8px)"
+                  : "translate(-50%, -100%) translateY(-8px)",
               }}
             >
               {renderHoverCard(tooltipItem)}
