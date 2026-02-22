@@ -34,7 +34,7 @@ public class WeaponService {
                                 "MELEEWEAPON",
                                 "RANGEDWEAPON",
                                 "ATTACK_TYPE",
-                                "WEAPON_PASSIVE_STAT",
+                                "STAT",
                                 "WORD"));
 
                 return weapons.stream()
