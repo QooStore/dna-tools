@@ -570,10 +570,11 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
           })}
         </div>
 
-        {/* 현재 탭 내성 입력 + 상태 */}
+        {/* 현재 탭 내성 입력 + 상태 + 초기화 */}
         {(() => {
-          const used = resistanceUsed[build.activeTab] ?? 0;
-          const limit = build.resistanceLimits[build.activeTab] ?? 0;
+          const tab = build.activeTab;
+          const used = resistanceUsed[tab] ?? 0;
+          const limit = build.resistanceLimits[tab] ?? 0;
           return (
             <div className="mt-4 flex items-center gap-3">
               <span className="text-sm text-white/60">내성 한도</span>
@@ -593,6 +594,22 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
               <span className="text-sm font-semibold text-white/50">
                 사용 {used} / {limit}
               </span>
+              <button
+                onClick={() => {
+                  const slotCount = build.wedgeSlots[tab].length;
+                  const emptySlugs = Array(slotCount).fill("");
+                  const emptyPS = Array(slotCount).fill(false);
+                  setBuild((prev) => ({
+                    ...prev,
+                    wedgeSlots: { ...prev.wedgeSlots, [tab]: emptySlugs },
+                    phaseShiftSlots: { ...prev.phaseShiftSlots, [tab]: emptyPS },
+                  }));
+                  syncWedgeBuff(tab, emptySlugs);
+                }}
+                className="ml-auto px-3 py-1.5 rounded-lg text-xs border border-white/15 bg-white/5 text-white/60 hover:bg-white/10"
+              >
+                탭 초기화
+              </button>
             </div>
           );
         })()}
@@ -915,27 +932,6 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
               onChange={(next) => setBuild((p) => ({ ...p, buffs: { ...p.buffs, [s.key]: next } }))}
             />
           ))}
-        </div>
-        <div className="mt-4 flex items-center gap-2">
-          <button
-            onClick={() => {
-              // 패시브만 남기고 나머지 버프 섹션 초기화
-              setBuild((p) => ({
-                ...p,
-                buffs: {
-                  ...p.buffs,
-                  characterWedge: emptyBuffFields(),
-                  meleeWeaponWedge: emptyBuffFields(),
-                  rangedWeaponWedge: emptyBuffFields(),
-                  meleeConsonanceWedge: emptyBuffFields(),
-                  rangedConsonanceWedge: emptyBuffFields(),
-                },
-              }));
-            }}
-            className="px-3 py-2 rounded-lg text-sm border border-white/15 bg-white/5 text-white/70 hover:bg-white/10"
-          >
-            쐐기 버프 초기화
-          </button>
         </div>
       </ContentSection>
 
