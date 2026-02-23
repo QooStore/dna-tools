@@ -1,41 +1,53 @@
+DNATOOLS (Live): https://dna-tools.co.kr — Next.js + Spring Boot + MySQL 기반 게임 DB/빌드 비교 서비스
+
 # Duet Night Abyss 팬메이드 DB & 대미지 기대값 계산기 (DNA Tools)
 
 모바일 게임 듀엣나이트 어비스의 캐릭터/무기/악마의 쐐기 데이터를 정리하고,  
 세팅에 따른 대미지 기대값을 계산, 비교할 수 있습니다.
 
 ## 주요 기능
+
 ### 1) 게임 DB
+
 - 캐릭터/무기/악마의 쐐기 데이터 조회
 - 검색/필터/정렬 (데이터가 늘어나도 확장 가능하도록 설계)
 
 ### 2) 대미지 기대값 계산기
+
 - 캐릭터/무기/협력동료/악마의 쐐기 선택 -> 정해진 공식에 따른 대미지 기대값 계산
 
 ### 3) 관리자
+
 - 데이터 등록/수정/삭제(CRUD)
 - 이미지 업로드/삭제 관리
 - 인증(JWT) 기반 관리자 접근 제어
 
 ## 기술 스택
+
 ### Frontend
+
 - Next.js (App Router)
 - React
 - TailwindCSS
 
 ### Backend
+
 - Spring Boot (Gradle)
 - Spring Data JPA
 - MySQL
 
 ### Infra / Deployment (예정)
+
 - AWS (EC2)
 
 ## 아키텍처 개요
+
 - Next.js: 사용자 UI + 서버액션/클라이언트 API 호출
 - Springboot API: 게임 DB CRUD, 인증, 이미지 업로드
 - MySQL: 캐릭터/무기/악마의 쐐기/이미지 메타데이터 저장
 - 이미지 저장소: Local 저장소 기반 구현 + (추후) S3로 확장 가능하도록 interface 추상화
 
 ## 고지사항
+
 본 프로젝트는 비공식 팬메이드이며, 원작/제작사와 무관합니다.
 게임 관련 명칭/이미지/데이터는 정보 제공 목적이며, 요청 시 즉시 수정/삭제할 수 있습니다.
