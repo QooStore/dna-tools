@@ -1,8 +1,40 @@
 import type { DemonWedgeListItem } from "@/domains/demonWedges/type";
 import type { CharacterListItem, CharacterPassiveUpgrade } from "@/domains/characters/types";
 import type { WeaponListItem } from "@/domains/weapons/type";
-import type { BuffFields, BuildState, ActiveTab } from "./calculatorTypes";
+import type { BuffFields, BuildState, ActiveTab, EnemyType, ElementCondition } from "./calculatorTypes";
 import { emptyBuffFields } from "./calculatorTypes";
+
+// ── 적 종류별 방어력 ──
+export const ENEMY_DEF: Record<EnemyType, number> = {
+  small: 130,
+  large: 200,
+  boss: 300,
+};
+
+export const ENEMY_TYPE_LABELS: Record<EnemyType, string> = {
+  small: "소형",
+  large: "대형",
+  boss: "보스",
+};
+
+// ── 속성 조건별 적 속성 저항 ──
+export const ELEMENT_RESIST: Record<ElementCondition, number> = {
+  none: 0,      // 무속성
+  counter: -400, // 카운터 속성
+  other: 50,    // 기타 속성
+};
+
+export const ELEMENT_CONDITION_LABELS: Record<ElementCondition, string> = {
+  none: "무속성",
+  counter: "카운터 속성",
+  other: "기타 속성",
+};
+
+export const ELEMENT_CONDITION_DESC: Record<ElementCondition, string> = {
+  none: "속성 저항 0%",
+  counter: "속성 저항 -400%",
+  other: "속성 저항 50%",
+};
 
 type WedgeEquipType = DemonWedgeListItem["equipType"]; // string
 
@@ -184,6 +216,36 @@ function critCoeff(critRatePct: number, critDamagePct: number): number {
   return (1 - critProb) * 1 + critProb * onCrit;
 }
 
+// ── 적 방어 계수 ──
+// (300 + 레벨 차이 계수) / (300 + 레벨 차이 계수 + 적 방어력 × (1 - 방어 무시%))
+// 레벨 차이 계수 = clamp(캐릭터 레벨 - 적 레벨, -20, 0)
+function enemyDefCoeff(
+  characterLevel: number,
+  enemyLevel: number,
+  enemyDef: number,
+  defPenetrationPct: number,
+): number {
+  const levelDiff = Math.max(-20, Math.min(0, characterLevel - enemyLevel));
+  const numer = 300 + levelDiff;
+  const denom = numer + enemyDef * (1 - defPenetrationPct / 100);
+  if (denom <= 0) return 1;
+  return numer / denom;
+}
+
+// ── 적 속성 저항 계수 ──
+// (1 - 적 속성 저항%) × (1 + 속성 관통%)
+function enemyElementResistCoeff(enemyElementResistPct: number, elementPenetrationPct: number): number {
+  return (1 - enemyElementResistPct / 100) * (1 + elementPenetrationPct / 100);
+}
+
+// ── 적 받는 대미지 계수 ──
+// 감소: 개별 곱연산 / 증가: 합연산
+// (1 - 감소1%) × (1 - 감소2%) × ... × (1 + 증가%)
+export function enemyDmgTakenCoeff(reductions: number[], increasePct: number): number {
+  const reductionMult = reductions.reduce((acc, r) => acc * (1 - r / 100), 1);
+  return reductionMult * (1 + increasePct / 100);
+}
+
 // ── 마스터리 ──
 // 캐릭터 숙련 무기 타입이 맞으면 120%, 아니면 100%
 // 각주(kezhou)는 모든 무기 120%
@@ -241,6 +303,7 @@ function computeWeaponDamage(
   totalResolvePct: number,
   totalMoralePct: number,
   isConsonance: boolean = false,
+  enemyMult: number = 1,
 ): number {
   const baseAttack = Number(build.base.character.baseAttack) || 0;
 
@@ -263,7 +326,7 @@ function computeWeaponDamage(
   const resolve = resolveCoeff(totalResolvePct, currentHpPct);
   const morale = moraleCoeff(totalMoralePct, currentHpPct);
 
-  return baseWeaponDamage * crit * extraDamage * weaponDamageCoeff * resolve * morale;
+  return baseWeaponDamage * crit * extraDamage * weaponDamageCoeff * resolve * morale * enemyMult;
 }
 
 // ── 스킬 대미지 계산 ──
@@ -283,6 +346,22 @@ export function computeOutputs(build: BuildState, data: ComputeData): OutputResu
   const totalResolvePct = (Number(build.base.character.resolvePct) || 0) + allBuff.resolvePct;
   const totalMoralePct = (Number(build.base.character.moralePct) || 0) + allBuff.moralePct;
 
+  // ── 적 계수 ──
+  const e = build.enemy;
+  const charBase = build.base.character;
+  const defCoeff = enemyDefCoeff(
+    charBase.characterLevel,
+    e.enemyLevel,
+    ENEMY_DEF[e.enemyType],
+    charBase.defPenetrationPct,
+  );
+  const elementResistCoeff = enemyElementResistCoeff(
+    ELEMENT_RESIST[e.elementCondition],
+    charBase.elementPenetrationPct,
+  );
+  const dmgTakenCoeff = enemyDmgTakenCoeff(e.enemyDmgReductions, e.enemyDmgIncreasePct);
+  const enemyMult = defCoeff * elementResistCoeff * dmgTakenCoeff;
+
   // ── 스킬 대미지 ──
   const finalStat = baseAttack * (1 + allBuff.characterAttackPct / 100) * (1 + allBuff.elementAttackPct / 100);
   const baseSkillDamage = finalStat * (1 + allBuff.skillPowerPct / 100);
@@ -291,7 +370,8 @@ export function computeOutputs(build: BuildState, data: ComputeData): OutputResu
     baseSkillDamage *
     resolveCoeff(totalResolvePct, currentHpPct) *
     moraleCoeff(totalMoralePct, currentHpPct) *
-    skillDamageCoeff;
+    skillDamageCoeff *
+    enemyMult;
 
   // ── 마스터리 판정 ──
   const charSlug = build.selections.characterSlug;
@@ -318,6 +398,8 @@ export function computeOutputs(build: BuildState, data: ComputeData): OutputResu
     currentHpPct,
     totalResolvePct,
     totalMoralePct,
+    false,
+    enemyMult,
   );
 
   // ── 원거리 무기 대미지 ──
@@ -332,6 +414,8 @@ export function computeOutputs(build: BuildState, data: ComputeData): OutputResu
     currentHpPct,
     totalResolvePct,
     totalMoralePct,
+    false,
+    enemyMult,
   );
 
   // ── 근접 동조 무기 대미지 ──
@@ -347,6 +431,7 @@ export function computeOutputs(build: BuildState, data: ComputeData): OutputResu
     totalResolvePct,
     totalMoralePct,
     true, // 동조 무기: 스킬 위력 적용
+    enemyMult,
   );
 
   // ── 원거리 동조 무기 대미지 ──
@@ -362,6 +447,7 @@ export function computeOutputs(build: BuildState, data: ComputeData): OutputResu
     totalResolvePct,
     totalMoralePct,
     true, // 동조 무기: 스킬 위력 적용
+    enemyMult,
   );
 
   return {

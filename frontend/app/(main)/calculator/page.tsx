@@ -8,9 +8,13 @@ import { CharacterListItem } from "@/domains/characters/types";
 import { WeaponListItem } from "@/domains/weapons/type";
 import { DemonWedgeListItem } from "@/domains/demonWedges/type";
 
+const EXCLUDED_SLUGS = ["hellfire", "sibylle", "truffle", "randy"];
+
 export default async function CalculatorPage() {
-  const [characters, weapons, wedges]: [CharacterListItem[], WeaponListItem[], DemonWedgeListItem[]] =
+  const [allCharacters, weapons, wedges]: [CharacterListItem[], WeaponListItem[], DemonWedgeListItem[]] =
     await Promise.all([getAllCharacters(), getAllWeapons(), getAllDemonWedges()]);
+
+  const characters = allCharacters.filter((c) => !EXCLUDED_SLUGS.includes(c.slug));
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">

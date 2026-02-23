@@ -30,10 +30,13 @@ export type BuffFields = {
 };
 
 export type BaseCharacterInputs = {
+  characterLevel: number;          // 캐릭터 레벨
   currentHpPct: number;
   baseAttack: number;
   resolvePct: number;
   moralePct: number;
+  defPenetrationPct: number;       // 방어 무시%
+  elementPenetrationPct: number;   // 속성 관통%
 };
 
 export type BaseWeaponInputs = {
@@ -41,6 +44,17 @@ export type BaseWeaponInputs = {
   critRatePct: number;
   critDamagePct: number;
   attackSpeed: number;
+};
+
+export type EnemyType = "small" | "large" | "boss";
+export type ElementCondition = "none" | "counter" | "other";
+
+export type EnemyInputs = {
+  enemyType: EnemyType;                  // 적 종류 → 방어력 자동 결정
+  enemyLevel: number;                    // 적 레벨
+  elementCondition: ElementCondition;    // 속성 조건 → 속성 저항 자동 결정
+  enemyDmgIncreasePct: number;           // 받는 대미지 증가%
+  enemyDmgReductions: number[];          // 받는 대미지 감소% 목록 (개별 곱연산)
 };
 
 export type BuildSelections = {
@@ -63,6 +77,7 @@ export type BuildState = {
   phaseShiftSlots: Record<ActiveTab, boolean[]>; // 페이즈 시프트 모듈 적용 슬롯
   consonanceCategory: ConsonanceCategory;
   resonanceLevel: number; // 수련 레벨 (0~65)
+  enemy: EnemyInputs;
 
   // "자동으로 불러온 값"을 사용자가 수정할 수 있게 하기 위해, 저장은 항상 이 입력값을 기준으로.
   base: {
@@ -130,6 +145,13 @@ export const emptyBuildState = (): BuildState => ({
   },
   consonanceCategory: null,
   resonanceLevel: 65,
+  enemy: {
+    enemyType: "boss",
+    enemyLevel: 100,
+    elementCondition: "none",
+    enemyDmgIncreasePct: 0,
+    enemyDmgReductions: [],
+  },
   wedgeSlots: {
     // boarhat.gg 스타일 슬롯 수
     // - Character: 9 (4 + center + 4)
@@ -142,7 +164,15 @@ export const emptyBuildState = (): BuildState => ({
     rangedWeapon: Array(8).fill(""),
   },
   base: {
-    character: { currentHpPct: 100, baseAttack: 0, resolvePct: 0, moralePct: 0 },
+    character: {
+      characterLevel: 80,
+      currentHpPct: 100,
+      baseAttack: 0,
+      resolvePct: 0,
+      moralePct: 0,
+      defPenetrationPct: 0,
+      elementPenetrationPct: 0,
+    },
     consonanceWeapon: { attack: 0, critRatePct: 0, critDamagePct: 0, attackSpeed: 1 },
     meleeWeapon: { attack: 0, critRatePct: 0, critDamagePct: 0, attackSpeed: 1 },
     rangedWeapon: { attack: 0, critRatePct: 0, critDamagePct: 0, attackSpeed: 1 },
