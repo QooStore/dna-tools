@@ -6,6 +6,8 @@ import lombok.Getter;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.dna.tools.domain.common.dto.ConditionalEffectResponse;
+
 @Getter
 @Builder
 public class DemonWedgeDetailResponse {
@@ -22,6 +24,7 @@ public class DemonWedgeDetailResponse {
     private final Boolean isKukulkan;
     private final String effectDescription;
     private final List<StatResponse> stats;
+    private final List<ConditionalEffectResponse> conditionalEffects;
 
     @Getter
     @Builder

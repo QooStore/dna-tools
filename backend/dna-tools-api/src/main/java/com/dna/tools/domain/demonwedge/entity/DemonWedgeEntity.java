@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -56,7 +57,13 @@ public class DemonWedgeEntity {
 
     @OneToMany(mappedBy = "demonWedge", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id ASC")
+    @BatchSize(size = 30)
     private List<DemonWedgeStatEntity> stats = new ArrayList<>();
+
+    @OneToMany(mappedBy = "demonWedge", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id ASC")
+    @BatchSize(size = 30)
+    private List<DemonWedgeConditionalEffectEntity> conditionalEffects = new ArrayList<>();
 
     // ===== 생성 팩토리 =====
     public static DemonWedgeEntity create(
@@ -103,5 +110,14 @@ public class DemonWedgeEntity {
 
     public void addStat(String statType, java.math.BigDecimal value) {
         this.stats.add(new DemonWedgeStatEntity(this, statType, value));
+    }
+
+    // ===== 조건부 효과 관리 =====
+    public void clearConditionalEffects() {
+        this.conditionalEffects.clear();
+    }
+
+    public void addConditionalEffect(String statType, java.math.BigDecimal value) {
+        this.conditionalEffects.add(new DemonWedgeConditionalEffectEntity(this, statType, value));
     }
 }

@@ -19,9 +19,16 @@ public class DemonWedgeSaveRequest {
     private Boolean isKukulkan;
     private String effectDescription;
     private List<StatRequest> stats;
+    private List<ConditionalEffect> conditionalEffects;
 
     @Getter
     public static class StatRequest {
+        private String statType;
+        private BigDecimal value;
+    }
+
+    @Getter
+    public static class ConditionalEffect {
         private String statType;
         private BigDecimal value;
     }

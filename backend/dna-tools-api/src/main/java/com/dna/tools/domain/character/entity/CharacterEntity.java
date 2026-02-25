@@ -83,6 +83,11 @@ public class CharacterEntity {
     @BatchSize(size = 30)
     private List<PassiveUpgradeEntity> passiveUpgrades = new ArrayList<>();
 
+    @OneToMany(mappedBy = "character", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id ASC")
+    @BatchSize(size = 30)
+    private List<CharacterConditionalEffectEntity> conditionalEffects = new ArrayList<>();
+
     // ===== 생성 팩토리 (등록) =====
     public static CharacterEntity create(
             String slug,
@@ -178,6 +183,16 @@ public class CharacterEntity {
                         value,
                         name,
                         description));
+    }
+
+    public void clearConditionalEffects() {
+        this.conditionalEffects.clear();
+    }
+
+    public void addConditionalEffect(String sourceType, Integer intronStage, String statType,
+            java.math.BigDecimal value) {
+        this.conditionalEffects.add(
+                new CharacterConditionalEffectEntity(this, sourceType, intronStage, statType, value));
     }
 
     public void syncPassiveUpgrades(List<CharacterSaveRequest.PassiveUpgrade> reqs) {

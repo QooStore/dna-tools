@@ -4,9 +4,12 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -92,6 +95,11 @@ public class WeaponEntity {
     @Column(name = "created_at", updatable = false, insertable = false)
     private LocalDateTime createdAt;
 
+    @OneToMany(mappedBy = "weapon", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id ASC")
+    @BatchSize(size = 30)
+    private List<WeaponConditionalEffectEntity> conditionalEffects = new ArrayList<>();
+
     // ===== 생성 팩토리 =====
     public static WeaponEntity create(
             String slug, String name, String image,
@@ -124,6 +132,15 @@ public class WeaponEntity {
         w.passiveValue = passiveValue;
         w.activeSkillDescription = activeSkillDescription;
         return w;
+    }
+
+    // ===== 조건부 효과 관리 =====
+    public void clearConditionalEffects() {
+        this.conditionalEffects.clear();
+    }
+
+    public void addConditionalEffect(String statType, BigDecimal value) {
+        this.conditionalEffects.add(new WeaponConditionalEffectEntity(this, statType, value));
     }
 
     // ===== 수정 =====

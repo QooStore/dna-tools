@@ -46,6 +46,11 @@ public class WeaponAdminService {
                 req.getPassiveValue(),
                 req.getActiveSkillDescription());
 
+        if (req.getConditionalEffects() != null) {
+            req.getConditionalEffects().forEach(e -> weapon.addConditionalEffect(
+                    e.getStatType(), e.getValue()));
+        }
+
         try {
             weaponRepository.save(weapon);
         } catch (DataIntegrityViolationException e) {
@@ -91,6 +96,12 @@ public class WeaponAdminService {
                 req.getPassiveStat(),
                 req.getPassiveValue(),
                 req.getActiveSkillDescription());
+
+        weapon.clearConditionalEffects();
+        if (req.getConditionalEffects() != null) {
+            req.getConditionalEffects().forEach(e -> weapon.addConditionalEffect(
+                    e.getStatType(), e.getValue()));
+        }
 
         // 이미지 메타데이터 갱신
         imageUsageService.markUsed(weapon.getImage());

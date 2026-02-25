@@ -2,6 +2,7 @@ package com.dna.tools.domain.character.mapper;
 
 import com.dna.tools.domain.character.dto.*;
 import com.dna.tools.domain.character.entity.*;
+import com.dna.tools.domain.common.dto.ConditionalEffectResponse;
 import com.dna.tools.domain.common.dto.LabelContext;
 import com.dna.tools.domain.image.storage.ImageStorage;
 
@@ -37,7 +38,8 @@ public class CharacterDetailMapper {
                                 toFeatures(character.getFeatures(), labels),
                                 toSkills(character.getSkills(), labels),
                                 toIntrons(character.getIntrons()),
-                                toPassiveUpgrades(character.getPassiveUpgrades()));
+                                toPassiveUpgrades(character.getPassiveUpgrades()),
+                                toConditionalEffects(character.getConditionalEffects()));
         }
 
         private static CharacterStatsResponse toStats(CharacterStatsEntity stats) {
@@ -87,7 +89,7 @@ public class CharacterDetailMapper {
                                 .map(s -> new SkillResponse(
                                                 s.getName(),
                                                 s.getType(),
-                                                labels.label("WORD", s.getType()),
+                                                labels.label("SKILL_TYPE", s.getType()),
                                                 s.getDescription()))
                                 .toList();
         }
@@ -98,6 +100,18 @@ public class CharacterDetailMapper {
                                 .map(i -> new IntronResponse(
                                                 i.getStage(),
                                                 i.getDescription()))
+                                .toList();
+        }
+
+        private static List<ConditionalEffectResponse> toConditionalEffects(
+                        List<CharacterConditionalEffectEntity> effects) {
+                return effects.stream()
+                                .map(e -> new ConditionalEffectResponse(
+                                                e.getId(),
+                                                e.getSourceType(),
+                                                e.getIntronStage(),
+                                                e.getStatType(),
+                                                e.getValue()))
                                 .toList();
         }
 

@@ -99,6 +99,14 @@ public class CharacterAdminService {
                     p.getDescription()));
         }
 
+        if (req.getConditionalEffects() != null) {
+            req.getConditionalEffects().forEach(e -> character.addConditionalEffect(
+                    e.getSourceType(),
+                    e.getIntronStage(),
+                    e.getStatType(),
+                    e.getValue()));
+        }
+
         imageUsageService.markUsed(
                 character.getImage(),
                 character.getListImage());
@@ -157,6 +165,15 @@ public class CharacterAdminService {
 
         if (req.getPassiveUpgrades() != null) {
             character.syncPassiveUpgrades(req.getPassiveUpgrades());
+        }
+
+        character.clearConditionalEffects();
+        if (req.getConditionalEffects() != null) {
+            req.getConditionalEffects().forEach(e -> character.addConditionalEffect(
+                    e.getSourceType(),
+                    e.getIntronStage(),
+                    e.getStatType(),
+                    e.getValue()));
         }
 
         // 3) 1:1 교체

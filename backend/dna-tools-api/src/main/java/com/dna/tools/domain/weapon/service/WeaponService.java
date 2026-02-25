@@ -1,10 +1,12 @@
 package com.dna.tools.domain.weapon.service;
 
+import com.dna.tools.domain.common.dto.ConditionalEffectResponse;
 import com.dna.tools.domain.common.dto.LabelContext;
 import com.dna.tools.domain.common.service.CommonCodeLabelService;
 import com.dna.tools.domain.image.storage.ImageStorage;
 import com.dna.tools.domain.weapon.dto.WeaponDetailResponse;
 import com.dna.tools.domain.weapon.dto.WeaponListResponse;
+import com.dna.tools.domain.weapon.entity.WeaponConditionalEffectEntity;
 import com.dna.tools.domain.weapon.entity.WeaponEntity;
 import com.dna.tools.domain.weapon.repository.WeaponRepository;
 import com.dna.tools.exception.BusinessException;
@@ -69,6 +71,7 @@ public class WeaponService {
                                 .passiveStat(w.getPassiveStat())
                                 .passiveValue(w.getPassiveValue())
                                 .activeSkillDescription(w.getActiveSkillDescription())
+                                .conditionalEffects(toConditionalEffects(w))
                                 .build();
         }
 
@@ -104,6 +107,15 @@ public class WeaponService {
                                 .passiveStatLabel(labels.label("STAT", w.getPassiveStat()))
                                 .passiveValue(w.getPassiveValue())
                                 .activeSkillDescription(w.getActiveSkillDescription())
+                                .conditionalEffects(toConditionalEffects(w))
                                 .build();
+        }
+
+        private List<ConditionalEffectResponse> toConditionalEffects(WeaponEntity w) {
+                return w.getConditionalEffects().stream()
+                                .map(e -> new ConditionalEffectResponse(
+                                                e.getId(), null, null,
+                                                e.getStatType(), e.getValue()))
+                                .toList();
         }
 }

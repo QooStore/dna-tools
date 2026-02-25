@@ -1,6 +1,7 @@
 package com.dna.tools.domain.admin.dto;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import lombok.Getter;
 
@@ -40,4 +41,13 @@ public class WeaponSaveRequest {
 
     // 액티브 스킬
     private String activeSkillDescription;
+
+    // 조건부 효과
+    private List<ConditionalEffect> conditionalEffects;
+
+    @Getter
+    public static class ConditionalEffect {
+        private String statType;
+        private BigDecimal value;
+    }
 }

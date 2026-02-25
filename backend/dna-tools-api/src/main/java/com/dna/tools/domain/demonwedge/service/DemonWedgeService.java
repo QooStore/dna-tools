@@ -1,9 +1,11 @@
 package com.dna.tools.domain.demonwedge.service;
 
+import com.dna.tools.domain.common.dto.ConditionalEffectResponse;
 import com.dna.tools.domain.common.dto.LabelContext;
 import com.dna.tools.domain.common.service.CommonCodeLabelService;
 import com.dna.tools.domain.demonwedge.dto.DemonWedgeDetailResponse;
 import com.dna.tools.domain.demonwedge.dto.DemonWedgeListResponse;
+import com.dna.tools.domain.demonwedge.entity.DemonWedgeConditionalEffectEntity;
 import com.dna.tools.domain.demonwedge.entity.DemonWedgeEntity;
 import com.dna.tools.domain.demonwedge.repository.DemonWedgeRepository;
 import com.dna.tools.domain.image.storage.ImageStorage;
@@ -62,6 +64,7 @@ public class DemonWedgeService {
                                 .value(s.getValue())
                                 .build())
                         .toList())
+                .conditionalEffects(toConditionalEffects(e))
                 .build();
     }
 
@@ -88,6 +91,15 @@ public class DemonWedgeService {
                                 .value(s.getValue())
                                 .build())
                         .toList())
+                .conditionalEffects(toConditionalEffects(e))
                 .build();
+    }
+
+    private List<ConditionalEffectResponse> toConditionalEffects(DemonWedgeEntity e) {
+        return e.getConditionalEffects().stream()
+                .map(c -> new ConditionalEffectResponse(
+                        c.getId(), null, null,
+                        c.getStatType(), c.getValue()))
+                .toList();
     }
 }

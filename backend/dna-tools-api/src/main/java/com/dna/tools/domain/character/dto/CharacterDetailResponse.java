@@ -2,6 +2,7 @@ package com.dna.tools.domain.character.dto;
 
 import java.util.List;
 
+import com.dna.tools.domain.common.dto.ConditionalEffectResponse;
 import lombok.Getter;
 
 @Getter
@@ -25,13 +26,15 @@ public class CharacterDetailResponse {
     private final List<SkillResponse> skills;
     private final List<IntronResponse> introns;
     private final List<PassiveUpgradeResponse> passiveUpgrades;
+    private final List<ConditionalEffectResponse> conditionalEffects;
 
     public CharacterDetailResponse(String slug, String name, String elementCode, String elementName, String image,
             String elementImage,
             String listImage, String meleeProficiency, String meleeProficiencyLabel, String rangedProficiency,
             String rangedProficiencyLabel, CharacterStatsResponse stats,
             ConsonanceWeaponResponse consonanceWeapon, List<CharacterFeatureResponse> features,
-            List<SkillResponse> skills, List<IntronResponse> introns, List<PassiveUpgradeResponse> passiveUpgrades) {
+            List<SkillResponse> skills, List<IntronResponse> introns, List<PassiveUpgradeResponse> passiveUpgrades,
+            List<ConditionalEffectResponse> conditionalEffects) {
         this.name = name;
         this.slug = slug;
         this.elementCode = elementCode;
@@ -49,6 +52,7 @@ public class CharacterDetailResponse {
         this.skills = skills;
         this.introns = introns;
         this.passiveUpgrades = passiveUpgrades;
+        this.conditionalEffects = conditionalEffects;
     }
 
 }

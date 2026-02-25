@@ -4,6 +4,9 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.math.BigDecimal;
+import java.util.List;
+
+import com.dna.tools.domain.common.dto.ConditionalEffectResponse;
 
 @Getter
 @Builder
@@ -49,4 +52,7 @@ public class WeaponListResponse {
 
     // 액티브 스킬
     private final String activeSkillDescription;
+
+    // 조건부 효과
+    private final List<ConditionalEffectResponse> conditionalEffects;
 }

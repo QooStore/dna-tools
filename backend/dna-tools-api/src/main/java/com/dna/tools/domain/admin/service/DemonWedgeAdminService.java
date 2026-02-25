@@ -42,6 +42,13 @@ public class DemonWedgeAdminService {
             }
         }
 
+        // 조건부 효과 추가
+        if (req.getConditionalEffects() != null) {
+            for (var e : req.getConditionalEffects()) {
+                entity.addConditionalEffect(e.getStatType(), e.getValue());
+            }
+        }
+
         try {
             demonWedgeRepository.save(entity);
         } catch (DataIntegrityViolationException e) {
@@ -82,6 +89,14 @@ public class DemonWedgeAdminService {
         if (req.getStats() != null) {
             for (var stat : req.getStats()) {
                 entity.addStat(stat.getStatType(), stat.getValue());
+            }
+        }
+
+        // 조건부 효과 갱신
+        entity.clearConditionalEffects();
+        if (req.getConditionalEffects() != null) {
+            for (var e : req.getConditionalEffects()) {
+                entity.addConditionalEffect(e.getStatType(), e.getValue());
             }
         }
 

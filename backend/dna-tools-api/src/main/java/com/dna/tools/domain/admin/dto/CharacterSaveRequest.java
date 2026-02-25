@@ -27,6 +27,7 @@ public class CharacterSaveRequest {
     private List<Skill> skills;
     private List<Intron> introns;
     private List<PassiveUpgrade> passiveUpgrades;
+    private List<ConditionalEffect> conditionalEffects;
 
     @Getter
     public static class Feature {
@@ -67,6 +68,14 @@ public class CharacterSaveRequest {
     public static class Intron {
         private int stage;
         private String description;
+    }
+
+    @Getter
+    public static class ConditionalEffect {
+        private String sourceType; // SKILL / PASSIVE / INTRON
+        private Integer intronStage;
+        private String statType;
+        private BigDecimal value;
     }
 
     @Getter
