@@ -29,6 +29,8 @@ const emptyForm: WeaponFormState = {
   passiveValue: 0,
 
   activeSkillDescription: "",
+
+  conditionalEffects: [],
 };
 
 export function useWeaponForm(initial?: Partial<WeaponFormState>) {

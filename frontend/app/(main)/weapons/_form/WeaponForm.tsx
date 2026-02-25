@@ -6,6 +6,7 @@ import SkillSection from "./SkillSection";
 import { useWeaponForm } from "./useWeaponForm";
 import { buildWeaponPayload } from "@/domains/weapons/buildPayload";
 import { WeaponFormState, WeaponSaveRequest } from "@/domains/weaponForm";
+import ConditionalEffectsSection from "@/components/ui/ConditionalEffectsSection";
 
 export default function WeaponForm({
   initialData,
@@ -29,6 +30,10 @@ export default function WeaponForm({
       <BasicSection form={form} setForm={setForm} />
       <StatsSection form={form} setForm={setForm} />
       <SkillSection form={form} setForm={setForm} />
+      <ConditionalEffectsSection
+        effects={form.conditionalEffects}
+        onChange={(effects) => setForm((prev) => ({ ...prev, conditionalEffects: effects }))}
+      />
 
       <button
         type="submit"

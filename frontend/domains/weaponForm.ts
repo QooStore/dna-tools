@@ -32,6 +32,14 @@ export interface WeaponFormState {
 
   // 액티브 스킬
   activeSkillDescription: string;
+
+  // 조건부 효과
+  conditionalEffects: WeaponConditionalEffectForm[];
+}
+
+export interface WeaponConditionalEffectForm {
+  statType: string;
+  value: number;
 }
 
 export interface WeaponSaveRequest {
@@ -62,4 +70,6 @@ export interface WeaponSaveRequest {
   passiveValue?: number;
 
   activeSkillDescription?: string;
+
+  conditionalEffects?: WeaponConditionalEffectForm[];
 }

@@ -1,4 +1,4 @@
-import type { CharacterListItem } from "@/domains/characters/types";
+import type { CharacterListItem, ConditionalEffectResponse } from "@/domains/characters/types";
 import type { WeaponListItem } from "@/domains/weapons/type";
 import type { DemonWedgeListItem } from "@/domains/demonWedges/type";
 
@@ -16,6 +16,7 @@ export type CalcMode = "melee" | "ranged";
 export type BuffFields = {
   characterAttackPct: number; // 캐릭터 공격%
   elementAttackPct: number; // 속성 공격%
+  independentAttack: number; // 독립 공격력 (고정값)
   resolvePct: number; // 필사%
   moralePct: number; // 격양%
   skillPowerPct: number; // 스킬 위력%
@@ -25,14 +26,17 @@ export type BuffFields = {
   weaponAttackPct: number; // 무기 공격%
   critRatePct: number; // 치명타 확률%
   critDamagePct: number; // 치명타 피해%
-  attackSpeedPct: number; // 공격 속도% (DB/쐐기에는 존재하지만, 필요 시 사용)
+  attackSpeedPct: number; // 공격 속도%
   extraDamagePct: number; // 추가 대미지%
+  defPenetrationPct: number; // 방어 무시%
+  elementPenetrationPct: number; // 속성 관통%
 };
 
 export type BaseCharacterInputs = {
   characterLevel: number;          // 캐릭터 레벨
   currentHpPct: number;
   baseAttack: number;
+  independentAttack: number;       // 독립 공격력 (attack% 미적용)
   resolvePct: number;
   moralePct: number;
   defPenetrationPct: number;       // 방어 무시%
@@ -65,6 +69,24 @@ export type BuildSelections = {
   ally2Slug: string | "";
 };
 
+export type AllyState = {
+  weaponSlug: string;
+  wedgeSlotsCharacter: string[]; // 9 slots (캐릭터 쐐기)
+  wedgeSlotsWeapon: string[];    // 8 slots (무기 쐐기, 동조 없음)
+  phaseShiftSlotsCharacter: boolean[]; // 9 slots
+  phaseShiftSlotsWeapon: boolean[];    // 8 slots
+  characterConditionalEffects: ConditionalEffectResponse[];
+};
+
+export const emptyAllyState = (): AllyState => ({
+  weaponSlug: "",
+  wedgeSlotsCharacter: Array(9).fill(""),
+  wedgeSlotsWeapon: Array(8).fill(""),
+  phaseShiftSlotsCharacter: Array(9).fill(false),
+  phaseShiftSlotsWeapon: Array(8).fill(false),
+  characterConditionalEffects: [],
+});
+
 export type WedgeSlots = Record<ActiveTab, string[]>; // wedge slugs
 
 export type ConsonanceCategory = "melee" | "ranged" | null;
@@ -96,6 +118,15 @@ export type BuildState = {
     meleeConsonanceWedge: BuffFields;
     rangedConsonanceWedge: BuffFields;
   };
+
+  // 조건부 효과 (토글)
+  conditionalEffects: {
+    characterEffects: ConditionalEffectResponse[];
+    disabledKeys: string[]; // 명시적으로 끈 키 (기본값은 켜진 상태)
+  };
+
+  // 협력 동료 장비 (쐐기, 무기) — 조건부 효과만 메인 캐릭터에 적용
+  allies: [AllyState, AllyState];
 };
 
 export type StaticData = {
@@ -107,6 +138,7 @@ export type StaticData = {
 export const emptyBuffFields = (): BuffFields => ({
   characterAttackPct: 0,
   elementAttackPct: 0,
+  independentAttack: 0,
   resolvePct: 0,
   moralePct: 0,
   skillPowerPct: 0,
@@ -118,6 +150,8 @@ export const emptyBuffFields = (): BuffFields => ({
   critDamagePct: 0,
   attackSpeedPct: 0,
   extraDamagePct: 0,
+  defPenetrationPct: 0,
+  elementPenetrationPct: 0,
 });
 
 export const emptyBuildState = (): BuildState => ({
@@ -168,6 +202,7 @@ export const emptyBuildState = (): BuildState => ({
       characterLevel: 80,
       currentHpPct: 100,
       baseAttack: 0,
+      independentAttack: 0,
       resolvePct: 0,
       moralePct: 0,
       defPenetrationPct: 0,
@@ -185,4 +220,9 @@ export const emptyBuildState = (): BuildState => ({
     meleeConsonanceWedge: emptyBuffFields(),
     rangedConsonanceWedge: emptyBuffFields(),
   },
+  conditionalEffects: {
+    characterEffects: [],
+    disabledKeys: [],
+  },
+  allies: [emptyAllyState(), emptyAllyState()],
 });

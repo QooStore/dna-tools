@@ -43,6 +43,13 @@ export interface PassiveUpgradeForm {
   description?: string;
 }
 
+export interface ConditionalEffectForm {
+  sourceType?: string | null;
+  intronStage?: number | null;
+  statType: string;
+  value: number;
+}
+
 export interface CharacterFormState {
   slug: string;
   name: string;
@@ -60,6 +67,7 @@ export interface CharacterFormState {
   skills: SkillForm[];
   introns: IntronForm[];
   passiveUpgrades: PassiveUpgradeForm[];
+  conditionalEffects: ConditionalEffectForm[];
 }
 
 export interface CharacterSaveRequest {
@@ -79,4 +87,5 @@ export interface CharacterSaveRequest {
   skills?: SkillForm[];
   introns?: IntronForm[];
   passiveUpgrades?: PassiveUpgradeForm[];
+  conditionalEffects?: ConditionalEffectForm[];
 }

@@ -1,3 +1,9 @@
+export interface DemonWedgeConditionalEffect {
+  id: number;
+  statType: string;
+  value: number;
+}
+
 // --- 악마의 쐐기 목록 ---
 
 export interface DemonWedgeStat {
@@ -22,6 +28,7 @@ export interface DemonWedgeListItem {
   isKukulkan: boolean;
   effectDescription: string | null;
   stats: DemonWedgeStat[];
+  conditionalEffects: DemonWedgeConditionalEffect[];
 }
 
 // --- 악마의 쐐기 상세 (수정 폼용) ---

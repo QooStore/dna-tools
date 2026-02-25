@@ -36,5 +36,13 @@ export function buildWeaponPayload(form: WeaponFormState): WeaponSaveRequest {
     passiveStat: isBlank(form.passiveStat) ? undefined : form.passiveStat,
     passiveValue: form.passiveValue || undefined,
     activeSkillDescription: isBlank(form.activeSkillDescription) ? undefined : form.activeSkillDescription,
+
+    conditionalEffects:
+      form.conditionalEffects
+        ?.filter((e) => !isBlank(e.statType) && e.value !== 0)
+        .map((e) => ({
+          statType: e.statType,
+          value: e.value,
+        })) ?? undefined,
   };
 }

@@ -35,6 +35,7 @@ const emptyForm: CharacterFormState = {
   skills: [],
   introns: [],
   passiveUpgrades: [],
+  conditionalEffects: [],
 };
 
 export function useCharacterForm(initial?: Partial<CharacterFormState>) {

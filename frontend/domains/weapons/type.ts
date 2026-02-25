@@ -36,6 +36,12 @@ export type ConsonanceWeaponStats =
       magCapacity: number;
     };
 
+export interface WeaponConditionalEffect {
+  id: number;
+  statType: string;
+  value: number;
+}
+
 // --- 무기 목록 ---
 export interface WeaponListItem {
   id: number;
@@ -77,6 +83,9 @@ export interface WeaponListItem {
 
   // 액티브
   activeSkillDescription: string | null;
+
+  // 조건부 효과
+  conditionalEffects: WeaponConditionalEffect[];
 }
 
 // --- 무기 상세 (수정 폼용) ---

@@ -46,6 +46,14 @@ export interface CharacterPassiveUpgrade {
   description: string; // 설명
 }
 
+export interface ConditionalEffectResponse {
+  id: number;
+  sourceType: string | null;
+  intronStage: number | null;
+  statType: string;
+  value: number;
+}
+
 export interface CharacterDetail {
   /** 식별자 */
   id?: number; // DB용 (프론트에선 없어도 됨)
@@ -81,6 +89,9 @@ export interface CharacterDetail {
 
   /** 근원 */
   introns: IntronEffect[];
+
+  /** 조건부 효과 */
+  conditionalEffects: ConditionalEffectResponse[];
 }
 
 export interface CharacterListItem {

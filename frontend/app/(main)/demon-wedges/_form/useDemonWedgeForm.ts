@@ -13,6 +13,7 @@ const emptyForm: DemonWedgeFormState = {
   isKukulkan: false,
   effectDescription: "",
   stats: [],
+  conditionalEffects: [],
 };
 
 export function useDemonWedgeForm(initial?: Partial<DemonWedgeFormState>) {

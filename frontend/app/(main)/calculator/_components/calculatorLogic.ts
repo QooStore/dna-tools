@@ -1,7 +1,8 @@
 import type { DemonWedgeListItem } from "@/domains/demonWedges/type";
 import type { CharacterListItem, CharacterPassiveUpgrade } from "@/domains/characters/types";
 import type { WeaponListItem } from "@/domains/weapons/type";
-import type { BuffFields, BuildState, ActiveTab, EnemyType, ElementCondition } from "./calculatorTypes";
+import type { BuildState } from "./calculatorTypes";
+import type { BuffFields, ActiveTab, EnemyType, ElementCondition } from "./calculatorTypes";
 import { emptyBuffFields } from "./calculatorTypes";
 
 // ── 적 종류별 방어력 ──
@@ -54,10 +55,34 @@ export const tabToEquipType: Record<ActiveTab, WedgeEquipType> = {
   rangedWeapon: "rangedWeapon",
 };
 
+// DB statType -> 표시용 한국어 라벨
+export const STAT_TYPE_LABEL: Record<string, string> = {
+  attack_per: "캐릭터 공격%",
+  elementAttack_per: "속성 공격%",
+  independentAttack: "독립 공격력",
+  resolve: "필사%",
+  morale: "격양%",
+  skillIntensity: "스킬 위력%",
+  skillDmg: "스킬 대미지%",
+  damage: "대미지%",
+  weaponDmg: "무기 대미지%",
+  weaponAttack_per: "무기 공격%",
+  slashAttack_per: "참격 무기 공격%",
+  smashAttack_per: "타격 무기 공격%",
+  spikeAttack_per: "관통 무기 공격%",
+  critRate: "치명타 확률%",
+  critDamage: "치명타 피해%",
+  attackSpeed: "공격 속도%",
+  additionalDmg: "추가 대미지%",
+  defPenetration_per: "방어 무시%",
+  elementPenetration_per: "속성 관통%",
+};
+
 // DB statType -> Calculator buff field
 const STAT_TO_BUFF_FIELD: Record<string, keyof BuffFields> = {
   attack_per: "characterAttackPct",
   elementAttack_per: "elementAttackPct",
+  independentAttack: "independentAttack",
   resolve: "resolvePct",
   morale: "moralePct",
   skillIntensity: "skillPowerPct",
@@ -72,6 +97,8 @@ const STAT_TO_BUFF_FIELD: Record<string, keyof BuffFields> = {
   critDamage: "critDamagePct",
   attackSpeed: "attackSpeedPct",
   additionalDmg: "extraDamagePct",
+  defPenetration_per: "defPenetrationPct",
+  elementPenetration_per: "elementPenetrationPct",
 };
 
 export function applyWedgesToBuff(
@@ -119,6 +146,138 @@ export function applyWeaponPassiveToBuff(passiveStat: string | null, passiveValu
   const key = STAT_TO_BUFF_FIELD[passiveStat];
   if (key) buff[key] += Number(passiveValue);
   return buff;
+}
+
+export function computeConditionalBuff(
+  build: BuildState,
+  weapons: WeaponListItem[],
+  wedges: DemonWedgeListItem[],
+): BuffFields {
+  const disabledSet = new Set(build.conditionalEffects.disabledKeys);
+  const parts: BuffFields[] = [];
+  const wedgeMap = new Map(wedges.map((w) => [w.slug, w]));
+
+  // 캐릭터 조건부 효과
+  const charBuff = emptyBuffFields();
+  let charHit = false;
+  for (const e of build.conditionalEffects.characterEffects) {
+    if (disabledSet.has(`char-${e.id}`)) continue;
+    const key = STAT_TO_BUFF_FIELD[e.statType];
+    if (key) {
+      charBuff[key] += Number(e.value);
+      charHit = true;
+    }
+  }
+  if (charHit) parts.push(charBuff);
+
+  // 근접 무기 조건부 효과
+  const meleeWeapon = build.selections.meleeWeaponSlug
+    ? weapons.find((w) => w.slug === build.selections.meleeWeaponSlug)
+    : undefined;
+  if (meleeWeapon?.conditionalEffects?.length) {
+    const mwBuff = emptyBuffFields();
+    let hit = false;
+    for (const e of meleeWeapon.conditionalEffects) {
+      if (disabledSet.has(`mw-${e.id}`)) continue;
+      const key = STAT_TO_BUFF_FIELD[e.statType];
+      if (key) {
+        mwBuff[key] += Number(e.value);
+        hit = true;
+      }
+    }
+    if (hit) parts.push(mwBuff);
+  }
+
+  // 원거리 무기 조건부 효과
+  const rangedWeapon = build.selections.rangedWeaponSlug
+    ? weapons.find((w) => w.slug === build.selections.rangedWeaponSlug)
+    : undefined;
+  if (rangedWeapon?.conditionalEffects?.length) {
+    const rwBuff = emptyBuffFields();
+    let hit = false;
+    for (const e of rangedWeapon.conditionalEffects) {
+      if (disabledSet.has(`rw-${e.id}`)) continue;
+      const key = STAT_TO_BUFF_FIELD[e.statType];
+      if (key) {
+        rwBuff[key] += Number(e.value);
+        hit = true;
+      }
+    }
+    if (hit) parts.push(rwBuff);
+  }
+
+  // 쐐기 조건부 효과 (모든 탭의 슬롯, 슬러그 중복 제거)
+  const seenSlugs = new Set<string>();
+  for (const slugs of Object.values(build.wedgeSlots)) {
+    for (const slug of slugs) {
+      if (!slug || seenSlugs.has(slug)) continue;
+      seenSlugs.add(slug);
+      const w = wedgeMap.get(slug);
+      if (!w?.conditionalEffects?.length) continue;
+      const wBuff = emptyBuffFields();
+      let hit = false;
+      for (const e of w.conditionalEffects) {
+        if (disabledSet.has(`wedge-${e.id}`)) continue;
+        const key = STAT_TO_BUFF_FIELD[e.statType];
+        if (key) {
+          wBuff[key] += Number(e.value);
+          hit = true;
+        }
+      }
+      if (hit) parts.push(wBuff);
+    }
+  }
+
+  // 협력 동료 조건부 효과 (캐릭터, 무기, 쐐기 각각)
+  for (let i = 0; i < 2; i++) {
+    const ally = build.allies?.[i];
+    if (!ally) continue;
+    const pfx = `ally${i + 1}`;
+
+    // 동료 캐릭터 조건부 효과
+    if (ally.characterConditionalEffects.length > 0) {
+      const aBuff = emptyBuffFields();
+      let hit = false;
+      for (const e of ally.characterConditionalEffects) {
+        if (disabledSet.has(`${pfx}-char-${e.id}`)) continue;
+        const key = STAT_TO_BUFF_FIELD[e.statType];
+        if (key) { aBuff[key] += Number(e.value); hit = true; }
+      }
+      if (hit) parts.push(aBuff);
+    }
+
+    // 동료 무기 조건부 효과
+    const allyWeapon = ally.weaponSlug ? weapons.find((w) => w.slug === ally.weaponSlug) : undefined;
+    if (allyWeapon?.conditionalEffects?.length) {
+      const aBuff = emptyBuffFields();
+      let hit = false;
+      for (const e of allyWeapon.conditionalEffects) {
+        if (disabledSet.has(`${pfx}-wep-${e.id}`)) continue;
+        const key = STAT_TO_BUFF_FIELD[e.statType];
+        if (key) { aBuff[key] += Number(e.value); hit = true; }
+      }
+      if (hit) parts.push(aBuff);
+    }
+
+    // 동료 쐐기 조건부 효과 (캐릭터 슬롯 + 무기 슬롯, 중복 제거)
+    const allySeenSlugs = new Set<string>();
+    for (const slug of [...ally.wedgeSlotsCharacter, ...ally.wedgeSlotsWeapon]) {
+      if (!slug || allySeenSlugs.has(slug)) continue;
+      allySeenSlugs.add(slug);
+      const w = wedgeMap.get(slug);
+      if (!w?.conditionalEffects?.length) continue;
+      const wBuff = emptyBuffFields();
+      let hit = false;
+      for (const e of w.conditionalEffects) {
+        if (disabledSet.has(`${pfx}-wedge-${e.id}`)) continue;
+        const key = STAT_TO_BUFF_FIELD[e.statType];
+        if (key) { wBuff[key] += Number(e.value); hit = true; }
+      }
+      if (hit) parts.push(wBuff);
+    }
+  }
+
+  return parts.length ? sumBuffs(parts) : emptyBuffFields();
 }
 
 export function sumBuffs(sections: BuffFields[]): BuffFields {
@@ -283,17 +442,18 @@ export type OutputResult = Record<OutputKey, number>;
 type ComputeData = {
   characters: CharacterListItem[];
   weapons: WeaponListItem[];
+  wedges: DemonWedgeListItem[];
 };
 
 // ── 무기 대미지 계산 ──
 // 최종 무기 대미지 = 기본 무기 대미지 × 크리티컬 계수 × 추가 대미지 계수 × 무기 대미지 증감 계수 × 필사 계수 × 격양 계수
 //
 // 기본 무기 대미지 = [캐릭터 최종 스탯 + (무기 기본 공격 × (1 + 무기 공격%) × 마스터리)]
-// 캐릭터 최종 스탯 = 캐릭터 기본 공격 × (1 + 공격%) × (1 + 속성 공격%)
+// 캐릭터 최종 스탯 = computeOutputs에서 allBuff 기준으로 미리 계산한 값을 그대로 사용
 // 추가 대미지 계수 = 1 + 추가 대미지% / 100
 // 무기 대미지 증감 계수 = 1 + (대미지% + 무기 대미지%) / 100
 function computeWeaponDamage(
-  build: BuildState,
+  charFinalStat: number,
   buff: BuffFields,
   weaponAttack: number,
   critRate: number,
@@ -305,10 +465,6 @@ function computeWeaponDamage(
   isConsonance: boolean = false,
   enemyMult: number = 1,
 ): number {
-  const baseAttack = Number(build.base.character.baseAttack) || 0;
-
-  // 캐릭터 최종 스탯
-  const charFinalStat = baseAttack * (1 + buff.characterAttackPct / 100) * (1 + buff.elementAttackPct / 100);
 
   // 무기 최종 공격
   const weaponFinalAttack = weaponAttack * (1 + buff.weaponAttackPct / 100) * masteryMult;
@@ -335,7 +491,9 @@ function computeWeaponDamage(
 // 스킬 대미지 증감 계수 = 1 + (대미지% + 스킬 대미지%) / 100
 
 export function computeOutputs(build: BuildState, data: ComputeData): OutputResult {
-  const allBuff = totalBuffs(build);
+  const conditionalBuff = computeConditionalBuff(build, data.weapons, data.wedges);
+
+  const allBuff = sumBuffs([totalBuffs(build), conditionalBuff]);
   // 레조넌스 ATK% → 캐릭터 공격%에 합산
   allBuff.characterAttackPct += getResonanceBonus(build.resonanceLevel).atk;
 
@@ -346,6 +504,9 @@ export function computeOutputs(build: BuildState, data: ComputeData): OutputResu
   const totalResolvePct = (Number(build.base.character.resolvePct) || 0) + allBuff.resolvePct;
   const totalMoralePct = (Number(build.base.character.moralePct) || 0) + allBuff.moralePct;
 
+  // 독립 공격력: 캐릭터 기본값 + 전체 버프 합산
+  const totalIndependentAttack = (Number(build.base.character.independentAttack) || 0) + allBuff.independentAttack;
+
   // ── 적 계수 ──
   const e = build.enemy;
   const charBase = build.base.character;
@@ -353,17 +514,19 @@ export function computeOutputs(build: BuildState, data: ComputeData): OutputResu
     charBase.characterLevel,
     e.enemyLevel,
     ENEMY_DEF[e.enemyType],
-    charBase.defPenetrationPct,
+    charBase.defPenetrationPct + allBuff.defPenetrationPct,
   );
   const elementResistCoeff = enemyElementResistCoeff(
     ELEMENT_RESIST[e.elementCondition],
-    charBase.elementPenetrationPct,
+    charBase.elementPenetrationPct + allBuff.elementPenetrationPct,
   );
   const dmgTakenCoeff = enemyDmgTakenCoeff(e.enemyDmgReductions, e.enemyDmgIncreasePct);
   const enemyMult = defCoeff * elementResistCoeff * dmgTakenCoeff;
 
   // ── 스킬 대미지 ──
-  const finalStat = baseAttack * (1 + allBuff.characterAttackPct / 100) * (1 + allBuff.elementAttackPct / 100);
+  const finalStat =
+    baseAttack * (1 + allBuff.characterAttackPct / 100) * (1 + allBuff.elementAttackPct / 100) +
+    totalIndependentAttack;
   const baseSkillDamage = finalStat * (1 + allBuff.skillPowerPct / 100);
   const skillDamageCoeff = 1 + (allBuff.damagePct + allBuff.skillDamagePct) / 100;
   const skillDamage =
@@ -387,9 +550,9 @@ export function computeOutputs(build: BuildState, data: ComputeData): OutputResu
   const rangedMastery = char && rangedWeapon ? mastery(char.slug, char.rangedProficiency, rangedWeapon.weaponType) : 1;
 
   // ── 근접 무기 대미지 ──
-  const meleeBuff = weaponBuffs(build, "melee");
+  const meleeBuff = sumBuffs([weaponBuffs(build, "melee"), conditionalBuff]);
   const meleeWeaponDamage = computeWeaponDamage(
-    build,
+    finalStat,
     meleeBuff,
     Number(build.base.meleeWeapon.attack) || 0,
     Number(build.base.meleeWeapon.critRatePct) || 0,
@@ -403,9 +566,9 @@ export function computeOutputs(build: BuildState, data: ComputeData): OutputResu
   );
 
   // ── 원거리 무기 대미지 ──
-  const rangedBuff = weaponBuffs(build, "ranged");
+  const rangedBuff = sumBuffs([weaponBuffs(build, "ranged"), conditionalBuff]);
   const rangedWeaponDamage = computeWeaponDamage(
-    build,
+    finalStat,
     rangedBuff,
     Number(build.base.rangedWeapon.attack) || 0,
     Number(build.base.rangedWeapon.critRatePct) || 0,
@@ -419,9 +582,9 @@ export function computeOutputs(build: BuildState, data: ComputeData): OutputResu
   );
 
   // ── 근접 동조 무기 대미지 ──
-  const meleeConsBuff = weaponBuffs(build, "meleeConsonance");
+  const meleeConsBuff = sumBuffs([weaponBuffs(build, "meleeConsonance"), conditionalBuff]);
   const meleeConsonanceWeaponDamage = computeWeaponDamage(
-    build,
+    finalStat,
     meleeConsBuff,
     Number(build.base.consonanceWeapon.attack) || 0,
     Number(build.base.consonanceWeapon.critRatePct) || 0,
@@ -435,9 +598,9 @@ export function computeOutputs(build: BuildState, data: ComputeData): OutputResu
   );
 
   // ── 원거리 동조 무기 대미지 ──
-  const rangedConsBuff = weaponBuffs(build, "rangedConsonance");
+  const rangedConsBuff = sumBuffs([weaponBuffs(build, "rangedConsonance"), conditionalBuff]);
   const rangedConsonanceWeaponDamage = computeWeaponDamage(
-    build,
+    finalStat,
     rangedConsBuff,
     Number(build.base.consonanceWeapon.attack) || 0,
     Number(build.base.consonanceWeapon.critRatePct) || 0,

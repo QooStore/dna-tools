@@ -3,6 +3,11 @@ export interface DemonWedgeStatForm {
   value: number;
 }
 
+export interface DemonWedgeConditionalEffectForm {
+  statType: string;
+  value: number;
+}
+
 export interface DemonWedgeFormState {
   slug: string;
   name: string;
@@ -15,6 +20,7 @@ export interface DemonWedgeFormState {
   isKukulkan: boolean;
   effectDescription: string;
   stats: DemonWedgeStatForm[];
+  conditionalEffects: DemonWedgeConditionalEffectForm[];
 }
 
 export interface DemonWedgeSaveRequest {
@@ -29,4 +35,5 @@ export interface DemonWedgeSaveRequest {
   isKukulkan: boolean;
   effectDescription?: string;
   stats: DemonWedgeStatForm[];
+  conditionalEffects?: DemonWedgeConditionalEffectForm[];
 }

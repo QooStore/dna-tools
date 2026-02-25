@@ -8,7 +8,7 @@ import { CharacterListItem } from "@/domains/characters/types";
 import { WeaponListItem } from "@/domains/weapons/type";
 import { DemonWedgeListItem } from "@/domains/demonWedges/type";
 
-const EXCLUDED_SLUGS = ["hellfire", "sibylle", "truffle", "randy"];
+const EXCLUDED_SLUGS = ["hellfire", "sibylle", "randy"];
 
 export default async function CalculatorPage() {
   const [allCharacters, weapons, wedges]: [CharacterListItem[], WeaponListItem[], DemonWedgeListItem[]] =

@@ -6,6 +6,7 @@ import EffectSection from "./EffectSection";
 import { useDemonWedgeForm } from "./useDemonWedgeForm";
 import { buildDemonWedgePayload } from "@/domains/demonWedges/buildPayload";
 import { DemonWedgeFormState, DemonWedgeSaveRequest } from "@/domains/demonWedgeForm";
+import ConditionalEffectsSection from "@/components/ui/ConditionalEffectsSection";
 
 export default function DemonWedgeForm({
   initialData,
@@ -28,6 +29,10 @@ export default function DemonWedgeForm({
       <BasicSection form={form} setForm={setForm} />
       <StatsSection form={form} setForm={setForm} />
       <EffectSection form={form} setForm={setForm} />
+      <ConditionalEffectsSection
+        effects={form.conditionalEffects}
+        onChange={(effects) => setForm((prev) => ({ ...prev, conditionalEffects: effects }))}
+      />
 
       <button
         type="submit"

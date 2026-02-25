@@ -10,6 +10,7 @@ import WeaponSection from "./WeaponSection";
 import { useCharacterForm } from "./useCharacterForm";
 import { buildCharacterPayload } from "@/domains/characters/buildPayload";
 import { CharacterFormState, CharacterSaveRequest } from "@/domains/characterForm";
+import ConditionalEffectsSection from "@/components/ui/ConditionalEffectsSection";
 
 export default function CharacterForm({
   initialData,
@@ -37,6 +38,11 @@ export default function CharacterForm({
       <SkillsSection form={form} setForm={setForm} />
       <IntronsSection form={form} setForm={setForm} />
       <PassiveSection form={form} setForm={setForm} />
+      <ConditionalEffectsSection
+        withSourceType
+        effects={form.conditionalEffects}
+        onChange={(effects) => setForm((prev) => ({ ...prev, conditionalEffects: effects }))}
+      />
 
       <button
         type="submit"

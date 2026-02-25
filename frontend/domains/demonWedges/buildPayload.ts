@@ -15,5 +15,13 @@ export function buildDemonWedgePayload(form: DemonWedgeFormState): DemonWedgeSav
     isKukulkan: form.isKukulkan,
     effectDescription: isBlank(form.effectDescription) ? undefined : form.effectDescription,
     stats: form.stats.filter((s) => !isBlank(s.statType) && s.value !== 0),
+
+    conditionalEffects:
+      form.conditionalEffects
+        ?.filter((e) => !isBlank(e.statType) && e.value !== 0)
+        .map((e) => ({
+          statType: e.statType,
+          value: e.value,
+        })) ?? undefined,
   };
 }

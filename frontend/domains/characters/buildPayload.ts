@@ -69,5 +69,15 @@ export function buildCharacterPayload(form: CharacterFormState): CharacterSaveRe
           name: p.name,
           description: p.description || undefined,
         })) ?? undefined,
+
+    conditionalEffects:
+      form.conditionalEffects
+        ?.filter((e) => !isBlank(e.sourceType) && !isBlank(e.statType) && e.value !== 0)
+        .map((e) => ({
+          sourceType: e.sourceType,
+          intronStage: e.sourceType === "INTRON" ? e.intronStage : undefined,
+          statType: e.statType,
+          value: e.value,
+        })) ?? undefined,
   };
 }
