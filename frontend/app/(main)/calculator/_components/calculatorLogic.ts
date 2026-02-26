@@ -1,8 +1,7 @@
 import type { DemonWedgeListItem } from "@/domains/demonWedges/type";
 import type { CharacterListItem, CharacterPassiveUpgrade } from "@/domains/characters/types";
 import type { WeaponListItem } from "@/domains/weapons/type";
-import type { BuildState } from "./calculatorTypes";
-import type { BuffFields, ActiveTab, EnemyType, ElementCondition } from "./calculatorTypes";
+import type { BuildState, BuffFields, ActiveTab, EnemyType, ElementCondition, ResonanceBonus, OutputKey, OutputResult } from "./calculatorTypes";
 import { emptyBuffFields } from "./calculatorTypes";
 
 // ── 적 종류별 방어력 ──
@@ -302,8 +301,6 @@ export function sumBuffs(sections: BuffFields[]): BuffFields {
 }
 
 // ── 레조넌스(수련) 보너스 테이블 ──
-export type ResonanceBonus = { atk: number; def: number; hp: number; shield: number };
-
 const RESONANCE_TABLE: { maxLevel: number; bonus: ResonanceBonus }[] = [
   { maxLevel: 14, bonus: { shield: 0, def: 0, hp: 0, atk: 0 } },
   { maxLevel: 19, bonus: { shield: 10, def: 0, hp: 0, atk: 0 } },
@@ -439,16 +436,6 @@ function weaponBuffs(build: BuildState, type: "melee" | "ranged" | "meleeConsona
 
   return sumBuffs([build.buffs.passive, build.buffs.characterWedge, build.buffs[wedgeKey]]);
 }
-
-// ── 결과 타입 ──
-export type OutputKey =
-  | "skillDamage"
-  | "meleeWeaponDamage"
-  | "rangedWeaponDamage"
-  | "meleeConsonanceWeaponDamage"
-  | "rangedConsonanceWeaponDamage";
-
-export type OutputResult = Record<OutputKey, number>;
 
 type ComputeData = {
   characters: CharacterListItem[];

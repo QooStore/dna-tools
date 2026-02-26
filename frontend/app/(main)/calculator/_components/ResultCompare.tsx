@@ -1,4 +1,4 @@
-import type { OutputKey } from "./calculatorLogic";
+import type { OutputKey } from "./calculatorTypes";
 
 const OUTPUT_META: { key: OutputKey; label: string }[] = [
   { key: "skillDamage", label: "스킬 대미지" },

@@ -51,6 +51,13 @@ function num(v: string): number {
   return Number.isFinite(n) ? n : 0;
 }
 
+const WEDGE_RARITY_COLORS: Record<number, string> = {
+  5: "border-amber-400/40 bg-gradient-to-b from-amber-400/20 to-transparent hover:from-amber-400/30",
+  4: "border-purple-400/30 bg-gradient-to-b from-purple-400/15 to-transparent hover:from-purple-400/25",
+  3: "border-blue-400/20 bg-gradient-to-b from-blue-400/10 to-transparent hover:from-blue-400/20",
+  2: "border-green-400/20 bg-gradient-to-b from-green-400/10 to-transparent hover:from-green-400/20",
+};
+
 function applyCharacterDetail(prev: BuildState, detail: CharacterDetail): BuildState {
   const nextAttack = detail?.stats?.attack ?? 0;
   const nextHp = detail?.stats?.hp ?? 0;
@@ -1112,16 +1119,7 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
         }))}
         grid="lg"
         renderHoverCard={(it) => <WedgeHoverCard wedge={it as unknown as DemonWedgeListItem} />}
-        itemClassName={(it) => {
-          const r = it.rarity as number;
-          const colors: Record<number, string> = {
-            5: "border-amber-400/40 bg-gradient-to-b from-amber-400/20 to-transparent hover:from-amber-400/30",
-            4: "border-purple-400/30 bg-gradient-to-b from-purple-400/15 to-transparent hover:from-purple-400/25",
-            3: "border-blue-400/20 bg-gradient-to-b from-blue-400/10 to-transparent hover:from-blue-400/20",
-            2: "border-green-400/20 bg-gradient-to-b from-green-400/10 to-transparent hover:from-green-400/20",
-          };
-          return colors[r] ?? "border-white/10 bg-white/5 hover:bg-white/10";
-        }}
+        itemClassName={(it) => WEDGE_RARITY_COLORS[it.rarity as number] ?? "border-white/10 bg-white/5 hover:bg-white/10"}
         onClose={() => setPicker(null)}
         onSelect={(slug) => {
           if (picker?.type !== "wedge") return;
@@ -1198,16 +1196,7 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
         }))}
         grid="lg"
         renderHoverCard={(it) => <WedgeHoverCard wedge={it as unknown as DemonWedgeListItem} />}
-        itemClassName={(it) => {
-          const r = it.rarity as number;
-          const colors: Record<number, string> = {
-            5: "border-amber-400/40 bg-gradient-to-b from-amber-400/20 to-transparent hover:from-amber-400/30",
-            4: "border-purple-400/30 bg-gradient-to-b from-purple-400/15 to-transparent hover:from-purple-400/25",
-            3: "border-blue-400/20 bg-gradient-to-b from-blue-400/10 to-transparent hover:from-blue-400/20",
-            2: "border-green-400/20 bg-gradient-to-b from-green-400/10 to-transparent hover:from-green-400/20",
-          };
-          return colors[r] ?? "border-white/10 bg-white/5 hover:bg-white/10";
-        }}
+        itemClassName={(it) => WEDGE_RARITY_COLORS[it.rarity as number] ?? "border-white/10 bg-white/5 hover:bg-white/10"}
         onClose={() => setPicker(null)}
         onSelect={(slug) => {
           if (picker?.type !== "ally-wedge") return;

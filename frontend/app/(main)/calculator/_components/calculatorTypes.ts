@@ -1,6 +1,4 @@
-import type { CharacterListItem, ConditionalEffectResponse } from "@/domains/characters/types";
-import type { WeaponListItem } from "@/domains/weapons/type";
-import type { DemonWedgeListItem } from "@/domains/demonWedges/type";
+import type { ConditionalEffectResponse } from "@/domains/characters/types";
 
 export type BuildId = "A" | "B";
 
@@ -10,8 +8,6 @@ export type ActiveTab =
   | "rangedConsonanceWeapon"
   | "meleeWeapon"
   | "rangedWeapon";
-
-export type CalcMode = "melee" | "ranged";
 
 export type BuffFields = {
   characterAttackPct: number; // 캐릭터 공격%
@@ -136,11 +132,18 @@ export type BuildState = {
   allies: [AllyState, AllyState];
 };
 
-export type StaticData = {
-  characters: CharacterListItem[];
-  weapons: WeaponListItem[];
-  wedges: DemonWedgeListItem[];
-};
+// ── 레조넌스 보너스 ──
+export type ResonanceBonus = { atk: number; def: number; hp: number; shield: number };
+
+// ── 계산 결과 ──
+export type OutputKey =
+  | "skillDamage"
+  | "meleeWeaponDamage"
+  | "rangedWeaponDamage"
+  | "meleeConsonanceWeaponDamage"
+  | "rangedConsonanceWeaponDamage";
+
+export type OutputResult = Record<OutputKey, number>;
 
 export const emptyBuffFields = (): BuffFields => ({
   characterAttackPct: 0,
