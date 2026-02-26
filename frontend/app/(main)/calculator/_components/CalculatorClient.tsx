@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { MutableRefObject, Dispatch, SetStateAction } from "react";
+import type { RefObject, Dispatch, SetStateAction } from "react";
 
 import type { CharacterListItem } from "@/domains/characters/types";
 import type { WeaponListItem } from "@/domains/weapons/type";
@@ -22,7 +22,7 @@ import { CHARACTER_MODAL_FILTERS } from "@/config/characterFilters";
 import { WEAPON_FILTERS } from "@/config/weaponFilters";
 import { DEMON_WEDGE_FILTERS } from "@/config/demonWedgeFilters";
 
-import { ActiveTab, BuildId, BuildState, emptyBuildState, BuffFields, emptyBuffFields, EnemyInputs, EnemyType, ElementCondition, AllyState, emptyAllyState } from "./calculatorTypes";
+import { ActiveTab, BuildId, BuildState, emptyBuildState, BuffFields, emptyBuffFields, AllyState, emptyAllyState } from "./calculatorTypes";
 import {
   TAB_LABELS,
   applyWedgesToBuff,
@@ -33,14 +33,12 @@ import {
   computeOutputs,
   RESONANCE_OPTIONS,
   getResonanceBonus,
-  ENEMY_DEF,
-  ENEMY_TYPE_LABELS,
-  ELEMENT_CONDITION_LABELS,
-  ELEMENT_CONDITION_DESC,
-  enemyDmgTakenCoeff,
-  STAT_TYPE_LABEL,
-  type OutputKey,
+  HP_BASED_SLUGS,
+  DEF_BASED_SLUGS,
 } from "./calculatorLogic";
+import { ConditionalEffectsToggle } from "./ConditionalEffectsToggle";
+import { ResultCompare } from "./ResultCompare";
+import { EnemyForm, DmgReductionModal } from "./EnemyForm";
 
 type Props = {
   characters: CharacterListItem[];
@@ -55,6 +53,8 @@ function num(v: string): number {
 
 function applyCharacterDetail(prev: BuildState, detail: CharacterDetail): BuildState {
   const nextAttack = detail?.stats?.attack ?? 0;
+  const nextHp = detail?.stats?.hp ?? 0;
+  const nextDefense = detail?.stats?.defense ?? 0;
   const nextResolve = detail?.stats?.resolve ?? 0;
   const nextMorale = detail?.stats?.morale ?? 0;
 
@@ -68,6 +68,8 @@ function applyCharacterDetail(prev: BuildState, detail: CharacterDetail): BuildS
       character: {
         ...prev.base.character,
         baseAttack: nextAttack,
+        hp: nextHp,
+        defense: nextDefense,
         resolvePct: nextResolve,
         moralePct: nextMorale,
       },
@@ -102,7 +104,7 @@ const emptyPassiveContrib = (): PassiveContrib => ({
 });
 
 function setPassiveContribAndApply(
-  contribRef: MutableRefObject<PassiveContrib>,
+  contribRef: RefObject<PassiveContrib>,
   key: keyof PassiveContrib,
   buff: BuffFields,
   setBuildFn: Dispatch<SetStateAction<BuildState>>,
@@ -132,6 +134,8 @@ const BUFF_FIELD_META: { key: keyof BuffFields; label: string }[] = [
   { key: "critDamagePct", label: "치명타 피해%" },
   { key: "attackSpeedPct", label: "공격 속도%" },
   { key: "extraDamagePct", label: "추가 대미지%" },
+  { key: "hpPct", label: "HP%" },
+  { key: "defensePct", label: "방어%" },
 ];
 
 const BUFF_SECTIONS: { key: keyof BuildState["buffs"]; label: string }[] = [
@@ -428,6 +432,28 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
     }
     return result;
   }, [build.wedgeSlots, build.phaseShiftSlots, wedges]);
+
+  // 동료별 탭별 내성 합계 (페이즈 시프트 슬롯은 올림(ceil) 절반 적용)
+  const allyResistanceUsed = useMemo(() => {
+    return build.allies.map((ally) => ({
+      character: ally.wedgeSlotsCharacter.reduce((sum, slug, i) => {
+        if (!slug) return sum;
+        const w = wedges.find((x) => x.slug === slug);
+        if (!w) return sum;
+        const res = w.resistance ?? 0;
+        const isPS = ally.phaseShiftSlotsCharacter[i] ?? false;
+        return sum + (isPS ? Math.ceil(res / 2) : res);
+      }, 0),
+      weapon: ally.wedgeSlotsWeapon.reduce((sum, slug, i) => {
+        if (!slug) return sum;
+        const w = wedges.find((x) => x.slug === slug);
+        if (!w) return sum;
+        const res = w.resistance ?? 0;
+        const isPS = ally.phaseShiftSlotsWeapon[i] ?? false;
+        return sum + (isPS ? Math.ceil(res / 2) : res);
+      }, 0),
+    }));
+  }, [build.allies, wedges]);
 
   const wedgeOptionsForTab = useMemo(() => {
     const equipType = tabToEquipType[build.activeTab];
@@ -849,9 +875,38 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
               );
             };
 
+            const allyUsed = allyResistanceUsed[allyIndex];
+            const allyUsedVal = allyTab === "character" ? allyUsed.character : allyUsed.weapon;
+            const allyLimit = allyTab === "character"
+              ? ally.resistanceLimits.character
+              : ally.resistanceLimits.weapon;
+
             return (
               <>
                 <div className="mt-4 flex items-center gap-3">
+                  <span className="text-sm text-white/60">내성 한도</span>
+                  <input
+                    type="number"
+                    min={0}
+                    value={allyLimit}
+                    onChange={(e) => {
+                      const v = Number(e.target.value);
+                      setBuild((prev) => {
+                        const newAllies = [prev.allies[0], prev.allies[1]] as [AllyState, AllyState];
+                        const a = { ...newAllies[allyIndex] };
+                        a.resistanceLimits = {
+                          ...a.resistanceLimits,
+                          [allyTab]: v >= 0 ? v : 0,
+                        };
+                        newAllies[allyIndex] = a;
+                        return { ...prev, allies: newAllies };
+                      });
+                    }}
+                    className="w-20 h-9 rounded-lg border border-white/10 bg-white/5 px-3 text-sm text-white/80 text-center"
+                  />
+                  <span className="text-sm font-semibold text-white/50">
+                    사용 {allyUsedVal} / {allyLimit}
+                  </span>
                   <button
                     onClick={() => {
                       const emptySlugs = allyTab === "character" ? Array(9).fill("") : Array(8).fill("");
@@ -1157,6 +1212,27 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
         onSelect={(slug) => {
           if (picker?.type !== "ally-wedge") return;
           const { allyIndex, allyTab, slotIndex } = picker;
+          const ally = build.allies[allyIndex];
+
+          // 내성 초과 체크
+          const psSlots = allyTab === "character" ? ally.phaseShiftSlotsCharacter : ally.phaseShiftSlotsWeapon;
+          const currentSlug = allyTab === "character"
+            ? ally.wedgeSlotsCharacter[slotIndex]
+            : ally.wedgeSlotsWeapon[slotIndex];
+          const isPS = psSlots[slotIndex] ?? false;
+          const rawCurrent = currentSlug ? (wedges.find((w) => w.slug === currentSlug)?.resistance ?? 0) : 0;
+          const currentResistance = isPS ? Math.ceil(rawCurrent / 2) : rawCurrent;
+          const rawNew = wedges.find((w) => w.slug === slug)?.resistance ?? 0;
+          const newResistance = isPS ? Math.ceil(rawNew / 2) : rawNew;
+          const usedNow = allyTab === "character" ? allyResistanceUsed[allyIndex].character : allyResistanceUsed[allyIndex].weapon;
+          const limit = allyTab === "character" ? ally.resistanceLimits.character : ally.resistanceLimits.weapon;
+          const newTotal = usedNow - currentResistance + newResistance;
+          if (newTotal > limit) {
+            setToast(`내성 초과! 배치 취소 (${newTotal} / ${limit})`);
+            setPicker(null);
+            return;
+          }
+
           setBuild((prev) => {
             const newAllies = [prev.allies[0], prev.allies[1]] as [AllyState, AllyState];
             const a = { ...newAllies[allyIndex] };
@@ -1180,67 +1256,99 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
       <ContentSection title="기본 스탯">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {/* 캐릭터 */}
-          <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-            <div className="mb-4 text-sm font-semibold text-white/80">캐릭터</div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <LabeledNumberInput
-                label="캐릭터 레벨"
-                value={build.base.character.characterLevel}
-                onChange={(n) =>
-                  setBuild((p) => ({ ...p, base: { ...p.base, character: { ...p.base.character, characterLevel: n } } }))
-                }
-              />
-              <LabeledNumberInput
-                label="현재 HP%"
-                value={build.base.character.currentHpPct}
-                onChange={(n) =>
-                  setBuild((p) => ({ ...p, base: { ...p.base, character: { ...p.base.character, currentHpPct: n } } }))
-                }
-              />
-              <LabeledNumberInput
-                label="캐릭터 기본 공격력"
-                value={build.base.character.baseAttack}
-                onChange={(n) =>
-                  setBuild((p) => ({ ...p, base: { ...p.base, character: { ...p.base.character, baseAttack: n } } }))
-                }
-              />
-              <LabeledNumberInput
-                label="독립 공격력"
-                value={build.base.character.independentAttack}
-                onChange={(n) =>
-                  setBuild((p) => ({ ...p, base: { ...p.base, character: { ...p.base.character, independentAttack: n } } }))
-                }
-              />
-              <LabeledNumberInput
-                label="필사(%)"
-                value={build.base.character.resolvePct}
-                onChange={(n) =>
-                  setBuild((p) => ({ ...p, base: { ...p.base, character: { ...p.base.character, resolvePct: n } } }))
-                }
-              />
-              <LabeledNumberInput
-                label="격양(%)"
-                value={build.base.character.moralePct}
-                onChange={(n) =>
-                  setBuild((p) => ({ ...p, base: { ...p.base, character: { ...p.base.character, moralePct: n } } }))
-                }
-              />
-              <LabeledNumberInput
-                label="방어 무시(%)"
-                value={build.base.character.defPenetrationPct}
-                onChange={(n) =>
-                  setBuild((p) => ({ ...p, base: { ...p.base, character: { ...p.base.character, defPenetrationPct: n } } }))
-                }
-              />
-              <LabeledNumberInput
-                label="속성 관통(%)"
-                value={build.base.character.elementPenetrationPct}
-                onChange={(n) =>
-                  setBuild((p) => ({ ...p, base: { ...p.base, character: { ...p.base.character, elementPenetrationPct: n } } }))
-                }
-              />
-            </div>
-          </div>
+          {(() => {
+            const slug = build.selections.characterSlug;
+            const isHpBased = (HP_BASED_SLUGS as readonly string[]).includes(slug);
+            const isDefBased = (DEF_BASED_SLUGS as readonly string[]).includes(slug);
+            return (
+              <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+                <div className="mb-4 text-sm font-semibold text-white/80">캐릭터</div>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <LabeledNumberInput
+                    label="캐릭터 레벨"
+                    value={build.base.character.characterLevel}
+                    onChange={(n) =>
+                      setBuild((p) => ({ ...p, base: { ...p.base, character: { ...p.base.character, characterLevel: n } } }))
+                    }
+                  />
+                  <LabeledNumberInput
+                    label="현재 HP%"
+                    value={build.base.character.currentHpPct}
+                    onChange={(n) =>
+                      setBuild((p) => ({ ...p, base: { ...p.base, character: { ...p.base.character, currentHpPct: n } } }))
+                    }
+                  />
+                  <LabeledNumberInput
+                    label="캐릭터 기본 공격력"
+                    value={build.base.character.baseAttack}
+                    onChange={(n) =>
+                      setBuild((p) => ({ ...p, base: { ...p.base, character: { ...p.base.character, baseAttack: n } } }))
+                    }
+                  />
+                  <LabeledNumberInput
+                    label="독립 공격력"
+                    value={build.base.character.independentAttack}
+                    onChange={(n) =>
+                      setBuild((p) => ({ ...p, base: { ...p.base, character: { ...p.base.character, independentAttack: n } } }))
+                    }
+                  />
+                  <LabeledNumberInput
+                    label="스킬 배율(%)"
+                    value={build.base.character.skillMultiplierPct}
+                    onChange={(n) =>
+                      setBuild((p) => ({ ...p, base: { ...p.base, character: { ...p.base.character, skillMultiplierPct: n } } }))
+                    }
+                  />
+                  {isHpBased && (
+                    <LabeledNumberInput
+                      label="기본 HP (스킬 계수)"
+                      value={build.base.character.hp}
+                      onChange={(n) =>
+                        setBuild((p) => ({ ...p, base: { ...p.base, character: { ...p.base.character, hp: n } } }))
+                      }
+                    />
+                  )}
+                  {isDefBased && (
+                    <LabeledNumberInput
+                      label="기본 방어 (스킬 계수)"
+                      value={build.base.character.defense}
+                      onChange={(n) =>
+                        setBuild((p) => ({ ...p, base: { ...p.base, character: { ...p.base.character, defense: n } } }))
+                      }
+                    />
+                  )}
+                  <LabeledNumberInput
+                    label="필사(%)"
+                    value={build.base.character.resolvePct}
+                    onChange={(n) =>
+                      setBuild((p) => ({ ...p, base: { ...p.base, character: { ...p.base.character, resolvePct: n } } }))
+                    }
+                  />
+                  <LabeledNumberInput
+                    label="격양(%)"
+                    value={build.base.character.moralePct}
+                    onChange={(n) =>
+                      setBuild((p) => ({ ...p, base: { ...p.base, character: { ...p.base.character, moralePct: n } } }))
+                    }
+                  />
+                  <LabeledNumberInput
+                    label="방어 무시(%)"
+                    value={build.base.character.defPenetrationPct}
+                    onChange={(n) =>
+                      setBuild((p) => ({ ...p, base: { ...p.base, character: { ...p.base.character, defPenetrationPct: n } } }))
+                    }
+                  />
+                  <LabeledNumberInput
+                    label="속성 관통(%)"
+                    value={build.base.character.elementPenetrationPct}
+                    onChange={(n) =>
+                      setBuild((p) => ({ ...p, base: { ...p.base, character: { ...p.base.character, elementPenetrationPct: n } } }))
+                    }
+                  />
+                </div>
+              </div>
+            );
+          })()}
 
           {/* 동조 무기 */}
           {build.consonanceCategory && (
@@ -1349,300 +1457,6 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
   );
 }
 
-const SOURCE_TYPE_LABELS: Record<string, string> = {
-  SKILL: "스킬 버프",
-  PASSIVE: "패시브",
-  INTRON: "근원",
-};
-
-function ConditionalEffectsToggle({
-  build,
-  meleeWeapon,
-  rangedWeapon,
-  allWedges,
-  allWeapons,
-  characters,
-  onToggle,
-}: {
-  build: BuildState;
-  meleeWeapon?: WeaponListItem;
-  rangedWeapon?: WeaponListItem;
-  allWedges: DemonWedgeListItem[];
-  allWeapons: WeaponListItem[];
-  characters: CharacterListItem[];
-  onToggle: (key: string) => void;
-}) {
-  const disabledSet = new Set(build.conditionalEffects.disabledKeys);
-
-  // 캐릭터 효과: sourceType 기준 그룹핑
-  const charEffectsBySource: Record<string, typeof build.conditionalEffects.characterEffects> = {};
-  for (const e of build.conditionalEffects.characterEffects) {
-    const src = e.sourceType ?? "기타";
-    if (!charEffectsBySource[src]) charEffectsBySource[src] = [];
-    charEffectsBySource[src].push(e);
-  }
-
-  // 무기 효과
-  const meleeEffects = meleeWeapon?.conditionalEffects ?? [];
-  const rangedEffects = rangedWeapon?.conditionalEffects ?? [];
-
-  // 쐐기 효과 (장착된 쐐기 중 조건부 효과 있는 것, 슬러그 중복 제거)
-  const wedgeMap = new Map(allWedges.map((w) => [w.slug, w]));
-  const seenSlugs = new Set<string>();
-  const wedgesWithEffects: { name: string; slug: string; effects: DemonWedgeListItem["conditionalEffects"] }[] = [];
-  for (const slugs of Object.values(build.wedgeSlots)) {
-    for (const slug of slugs) {
-      if (!slug || seenSlugs.has(slug)) continue;
-      seenSlugs.add(slug);
-      const w = wedgeMap.get(slug);
-      if (!w?.conditionalEffects?.length) continue;
-      wedgesWithEffects.push({ name: w.name, slug: w.slug, effects: w.conditionalEffects });
-    }
-  }
-
-  // 협력 동료 효과 데이터 계산
-  const allyEffectDataList = ([0, 1] as const).flatMap((allyIdx) => {
-    const allySlug = allyIdx === 0 ? build.selections.ally1Slug : build.selections.ally2Slug;
-    if (!allySlug) return [];
-    const ally = build.allies[allyIdx];
-    const allyChar = characters.find((c) => c.slug === allySlug);
-    const allyLabel = allyChar ? `협력 동료 ${allyIdx + 1} — ${allyChar.name}` : `협력 동료 ${allyIdx + 1}`;
-
-    const allyCharEffsBySource: Record<string, typeof build.conditionalEffects.characterEffects> = {};
-    for (const e of ally.characterConditionalEffects) {
-      const src = e.sourceType ?? "기타";
-      if (!allyCharEffsBySource[src]) allyCharEffsBySource[src] = [];
-      allyCharEffsBySource[src].push(e);
-    }
-
-    const allyWeapon = ally.weaponSlug ? allWeapons.find((w) => w.slug === ally.weaponSlug) : undefined;
-    const allyWeaponEffects = allyWeapon?.conditionalEffects ?? [];
-
-    const allySeenSlugs = new Set<string>();
-    const allyWedgesWithEffects: typeof wedgesWithEffects = [];
-    for (const slug of [...ally.wedgeSlotsCharacter, ...ally.wedgeSlotsWeapon]) {
-      if (!slug || allySeenSlugs.has(slug)) continue;
-      allySeenSlugs.add(slug);
-      const w = wedgeMap.get(slug);
-      if (!w?.conditionalEffects?.length) continue;
-      allyWedgesWithEffects.push({ name: w.name, slug: w.slug, effects: w.conditionalEffects });
-    }
-
-    const hasAny =
-      ally.characterConditionalEffects.length > 0 ||
-      allyWeaponEffects.length > 0 ||
-      allyWedgesWithEffects.length > 0;
-
-    if (!hasAny) return [];
-
-    return [{
-      allyIdx,
-      allyLabel,
-      charEffectsBySource: allyCharEffsBySource,
-      weapon: allyWeapon,
-      weaponEffects: allyWeaponEffects,
-      wedgesWithEffects: allyWedgesWithEffects,
-    }];
-  });
-
-  const hasCharEffects = build.conditionalEffects.characterEffects.length > 0;
-  const hasMeleeEffects = meleeEffects.length > 0;
-  const hasRangedEffects = rangedEffects.length > 0;
-  const hasWedgeEffects = wedgesWithEffects.length > 0;
-  const hasAllyEffects = allyEffectDataList.length > 0;
-
-  const renderToggle = (key: string, statType: string, value: number, extra?: string) => {
-    const isEnabled = !disabledSet.has(key);
-    const label = STAT_TYPE_LABEL[statType] ?? statType;
-    return (
-      <button
-        key={key}
-        type="button"
-        onClick={() => onToggle(key)}
-        className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm border transition text-left ${
-          isEnabled
-            ? "border-indigo-400/60 bg-indigo-400/15 text-indigo-200"
-            : "border-white/15 bg-white/5 text-white/60 hover:bg-white/10"
-        }`}
-      >
-        <span
-          className={`w-3 h-3 rounded-sm border flex-shrink-0 flex items-center justify-center ${
-            isEnabled ? "border-indigo-400 bg-indigo-400" : "border-white/40"
-          }`}
-        >
-          {isEnabled && (
-            <svg viewBox="0 0 10 10" className="w-2.5 h-2.5 text-white" fill="currentColor">
-              <path d="M1.5 5l2.5 2.5 4.5-4.5" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          )}
-        </span>
-        <span>
-          {label} {value > 0 ? "+" : ""}{value}
-          {extra && <span className="ml-1 text-xs opacity-60">({extra})</span>}
-        </span>
-      </button>
-    );
-  };
-
-  if (!hasCharEffects && !hasMeleeEffects && !hasRangedEffects && !hasWedgeEffects && !hasAllyEffects) {
-    return <p className="text-sm text-white/40">등록된 조건부 효과가 없습니다.</p>;
-  }
-
-  return (
-    <div className="space-y-5">
-      {/* 캐릭터 조건부 효과 */}
-      {hasCharEffects && (
-        <div className="space-y-3">
-          <div className="text-sm font-semibold text-white/70">캐릭터</div>
-          {Object.entries(charEffectsBySource).map(([sourceType, effects]) => (
-            <div key={sourceType} className="space-y-2">
-              <div className="text-xs text-white/50">{SOURCE_TYPE_LABELS[sourceType] ?? sourceType}</div>
-              <div className="flex flex-wrap gap-2">
-                {effects.map((e) =>
-                  renderToggle(
-                    `char-${e.id}`,
-                    e.statType,
-                    e.value,
-                    e.intronStage ? `${e.intronStage}단계` : undefined,
-                  )
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* 근접 무기 조건부 효과 */}
-      {hasMeleeEffects && meleeWeapon && (
-        <div className="space-y-2">
-          <div className="text-sm font-semibold text-white/70">근접 무기: {meleeWeapon.name}</div>
-          <div className="flex flex-wrap gap-2">
-            {meleeEffects.map((e) => renderToggle(`mw-${e.id}`, e.statType, e.value))}
-          </div>
-        </div>
-      )}
-
-      {/* 원거리 무기 조건부 효과 */}
-      {hasRangedEffects && rangedWeapon && (
-        <div className="space-y-2">
-          <div className="text-sm font-semibold text-white/70">원거리 무기: {rangedWeapon.name}</div>
-          <div className="flex flex-wrap gap-2">
-            {rangedEffects.map((e) => renderToggle(`rw-${e.id}`, e.statType, e.value))}
-          </div>
-        </div>
-      )}
-
-      {/* 쐐기 조건부 효과 */}
-      {wedgesWithEffects.map(({ name, slug, effects }) => (
-        <div key={slug} className="space-y-2">
-          <div className="text-sm font-semibold text-white/70">쐐기: {name}</div>
-          <div className="flex flex-wrap gap-2">
-            {effects.map((e) => renderToggle(`wedge-${e.id}`, e.statType, e.value))}
-          </div>
-        </div>
-      ))}
-
-      {/* 협력 동료 조건부 효과 */}
-      {allyEffectDataList.map(({ allyIdx, allyLabel, charEffectsBySource: allyCharEffsBySource, weapon: allyWeapon, weaponEffects: allyWeaponEffects, wedgesWithEffects: allyWedgesWithEffects }) => {
-        const pfx = `ally${allyIdx + 1}`;
-        return (
-          <div key={allyIdx} className="space-y-3">
-            <div className="text-sm font-semibold text-white/70">{allyLabel}</div>
-            {/* 동료 캐릭터 효과 */}
-            {Object.entries(allyCharEffsBySource).map(([sourceType, effects]) => (
-              <div key={sourceType} className="space-y-2">
-                <div className="text-xs text-white/50">{SOURCE_TYPE_LABELS[sourceType] ?? sourceType}</div>
-                <div className="flex flex-wrap gap-2">
-                  {effects.map((e) =>
-                    renderToggle(`${pfx}-char-${e.id}`, e.statType, e.value, e.intronStage ? `${e.intronStage}단계` : undefined)
-                  )}
-                </div>
-              </div>
-            ))}
-            {/* 동료 무기 효과 */}
-            {allyWeaponEffects.length > 0 && allyWeapon && (
-              <div className="space-y-2">
-                <div className="text-xs text-white/50">무기: {allyWeapon.name}</div>
-                <div className="flex flex-wrap gap-2">
-                  {allyWeaponEffects.map((e) => renderToggle(`${pfx}-wep-${e.id}`, e.statType, e.value))}
-                </div>
-              </div>
-            )}
-            {/* 동료 쐐기 효과 */}
-            {allyWedgesWithEffects.map(({ name, slug, effects }) => (
-              <div key={slug} className="space-y-2">
-                <div className="text-xs text-white/50">쐐기: {name}</div>
-                <div className="flex flex-wrap gap-2">
-                  {effects.map((e) => renderToggle(`${pfx}-wedge-${e.id}`, e.statType, e.value))}
-                </div>
-              </div>
-            ))}
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-const OUTPUT_META: { key: OutputKey; label: string }[] = [
-  { key: "skillDamage", label: "스킬 대미지" },
-  { key: "meleeWeaponDamage", label: "근접 무기 대미지" },
-  { key: "rangedWeaponDamage", label: "원거리 무기 대미지" },
-  { key: "meleeConsonanceWeaponDamage", label: "근접 동조 무기 대미지" },
-  { key: "rangedConsonanceWeaponDamage", label: "원거리 동조 무기 대미지" },
-];
-
-function fmt(n: number): string {
-  if (!Number.isFinite(n)) return "0";
-  const abs = Math.abs(n);
-  if (abs >= 1_000_000) return n.toLocaleString(undefined, { maximumFractionDigits: 0 });
-  if (abs >= 1000) return n.toLocaleString(undefined, { maximumFractionDigits: 1 });
-  return n.toLocaleString(undefined, { maximumFractionDigits: 2 });
-}
-
-function ResultCompare({ a, b }: { a: Record<OutputKey, number>; b: Record<OutputKey, number> }) {
-  return (
-    <div className="space-y-4">
-      <div className="overflow-x-auto rounded-xl border border-white/10">
-        <table className="min-w-[760px] w-full text-sm">
-          <thead className="bg-white/5">
-            <tr>
-              <th className="px-4 py-3 text-left font-semibold text-white/80">항목</th>
-              <th className="px-4 py-3 text-right font-semibold text-white/80">빌드 A</th>
-              <th className="px-4 py-3 text-right font-semibold text-white/80">빌드 B</th>
-              <th className="px-4 py-3 text-right font-semibold text-white/80">차이</th>
-              <th className="px-4 py-3 text-center font-semibold text-white/80">+</th>
-            </tr>
-          </thead>
-          <tbody>
-            {OUTPUT_META.map((m) => {
-              const av = a[m.key] ?? 0;
-              const bv = b[m.key] ?? 0;
-              const high = Math.max(av, bv);
-              const low = Math.min(av, bv);
-              const winner: "A" | "B" | "=" = av === bv ? "=" : av > bv ? "A" : "B";
-              const winClass = winner === "A" ? "text-cyan-200" : winner === "B" ? "text-fuchsia-200" : "text-white/60";
-
-              return (
-                <tr key={m.key} className="border-t border-white/10">
-                  <td className="px-4 py-3 text-white/80">{m.label}</td>
-                  <td className={`px-4 py-3 text-right ${winner === "A" ? "text-cyan-200" : "text-white/70"}`}>
-                    {fmt(av)}
-                  </td>
-                  <td className={`px-4 py-3 text-right ${winner === "B" ? "text-fuchsia-200" : "text-white/70"}`}>
-                    {fmt(bv)}
-                  </td>
-                  <td className="px-4 py-3 text-right text-white/70">{fmt(high - low)}</td>
-                  <td className={`px-4 py-3 text-center font-semibold ${winClass}`}>{winner}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
 
 function LabeledNumberInput({
   label,
@@ -1694,211 +1508,6 @@ function BaseWeaponForm({
   );
 }
 
-function EnemyForm({
-  value,
-  onChange,
-  onOpenReductionModal,
-}: {
-  value: EnemyInputs;
-  onChange: (v: EnemyInputs) => void;
-  onOpenReductionModal: () => void;
-}) {
-  const enemyTypes: EnemyType[] = ["small", "large", "boss"];
-  const elementConditions: ElementCondition[] = ["none", "counter", "other"];
-
-  const finalDmgTakenCoeff = enemyDmgTakenCoeff(value.enemyDmgReductions, value.enemyDmgIncreasePct);
-
-  return (
-    <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {/* 적 종류 */}
-        <div>
-          <div className="mb-3 text-sm text-white/70">적 종류</div>
-          <div className="flex gap-2">
-            {enemyTypes.map((t) => (
-              <button
-                key={t}
-                onClick={() => onChange({ ...value, enemyType: t })}
-                className={`flex-1 py-2 rounded-lg text-sm border transition ${
-                  value.enemyType === t
-                    ? "border-cyan-300/60 bg-cyan-400/10 text-cyan-200"
-                    : "border-white/15 bg-white/5 text-white/60 hover:bg-white/10"
-                }`}
-              >
-                <div>{ENEMY_TYPE_LABELS[t]}</div>
-                <div className="text-xs text-white/40">방어력 {ENEMY_DEF[t]}</div>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* 적 레벨 */}
-        <div>
-          <LabeledNumberInput
-            label="적 레벨"
-            value={value.enemyLevel}
-            onChange={(n) => onChange({ ...value, enemyLevel: n })}
-          />
-        </div>
-
-        {/* 속성 조건 */}
-        <div>
-          <div className="mb-3 text-sm text-white/70">속성 조건</div>
-          <div className="flex flex-col gap-2">
-            {elementConditions.map((c) => (
-              <button
-                key={c}
-                onClick={() => onChange({ ...value, elementCondition: c })}
-                className={`py-1.5 rounded-lg text-sm border transition text-left px-3 ${
-                  value.elementCondition === c
-                    ? "border-cyan-300/60 bg-cyan-400/10 text-cyan-200"
-                    : "border-white/15 bg-white/5 text-white/60 hover:bg-white/10"
-                }`}
-              >
-                <span>{ELEMENT_CONDITION_LABELS[c]}</span>
-                <span className="ml-1.5 text-xs opacity-50">{ELEMENT_CONDITION_DESC[c]}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* 받는 대미지 계수 */}
-        <div className="flex flex-col gap-3">
-          <LabeledNumberInput
-            label="받는 대미지 증가(%)"
-            value={value.enemyDmgIncreasePct}
-            onChange={(n) => onChange({ ...value, enemyDmgIncreasePct: n })}
-          />
-          <div>
-            <div className="mb-2 text-sm text-white/70">받는 대미지 감소</div>
-            <button
-              onClick={onOpenReductionModal}
-              className="w-full py-2 rounded-lg text-sm border border-white/15 bg-white/5 text-white/70 hover:bg-white/10 transition"
-            >
-              {value.enemyDmgReductions.length === 0
-                ? "감소 없음"
-                : `${value.enemyDmgReductions.length}개 적용 (계수 ${(finalDmgTakenCoeff * 100).toFixed(1)}%)`}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function DmgReductionModal({
-  open,
-  reductions,
-  onClose,
-  onChange,
-}: {
-  open: boolean;
-  reductions: number[];
-  onClose: () => void;
-  onChange: (v: number[]) => void;
-}) {
-  if (!open) return null;
-  return <DmgReductionModalContent reductions={reductions} onClose={onClose} onChange={onChange} />;
-}
-
-function DmgReductionModalContent({
-  reductions,
-  onClose,
-  onChange,
-}: {
-  reductions: number[];
-  onClose: () => void;
-  onChange: (v: number[]) => void;
-}) {
-  const [local, setLocal] = useState<number[]>([...reductions]);
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-
-  const finalMult = local.reduce((acc, r) => acc * (1 - r / 100), 1);
-
-  const handleAdd = () => {
-    const newLocal = [...local, 0];
-    setLocal(newLocal);
-    setTimeout(() => {
-      const last = inputRefs.current[newLocal.length - 1];
-      last?.focus();
-      last?.select();
-    }, 0);
-  };
-
-  const handleConfirm = () => {
-    onChange(local.filter((r) => r !== 0));
-    onClose();
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="w-full max-w-sm rounded-2xl border border-white/15 bg-[#0b1020] p-6 shadow-xl">
-        <div className="mb-4 text-base font-semibold text-white/90">받는 대미지 감소 설정</div>
-        <p className="mb-4 text-xs text-white/40">항목마다 개별 곱연산으로 적용됩니다.</p>
-
-        <div className="mb-4 space-y-2 max-h-60 overflow-y-auto">
-          {local.length === 0 && (
-            <div className="py-4 text-center text-sm text-white/30">항목 없음</div>
-          )}
-          {local.map((r, i) => (
-            <div key={i} className="flex items-center gap-2">
-              <input
-                ref={(el) => { inputRefs.current[i] = el; }}
-                type="number"
-                min={0}
-                max={100}
-                value={r}
-                onFocus={(e) => e.target.select()}
-                onChange={(e) => {
-                  const next = [...local];
-                  next[i] = Number(e.target.value);
-                  setLocal(next);
-                }}
-                className="w-full h-9 rounded-lg border border-white/10 bg-white/5 px-3 text-sm text-white/80 text-center"
-              />
-              <span className="text-sm text-white/50 shrink-0">%</span>
-              <button
-                onClick={() => setLocal(local.filter((_, j) => j !== i))}
-                className="shrink-0 px-2 h-8 rounded-lg border border-white/10 bg-white/5 text-white/50 hover:bg-white/10 hover:text-white/80 transition text-xs"
-              >
-                삭제
-              </button>
-            </div>
-          ))}
-        </div>
-
-        <button
-          onClick={handleAdd}
-          className="mb-4 w-full py-2 rounded-lg border border-dashed border-white/20 text-sm text-white/50 hover:bg-white/5 hover:text-white/70 transition"
-        >
-          + 감소 추가
-        </button>
-
-        <div className="mb-4 rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/70">
-          최종 감소 계수:{" "}
-          <span className={finalMult < 1 ? "text-red-300" : "text-white/90"}>
-            {(finalMult * 100).toFixed(2)}%
-          </span>
-        </div>
-
-        <div className="flex gap-2">
-          <button
-            onClick={onClose}
-            className="flex-1 py-2 rounded-lg border border-white/15 bg-white/5 text-sm text-white/60 hover:bg-white/10 transition text-center"
-          >
-            취소
-          </button>
-          <button
-            onClick={handleConfirm}
-            className="flex-1 py-2 rounded-lg border border-cyan-300/40 bg-cyan-400/10 text-sm text-cyan-200 hover:bg-cyan-400/20 transition text-center"
-          >
-            확인
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function BuffSectionForm({
   title,

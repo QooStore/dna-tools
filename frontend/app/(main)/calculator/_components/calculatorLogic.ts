@@ -37,6 +37,11 @@ export const ELEMENT_CONDITION_DESC: Record<ElementCondition, string> = {
   other: "속성 저항 50%",
 };
 
+// 스킬 대미지 계산 시 HP를 기본 계수로 사용하는 캐릭터
+export const HP_BASED_SLUGS = ["sibylle", "hellfire", "truffle"] as const;
+// 스킬 대미지 계산 시 방어를 기본 계수로 사용하는 캐릭터
+export const DEF_BASED_SLUGS = ["randy"] as const;
+
 type WedgeEquipType = DemonWedgeListItem["equipType"]; // string
 
 export const TAB_LABELS: Record<ActiveTab, string> = {
@@ -76,6 +81,10 @@ export const STAT_TYPE_LABEL: Record<string, string> = {
   additionalDmg: "추가 대미지%",
   defPenetration_per: "방어 무시%",
   elementPenetration_per: "속성 관통%",
+  hp: "HP",
+  hp_per: "HP%",
+  defense: "방어",
+  defense_per: "방어%",
 };
 
 // DB statType -> Calculator buff field
@@ -99,6 +108,8 @@ const STAT_TO_BUFF_FIELD: Record<string, keyof BuffFields> = {
   additionalDmg: "extraDamagePct",
   defPenetration_per: "defPenetrationPct",
   elementPenetration_per: "elementPenetrationPct",
+  hp_per: "hpPct",
+  defense_per: "defensePct",
 };
 
 export function applyWedgesToBuff(
@@ -494,8 +505,11 @@ export function computeOutputs(build: BuildState, data: ComputeData): OutputResu
   const conditionalBuff = computeConditionalBuff(build, data.weapons, data.wedges);
 
   const allBuff = sumBuffs([totalBuffs(build), conditionalBuff]);
-  // 레조넌스 ATK% → 캐릭터 공격%에 합산
-  allBuff.characterAttackPct += getResonanceBonus(build.resonanceLevel).atk;
+  // 레조넌스 보너스 합산
+  const resonanceBonus = getResonanceBonus(build.resonanceLevel);
+  allBuff.characterAttackPct += resonanceBonus.atk;
+  allBuff.hpPct += resonanceBonus.hp;
+  allBuff.defensePct += resonanceBonus.def;
 
   const baseAttack = Number(build.base.character.baseAttack) || 0;
   const currentHpPct = Number(build.base.character.currentHpPct) || 100;
@@ -523,11 +537,26 @@ export function computeOutputs(build: BuildState, data: ComputeData): OutputResu
   const dmgTakenCoeff = enemyDmgTakenCoeff(e.enemyDmgReductions, e.enemyDmgIncreasePct);
   const enemyMult = defCoeff * elementResistCoeff * dmgTakenCoeff;
 
-  // ── 스킬 대미지 ──
-  const finalStat =
+  // ── 최종 스탯 계산 ──
+  const charSlug = build.selections.characterSlug;
+
+  // 무기 대미지용 스탯: 항상 공격력 기반
+  const weaponFinalStat =
     baseAttack * (1 + allBuff.characterAttackPct / 100) * (1 + allBuff.elementAttackPct / 100) +
     totalIndependentAttack;
-  const baseSkillDamage = finalStat * (1 + allBuff.skillPowerPct / 100);
+
+  // 스킬 대미지용 스탯: 캐릭터 종류에 따라 HP 또는 방어 기반
+  const baseHp = Number(build.base.character.hp) || 0;
+  const baseDefense = Number(build.base.character.defense) || 0;
+  const skillFinalStat = (HP_BASED_SLUGS as readonly string[]).includes(charSlug)
+    ? baseHp * (1 + allBuff.hpPct / 100)
+    : (DEF_BASED_SLUGS as readonly string[]).includes(charSlug)
+    ? baseDefense * (1 + allBuff.defensePct / 100)
+    : weaponFinalStat;
+
+  // ── 스킬 대미지 ──
+  const skillMultiplier = (Number(build.base.character.skillMultiplierPct) || 100) / 100;
+  const baseSkillDamage = skillFinalStat * skillMultiplier * (1 + allBuff.skillPowerPct / 100);
   const skillDamageCoeff = 1 + (allBuff.damagePct + allBuff.skillDamagePct) / 100;
   const skillDamage =
     baseSkillDamage *
@@ -537,7 +566,6 @@ export function computeOutputs(build: BuildState, data: ComputeData): OutputResu
     enemyMult;
 
   // ── 마스터리 판정 ──
-  const charSlug = build.selections.characterSlug;
   const char = charSlug ? data.characters.find((c) => c.slug === charSlug) : undefined;
   const meleeWeapon = build.selections.meleeWeaponSlug
     ? data.weapons.find((w) => w.slug === build.selections.meleeWeaponSlug)
@@ -552,7 +580,7 @@ export function computeOutputs(build: BuildState, data: ComputeData): OutputResu
   // ── 근접 무기 대미지 ──
   const meleeBuff = sumBuffs([weaponBuffs(build, "melee"), conditionalBuff]);
   const meleeWeaponDamage = computeWeaponDamage(
-    finalStat,
+    weaponFinalStat,
     meleeBuff,
     Number(build.base.meleeWeapon.attack) || 0,
     Number(build.base.meleeWeapon.critRatePct) || 0,
@@ -568,7 +596,7 @@ export function computeOutputs(build: BuildState, data: ComputeData): OutputResu
   // ── 원거리 무기 대미지 ──
   const rangedBuff = sumBuffs([weaponBuffs(build, "ranged"), conditionalBuff]);
   const rangedWeaponDamage = computeWeaponDamage(
-    finalStat,
+    weaponFinalStat,
     rangedBuff,
     Number(build.base.rangedWeapon.attack) || 0,
     Number(build.base.rangedWeapon.critRatePct) || 0,
@@ -584,7 +612,7 @@ export function computeOutputs(build: BuildState, data: ComputeData): OutputResu
   // ── 근접 동조 무기 대미지 ──
   const meleeConsBuff = sumBuffs([weaponBuffs(build, "meleeConsonance"), conditionalBuff]);
   const meleeConsonanceWeaponDamage = computeWeaponDamage(
-    finalStat,
+    weaponFinalStat,
     meleeConsBuff,
     Number(build.base.consonanceWeapon.attack) || 0,
     Number(build.base.consonanceWeapon.critRatePct) || 0,
@@ -600,7 +628,7 @@ export function computeOutputs(build: BuildState, data: ComputeData): OutputResu
   // ── 원거리 동조 무기 대미지 ──
   const rangedConsBuff = sumBuffs([weaponBuffs(build, "rangedConsonance"), conditionalBuff]);
   const rangedConsonanceWeaponDamage = computeWeaponDamage(
-    finalStat,
+    weaponFinalStat,
     rangedConsBuff,
     Number(build.base.consonanceWeapon.attack) || 0,
     Number(build.base.consonanceWeapon.critRatePct) || 0,

@@ -30,6 +30,8 @@ export type BuffFields = {
   extraDamagePct: number; // 추가 대미지%
   defPenetrationPct: number; // 방어 무시%
   elementPenetrationPct: number; // 속성 관통%
+  hpPct: number; // HP% (HP 계수 캐릭터용)
+  defensePct: number; // 방어% (방어 계수 캐릭터용)
 };
 
 export type BaseCharacterInputs = {
@@ -37,6 +39,9 @@ export type BaseCharacterInputs = {
   currentHpPct: number;
   baseAttack: number;
   independentAttack: number;       // 독립 공격력 (attack% 미적용)
+  hp: number;                      // 기본 HP (HP 계수 캐릭터용)
+  defense: number;                 // 기본 방어 (방어 계수 캐릭터용)
+  skillMultiplierPct: number;      // 스킬 배율%
   resolvePct: number;
   moralePct: number;
   defPenetrationPct: number;       // 방어 무시%
@@ -76,6 +81,7 @@ export type AllyState = {
   phaseShiftSlotsCharacter: boolean[]; // 9 slots
   phaseShiftSlotsWeapon: boolean[];    // 8 slots
   characterConditionalEffects: ConditionalEffectResponse[];
+  resistanceLimits: { character: number; weapon: number };
 };
 
 export const emptyAllyState = (): AllyState => ({
@@ -85,6 +91,7 @@ export const emptyAllyState = (): AllyState => ({
   phaseShiftSlotsCharacter: Array(9).fill(false),
   phaseShiftSlotsWeapon: Array(8).fill(false),
   characterConditionalEffects: [],
+  resistanceLimits: { character: 100, weapon: 100 },
 });
 
 export type WedgeSlots = Record<ActiveTab, string[]>; // wedge slugs
@@ -152,6 +159,8 @@ export const emptyBuffFields = (): BuffFields => ({
   extraDamagePct: 0,
   defPenetrationPct: 0,
   elementPenetrationPct: 0,
+  hpPct: 0,
+  defensePct: 0,
 });
 
 export const emptyBuildState = (): BuildState => ({
@@ -203,6 +212,9 @@ export const emptyBuildState = (): BuildState => ({
       currentHpPct: 100,
       baseAttack: 0,
       independentAttack: 0,
+      hp: 0,
+      defense: 0,
+      skillMultiplierPct: 100,
       resolvePct: 0,
       moralePct: 0,
       defPenetrationPct: 0,
