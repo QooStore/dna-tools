@@ -213,9 +213,7 @@ export default function PickerModal<T extends BaseItem>({
               style={{
                 left: `${tooltipPos.x}px`,
                 top: `${tooltipPos.y}px`,
-                transform: tooltipPos.below
-                  ? "translate(-50%, 8px)"
-                  : "translate(-50%, -100%) translateY(-8px)",
+                transform: tooltipPos.below ? "translate(-50%, 8px)" : "translate(-50%, -100%) translateY(-8px)",
               }}
             >
               {renderHoverCard(tooltipItem)}

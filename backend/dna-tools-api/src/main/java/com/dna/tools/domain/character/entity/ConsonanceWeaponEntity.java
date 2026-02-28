@@ -50,6 +50,9 @@ public class ConsonanceWeaponEntity {
     @Column(name = "multishot", precision = 5, scale = 2)
     private BigDecimal multishot;
 
+    @Column(name = "item_code", insertable = false, updatable = false, length = 5)
+    private String itemCode;
+
     public ConsonanceWeaponEntity(
             CharacterEntity character,
             String category,

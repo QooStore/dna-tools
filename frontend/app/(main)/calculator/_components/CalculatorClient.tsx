@@ -22,7 +22,16 @@ import { CHARACTER_MODAL_FILTERS } from "@/config/characterFilters";
 import { WEAPON_FILTERS } from "@/config/weaponFilters";
 import { DEMON_WEDGE_FILTERS } from "@/config/demonWedgeFilters";
 
-import { ActiveTab, BuildId, BuildState, emptyBuildState, BuffFields, emptyBuffFields, AllyState, emptyAllyState } from "./calculatorTypes";
+import {
+  ActiveTab,
+  BuildId,
+  BuildState,
+  emptyBuildState,
+  BuffFields,
+  emptyBuffFields,
+  AllyState,
+  emptyAllyState,
+} from "./calculatorTypes";
 import {
   TAB_LABELS,
   applyWedgesToBuff,
@@ -35,6 +44,8 @@ import {
   getResonanceBonus,
   HP_BASED_SLUGS,
   DEF_BASED_SLUGS,
+  generateWedgeCode,
+  parseWedgeCode,
 } from "./calculatorLogic";
 import { ConditionalEffectsToggle } from "./ConditionalEffectsToggle";
 import { ResultCompare } from "./ResultCompare";
@@ -70,6 +81,7 @@ function applyCharacterDetail(prev: BuildState, detail: CharacterDetail): BuildS
   return {
     ...prev,
     consonanceCategory: consonance?.category ?? null,
+    consonanceItemCode: consonance?.itemCode ?? null,
     base: {
       ...prev.base,
       character: {
@@ -194,6 +206,8 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
   };
   const handleWedgeMouseLeave = () => setWedgeTooltip(null);
   const [dmgReductionModalOpen, setDmgReductionModalOpen] = useState(false);
+  const [wedgeCodeModal, setWedgeCodeModal] = useState<ActiveTab | null>(null);
+  const [wedgeCopyConfirm, setWedgeCopyConfirm] = useState<{ code: string } | null>(null);
   useEffect(() => {
     if (!toast) return;
     const t = setTimeout(() => setToast(null), 2000);
@@ -271,10 +285,7 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
         );
         setBuildA((prev) => ({
           ...prev,
-          allies: [
-            { ...prev.allies[0], characterConditionalEffects: detail.conditionalEffects ?? [] },
-            prev.allies[1],
-          ],
+          allies: [{ ...prev.allies[0], characterConditionalEffects: detail.conditionalEffects ?? [] }, prev.allies[1]],
         }));
       } catch {
         // ignore
@@ -301,10 +312,7 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
         );
         setBuildA((prev) => ({
           ...prev,
-          allies: [
-            prev.allies[0],
-            { ...prev.allies[1], characterConditionalEffects: detail.conditionalEffects ?? [] },
-          ],
+          allies: [prev.allies[0], { ...prev.allies[1], characterConditionalEffects: detail.conditionalEffects ?? [] }],
         }));
       } catch {
         // ignore
@@ -331,10 +339,7 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
         );
         setBuildB((prev) => ({
           ...prev,
-          allies: [
-            { ...prev.allies[0], characterConditionalEffects: detail.conditionalEffects ?? [] },
-            prev.allies[1],
-          ],
+          allies: [{ ...prev.allies[0], characterConditionalEffects: detail.conditionalEffects ?? [] }, prev.allies[1]],
         }));
       } catch {
         // ignore
@@ -361,10 +366,7 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
         );
         setBuildB((prev) => ({
           ...prev,
-          allies: [
-            prev.allies[0],
-            { ...prev.allies[1], characterConditionalEffects: detail.conditionalEffects ?? [] },
-          ],
+          allies: [prev.allies[0], { ...prev.allies[1], characterConditionalEffects: detail.conditionalEffects ?? [] }],
         }));
       } catch {
         // ignore
@@ -415,14 +417,8 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
     () => bySlug(weapons, build.selections.rangedWeaponSlug),
     [weapons, build.selections.rangedWeaponSlug],
   );
-  const selectedAllyWeapon1 = useMemo(
-    () => bySlug(weapons, build.allies[0].weaponSlug),
-    [weapons, build.allies],
-  );
-  const selectedAllyWeapon2 = useMemo(
-    () => bySlug(weapons, build.allies[1].weaponSlug),
-    [weapons, build.allies],
-  );
+  const selectedAllyWeapon1 = useMemo(() => bySlug(weapons, build.allies[0].weaponSlug), [weapons, build.allies]);
+  const selectedAllyWeapon2 = useMemo(() => bySlug(weapons, build.allies[1].weaponSlug), [weapons, build.allies]);
 
   // 탭별 내성 합계 (페이즈 시프트 슬롯은 올림(ceil) 절반 적용)
   const resistanceUsed = useMemo(() => {
@@ -501,9 +497,7 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
       const allyWeaponSlug = build.allies[allyIndex].weaponSlug;
       const allyWeapon = allyWeaponSlug ? weapons.find((w) => w.slug === allyWeaponSlug) : undefined;
       const targetEquipType =
-        allyWeapon?.category === "melee" ? "meleeWeapon"
-        : allyWeapon?.category === "ranged" ? "rangedWeapon"
-        : null;
+        allyWeapon?.category === "melee" ? "meleeWeapon" : allyWeapon?.category === "ranged" ? "rangedWeapon" : null;
       return wedges.filter((w) => {
         if (targetEquipType) return w.equipType === targetEquipType;
         return w.equipType === "meleeWeapon" || w.equipType === "rangedWeapon";
@@ -754,202 +748,231 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
           )}
 
           {/* 메인 탭: 내성 입력 + 초기화 + 슬롯 */}
-          {displayTab.kind === "main" && (() => {
-            const tab = displayTab.tab;
-            const used = resistanceUsed[tab] ?? 0;
-            const limit = build.resistanceLimits[tab] ?? 0;
-            const wedgeSlotCard = (it: DemonWedgeListItem | undefined, i: number, label: string) => {
-              const isPS = build.phaseShiftSlots[tab]?.[i] ?? false;
-              const handleClick = () => {
-                if (phaseShiftMode) {
-                  setBuild((prev) => {
-                    const next = [...(prev.phaseShiftSlots[tab] ?? [])];
-                    next[i] = !next[i];
-                    return { ...prev, phaseShiftSlots: { ...prev.phaseShiftSlots, [tab]: next } };
-                  });
-                } else {
-                  setPicker({ type: "wedge", tab, slotIndex: i });
-                }
+          {displayTab.kind === "main" &&
+            (() => {
+              const tab = displayTab.tab;
+              const used = resistanceUsed[tab] ?? 0;
+              const limit = build.resistanceLimits[tab] ?? 0;
+              const wedgeSlotCard = (it: DemonWedgeListItem | undefined, i: number, label: string) => {
+                const isPS = build.phaseShiftSlots[tab]?.[i] ?? false;
+                const handleClick = () => {
+                  if (phaseShiftMode) {
+                    setBuild((prev) => {
+                      const next = [...(prev.phaseShiftSlots[tab] ?? [])];
+                      next[i] = !next[i];
+                      return { ...prev, phaseShiftSlots: { ...prev.phaseShiftSlots, [tab]: next } };
+                    });
+                  } else {
+                    setPicker({ type: "wedge", tab, slotIndex: i });
+                  }
+                };
+                return (
+                  <div
+                    key={i}
+                    className={`rounded-2xl transition ${isPS ? "ring-1 ring-violet-400/70" : ""}`}
+                    onMouseEnter={(e) => handleWedgeMouseEnter(e, it)}
+                    onMouseLeave={handleWedgeMouseLeave}
+                  >
+                    <SlotCard size="sm" label={label} item={it} onClick={handleClick} />
+                  </div>
+                );
               };
               return (
-                <div
-                  key={i}
-                  className={`rounded-2xl transition ${isPS ? "ring-1 ring-violet-400/70" : ""}`}
-                  onMouseEnter={(e) => handleWedgeMouseEnter(e, it)}
-                  onMouseLeave={handleWedgeMouseLeave}
-                >
-                  <SlotCard size="sm" label={label} item={it} onClick={handleClick} />
-                </div>
-              );
-            };
-            return (
-              <>
-                <div className="mt-4 flex items-center gap-3">
-                  <span className="text-sm text-white/60">내성 한도</span>
-                  <input
-                    type="number"
-                    min={0}
-                    value={limit}
-                    onChange={(e) => {
-                      const v = Number(e.target.value);
-                      setBuild((prev) => ({
-                        ...prev,
-                        resistanceLimits: { ...prev.resistanceLimits, [tab]: v >= 0 ? v : 0 },
-                      }));
-                    }}
-                    className="w-20 h-9 rounded-lg border border-white/10 bg-white/5 px-3 text-sm text-white/80 text-center"
-                  />
-                  <span className="text-sm font-semibold text-white/50">
-                    사용 {used} / {limit}
-                  </span>
-                  <button
-                    onClick={() => {
-                      const emptySlugs = Array(build.wedgeSlots[tab].length).fill("");
-                      setBuild((prev) => ({ ...prev, wedgeSlots: { ...prev.wedgeSlots, [tab]: emptySlugs } }));
-                      syncWedgeBuff(tab, emptySlugs);
-                    }}
-                    className="ml-auto px-3 py-1.5 rounded-lg text-xs border border-white/15 bg-white/5 text-white/60 hover:bg-white/10"
-                  >
-                    쐐기 초기화
-                  </button>
-                </div>
-                <div className="mt-6">
-                  {tab === "character" ? (
-                    <div className="grid grid-cols-4 gap-8 justify-items-center">
-                      {wedgeSlotItems.slice(0, 4).map((it, i) => wedgeSlotCard(it, i, `Slot ${i + 1}`))}
-                      <div className="col-span-4 flex justify-center py-4">
-                        {wedgeSlotCard(wedgeSlotItems[8], 8, "Slot 9")}
+                <>
+                  <div className="mt-4 flex items-center gap-3">
+                    <span className="text-sm text-white/60">내성 한도</span>
+                    <input
+                      type="number"
+                      min={0}
+                      value={limit}
+                      onChange={(e) => {
+                        const v = Number(e.target.value);
+                        setBuild((prev) => ({
+                          ...prev,
+                          resistanceLimits: { ...prev.resistanceLimits, [tab]: v >= 0 ? v : 0 },
+                        }));
+                      }}
+                      className="w-20 h-9 rounded-lg border border-white/10 bg-white/5 px-3 text-sm text-white/80 text-center"
+                    />
+                    <span className="text-sm font-semibold text-white/50">
+                      사용 {used} / {limit}
+                    </span>
+                    <button
+                      onClick={() => {
+                        const emptySlugs = Array(build.wedgeSlots[tab].length).fill("");
+                        setBuild((prev) => ({ ...prev, wedgeSlots: { ...prev.wedgeSlots, [tab]: emptySlugs } }));
+                        syncWedgeBuff(tab, emptySlugs);
+                      }}
+                      className="ml-auto px-3 py-1.5 rounded-lg text-xs border border-white/15 bg-white/5 text-white/60 hover:bg-white/10"
+                    >
+                      쐐기 초기화
+                    </button>
+                    <button
+                      onClick={() => {
+                        const entityCode =
+                          tab === "character"
+                            ? (selectedMain?.itemCode ?? null)
+                            : tab === "meleeWeapon"
+                              ? (selectedMeleeWeapon?.itemCode ?? null)
+                              : tab === "rangedWeapon"
+                                ? (selectedRangedWeapon?.itemCode ?? null)
+                                : build.consonanceItemCode;
+                        if (!entityCode) {
+                          setToast("아이템 코드가 없습니다");
+                          return;
+                        }
+                        const code = generateWedgeCode(tab, build.wedgeSlots[tab], wedges, entityCode);
+                        setWedgeCopyConfirm({ code });
+                      }}
+                      className="px-3 py-1.5 rounded-lg text-xs border border-white/15 bg-white/5 text-white/60 hover:bg-white/10"
+                    >
+                      쐐기 코드 복사
+                    </button>
+                    <button
+                      onClick={() => setWedgeCodeModal(tab)}
+                      className="px-3 py-1.5 rounded-lg text-xs border border-white/15 bg-white/5 text-white/60 hover:bg-white/10"
+                    >
+                      쐐기 코드 적용
+                    </button>
+                  </div>
+                  <div className="mt-6">
+                    {tab === "character" ? (
+                      <div className="grid grid-cols-4 gap-8 justify-items-center">
+                        {wedgeSlotItems.slice(0, 4).map((it, i) => wedgeSlotCard(it, i, `Slot ${i + 1}`))}
+                        <div className="col-span-4 flex justify-center py-4">
+                          {wedgeSlotCard(wedgeSlotItems[8], 8, "Slot 9")}
+                        </div>
+                        {wedgeSlotItems.slice(4, 8).map((it, i) => wedgeSlotCard(it, i + 4, `Slot ${i + 5}`))}
                       </div>
-                      {wedgeSlotItems.slice(4, 8).map((it, i) => wedgeSlotCard(it, i + 4, `Slot ${i + 5}`))}
-                    </div>
-                  ) : tab === "meleeConsonanceWeapon" || tab === "rangedConsonanceWeapon" ? (
-                    <div className="grid grid-cols-4 gap-8 justify-items-center">
-                      {wedgeSlotItems.map((it, i) => wedgeSlotCard(it, i, `Slot ${i + 1}`))}
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-4 gap-8 justify-items-center">
-                      {wedgeSlotItems.slice(0, 4).map((it, i) => wedgeSlotCard(it, i, `Slot ${i + 1}`))}
-                      {wedgeSlotItems.slice(4, 8).map((it, i) => wedgeSlotCard(it, i + 4, `Slot ${i + 5}`))}
-                    </div>
-                  )}
-                </div>
-              </>
-            );
-          })()}
+                    ) : tab === "meleeConsonanceWeapon" || tab === "rangedConsonanceWeapon" ? (
+                      <div className="grid grid-cols-4 gap-8 justify-items-center">
+                        {wedgeSlotItems.map((it, i) => wedgeSlotCard(it, i, `Slot ${i + 1}`))}
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-4 gap-8 justify-items-center">
+                        {wedgeSlotItems.slice(0, 4).map((it, i) => wedgeSlotCard(it, i, `Slot ${i + 1}`))}
+                        {wedgeSlotItems.slice(4, 8).map((it, i) => wedgeSlotCard(it, i + 4, `Slot ${i + 5}`))}
+                      </div>
+                    )}
+                  </div>
+                </>
+              );
+            })()}
 
           {/* 동료 탭: 동료 쐐기 슬롯 */}
-          {displayTab.kind === "ally" && (() => {
-            const { allyIndex, allyTab } = displayTab;
-            const ally = build.allies[allyIndex];
-            const slotItems = allyTab === "character"
-              ? ally.wedgeSlotsCharacter.map((s) => bySlug(wedges, s))
-              : ally.wedgeSlotsWeapon.map((s) => bySlug(wedges, s));
+          {displayTab.kind === "ally" &&
+            (() => {
+              const { allyIndex, allyTab } = displayTab;
+              const ally = build.allies[allyIndex];
+              const slotItems =
+                allyTab === "character"
+                  ? ally.wedgeSlotsCharacter.map((s) => bySlug(wedges, s))
+                  : ally.wedgeSlotsWeapon.map((s) => bySlug(wedges, s));
 
-            const psSlots = allyTab === "character" ? ally.phaseShiftSlotsCharacter : ally.phaseShiftSlotsWeapon;
+              const psSlots = allyTab === "character" ? ally.phaseShiftSlotsCharacter : ally.phaseShiftSlotsWeapon;
 
-            const allyWedgeSlotCard = (it: DemonWedgeListItem | undefined, i: number, label: string) => {
-              const isPS = psSlots?.[i] ?? false;
-              const handleClick = () => {
-                if (phaseShiftMode) {
-                  setBuild((prev) => {
-                    const newAllies = [prev.allies[0], prev.allies[1]] as [AllyState, AllyState];
-                    const a = { ...newAllies[allyIndex] };
-                    if (allyTab === "character") {
-                      const next = [...a.phaseShiftSlotsCharacter];
-                      next[i] = !next[i];
-                      a.phaseShiftSlotsCharacter = next;
-                    } else {
-                      const next = [...a.phaseShiftSlotsWeapon];
-                      next[i] = !next[i];
-                      a.phaseShiftSlotsWeapon = next;
-                    }
-                    newAllies[allyIndex] = a;
-                    return { ...prev, allies: newAllies };
-                  });
-                } else {
-                  setPicker({ type: "ally-wedge", allyIndex, allyTab, slotIndex: i });
-                }
-              };
-              return (
-                <div
-                  key={i}
-                  className={`rounded-2xl transition ${isPS ? "ring-1 ring-violet-400/70" : ""}`}
-                  onMouseEnter={(e) => handleWedgeMouseEnter(e, it)}
-                  onMouseLeave={handleWedgeMouseLeave}
-                >
-                  <SlotCard size="sm" label={label} item={it} onClick={handleClick} />
-                </div>
-              );
-            };
-
-            const allyUsed = allyResistanceUsed[allyIndex];
-            const allyUsedVal = allyTab === "character" ? allyUsed.character : allyUsed.weapon;
-            const allyLimit = allyTab === "character"
-              ? ally.resistanceLimits.character
-              : ally.resistanceLimits.weapon;
-
-            return (
-              <>
-                <div className="mt-4 flex items-center gap-3">
-                  <span className="text-sm text-white/60">내성 한도</span>
-                  <input
-                    type="number"
-                    min={0}
-                    value={allyLimit}
-                    onChange={(e) => {
-                      const v = Number(e.target.value);
-                      setBuild((prev) => {
-                        const newAllies = [prev.allies[0], prev.allies[1]] as [AllyState, AllyState];
-                        const a = { ...newAllies[allyIndex] };
-                        a.resistanceLimits = {
-                          ...a.resistanceLimits,
-                          [allyTab]: v >= 0 ? v : 0,
-                        };
-                        newAllies[allyIndex] = a;
-                        return { ...prev, allies: newAllies };
-                      });
-                    }}
-                    className="w-20 h-9 rounded-lg border border-white/10 bg-white/5 px-3 text-sm text-white/80 text-center"
-                  />
-                  <span className="text-sm font-semibold text-white/50">
-                    사용 {allyUsedVal} / {allyLimit}
-                  </span>
-                  <button
-                    onClick={() => {
-                      const emptySlugs = allyTab === "character" ? Array(9).fill("") : Array(8).fill("");
-                      setBuild((prev) => {
-                        const newAllies = [prev.allies[0], prev.allies[1]] as [AllyState, AllyState];
-                        const a = { ...newAllies[allyIndex] };
-                        if (allyTab === "character") a.wedgeSlotsCharacter = emptySlugs;
-                        else a.wedgeSlotsWeapon = emptySlugs;
-                        newAllies[allyIndex] = a;
-                        return { ...prev, allies: newAllies };
-                      });
-                    }}
-                    className="ml-auto px-3 py-1.5 rounded-lg text-xs border border-white/15 bg-white/5 text-white/60 hover:bg-white/10"
+              const allyWedgeSlotCard = (it: DemonWedgeListItem | undefined, i: number, label: string) => {
+                const isPS = psSlots?.[i] ?? false;
+                const handleClick = () => {
+                  if (phaseShiftMode) {
+                    setBuild((prev) => {
+                      const newAllies = [prev.allies[0], prev.allies[1]] as [AllyState, AllyState];
+                      const a = { ...newAllies[allyIndex] };
+                      if (allyTab === "character") {
+                        const next = [...a.phaseShiftSlotsCharacter];
+                        next[i] = !next[i];
+                        a.phaseShiftSlotsCharacter = next;
+                      } else {
+                        const next = [...a.phaseShiftSlotsWeapon];
+                        next[i] = !next[i];
+                        a.phaseShiftSlotsWeapon = next;
+                      }
+                      newAllies[allyIndex] = a;
+                      return { ...prev, allies: newAllies };
+                    });
+                  } else {
+                    setPicker({ type: "ally-wedge", allyIndex, allyTab, slotIndex: i });
+                  }
+                };
+                return (
+                  <div
+                    key={i}
+                    className={`rounded-2xl transition ${isPS ? "ring-1 ring-violet-400/70" : ""}`}
+                    onMouseEnter={(e) => handleWedgeMouseEnter(e, it)}
+                    onMouseLeave={handleWedgeMouseLeave}
                   >
-                    쐐기 초기화
-                  </button>
-                </div>
-                <div className="mt-6">
-                  {allyTab === "character" ? (
-                    <div className="grid grid-cols-4 gap-8 justify-items-center">
-                      {slotItems.slice(0, 4).map((it, i) => allyWedgeSlotCard(it, i, `Slot ${i + 1}`))}
-                      <div className="col-span-4 flex justify-center py-4">
-                        {allyWedgeSlotCard(slotItems[8], 8, "Slot 9")}
+                    <SlotCard size="sm" label={label} item={it} onClick={handleClick} />
+                  </div>
+                );
+              };
+
+              const allyUsed = allyResistanceUsed[allyIndex];
+              const allyUsedVal = allyTab === "character" ? allyUsed.character : allyUsed.weapon;
+              const allyLimit =
+                allyTab === "character" ? ally.resistanceLimits.character : ally.resistanceLimits.weapon;
+
+              return (
+                <>
+                  <div className="mt-4 flex items-center gap-3">
+                    <span className="text-sm text-white/60">내성 한도</span>
+                    <input
+                      type="number"
+                      min={0}
+                      value={allyLimit}
+                      onChange={(e) => {
+                        const v = Number(e.target.value);
+                        setBuild((prev) => {
+                          const newAllies = [prev.allies[0], prev.allies[1]] as [AllyState, AllyState];
+                          const a = { ...newAllies[allyIndex] };
+                          a.resistanceLimits = {
+                            ...a.resistanceLimits,
+                            [allyTab]: v >= 0 ? v : 0,
+                          };
+                          newAllies[allyIndex] = a;
+                          return { ...prev, allies: newAllies };
+                        });
+                      }}
+                      className="w-20 h-9 rounded-lg border border-white/10 bg-white/5 px-3 text-sm text-white/80 text-center"
+                    />
+                    <span className="text-sm font-semibold text-white/50">
+                      사용 {allyUsedVal} / {allyLimit}
+                    </span>
+                    <button
+                      onClick={() => {
+                        const emptySlugs = allyTab === "character" ? Array(9).fill("") : Array(8).fill("");
+                        setBuild((prev) => {
+                          const newAllies = [prev.allies[0], prev.allies[1]] as [AllyState, AllyState];
+                          const a = { ...newAllies[allyIndex] };
+                          if (allyTab === "character") a.wedgeSlotsCharacter = emptySlugs;
+                          else a.wedgeSlotsWeapon = emptySlugs;
+                          newAllies[allyIndex] = a;
+                          return { ...prev, allies: newAllies };
+                        });
+                      }}
+                      className="ml-auto px-3 py-1.5 rounded-lg text-xs border border-white/15 bg-white/5 text-white/60 hover:bg-white/10"
+                    >
+                      쐐기 초기화
+                    </button>
+                  </div>
+                  <div className="mt-6">
+                    {allyTab === "character" ? (
+                      <div className="grid grid-cols-4 gap-8 justify-items-center">
+                        {slotItems.slice(0, 4).map((it, i) => allyWedgeSlotCard(it, i, `Slot ${i + 1}`))}
+                        <div className="col-span-4 flex justify-center py-4">
+                          {allyWedgeSlotCard(slotItems[8], 8, "Slot 9")}
+                        </div>
+                        {slotItems.slice(4, 8).map((it, i) => allyWedgeSlotCard(it, i + 4, `Slot ${i + 5}`))}
                       </div>
-                      {slotItems.slice(4, 8).map((it, i) => allyWedgeSlotCard(it, i + 4, `Slot ${i + 5}`))}
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-4 gap-8 justify-items-center">
-                      {slotItems.slice(0, 4).map((it, i) => allyWedgeSlotCard(it, i, `Slot ${i + 1}`))}
-                      {slotItems.slice(4, 8).map((it, i) => allyWedgeSlotCard(it, i + 4, `Slot ${i + 5}`))}
-                    </div>
-                  )}
-                </div>
-              </>
-            );
-          })()}
+                    ) : (
+                      <div className="grid grid-cols-4 gap-8 justify-items-center">
+                        {slotItems.slice(0, 4).map((it, i) => allyWedgeSlotCard(it, i, `Slot ${i + 1}`))}
+                        {slotItems.slice(4, 8).map((it, i) => allyWedgeSlotCard(it, i + 4, `Slot ${i + 5}`))}
+                      </div>
+                    )}
+                  </div>
+                </>
+              );
+            })()}
         </ContentSection>
       )}
 
@@ -960,9 +983,7 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
           style={{
             left: `${wedgeTooltip.x}px`,
             top: `${wedgeTooltip.y}px`,
-            transform: wedgeTooltip.below
-              ? "translate(-50%, 8px)"
-              : "translate(-50%, -100%) translateY(-8px)",
+            transform: wedgeTooltip.below ? "translate(-50%, 8px)" : "translate(-50%, -100%) translateY(-8px)",
           }}
         >
           <WedgeHoverCard wedge={wedgeTooltip.item} />
@@ -1043,9 +1064,7 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
             });
             // 동료 쐐기 탭을 보고 있었다면 메인으로 리셋
             setDisplayTab((prev) =>
-              prev.kind === "ally" && prev.allyIndex === allyIdx
-                ? { kind: "main", tab: "character" }
-                : prev
+              prev.kind === "ally" && prev.allyIndex === allyIdx ? { kind: "main", tab: "character" } : prev,
             );
           }
         }}
@@ -1119,7 +1138,9 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
         }))}
         grid="lg"
         renderHoverCard={(it) => <WedgeHoverCard wedge={it as unknown as DemonWedgeListItem} />}
-        itemClassName={(it) => WEDGE_RARITY_COLORS[it.rarity as number] ?? "border-white/10 bg-white/5 hover:bg-white/10"}
+        itemClassName={(it) =>
+          WEDGE_RARITY_COLORS[it.rarity as number] ?? "border-white/10 bg-white/5 hover:bg-white/10"
+        }
         onClose={() => setPicker(null)}
         onSelect={(slug) => {
           if (picker?.type !== "wedge") return;
@@ -1184,9 +1205,9 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
         items={allyWedgeOptions}
         selectedSlug={
           picker?.type === "ally-wedge"
-            ? (picker.allyTab === "character"
-                ? build.allies[picker.allyIndex].wedgeSlotsCharacter[picker.slotIndex]
-                : build.allies[picker.allyIndex].wedgeSlotsWeapon[picker.slotIndex])
+            ? picker.allyTab === "character"
+              ? build.allies[picker.allyIndex].wedgeSlotsCharacter[picker.slotIndex]
+              : build.allies[picker.allyIndex].wedgeSlotsWeapon[picker.slotIndex]
             : undefined
         }
         filters={DEMON_WEDGE_FILTERS.filter((f) => f.field !== "equipType" && f.field !== "element").map((f) => ({
@@ -1196,7 +1217,9 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
         }))}
         grid="lg"
         renderHoverCard={(it) => <WedgeHoverCard wedge={it as unknown as DemonWedgeListItem} />}
-        itemClassName={(it) => WEDGE_RARITY_COLORS[it.rarity as number] ?? "border-white/10 bg-white/5 hover:bg-white/10"}
+        itemClassName={(it) =>
+          WEDGE_RARITY_COLORS[it.rarity as number] ?? "border-white/10 bg-white/5 hover:bg-white/10"
+        }
         onClose={() => setPicker(null)}
         onSelect={(slug) => {
           if (picker?.type !== "ally-wedge") return;
@@ -1205,15 +1228,15 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
 
           // 내성 초과 체크
           const psSlots = allyTab === "character" ? ally.phaseShiftSlotsCharacter : ally.phaseShiftSlotsWeapon;
-          const currentSlug = allyTab === "character"
-            ? ally.wedgeSlotsCharacter[slotIndex]
-            : ally.wedgeSlotsWeapon[slotIndex];
+          const currentSlug =
+            allyTab === "character" ? ally.wedgeSlotsCharacter[slotIndex] : ally.wedgeSlotsWeapon[slotIndex];
           const isPS = psSlots[slotIndex] ?? false;
           const rawCurrent = currentSlug ? (wedges.find((w) => w.slug === currentSlug)?.resistance ?? 0) : 0;
           const currentResistance = isPS ? Math.ceil(rawCurrent / 2) : rawCurrent;
           const rawNew = wedges.find((w) => w.slug === slug)?.resistance ?? 0;
           const newResistance = isPS ? Math.ceil(rawNew / 2) : rawNew;
-          const usedNow = allyTab === "character" ? allyResistanceUsed[allyIndex].character : allyResistanceUsed[allyIndex].weapon;
+          const usedNow =
+            allyTab === "character" ? allyResistanceUsed[allyIndex].character : allyResistanceUsed[allyIndex].weapon;
           const limit = allyTab === "character" ? ally.resistanceLimits.character : ally.resistanceLimits.weapon;
           const newTotal = usedNow - currentResistance + newResistance;
           if (newTotal > limit) {
@@ -1257,35 +1280,50 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
                     label="캐릭터 레벨"
                     value={build.base.character.characterLevel}
                     onChange={(n) =>
-                      setBuild((p) => ({ ...p, base: { ...p.base, character: { ...p.base.character, characterLevel: n } } }))
+                      setBuild((p) => ({
+                        ...p,
+                        base: { ...p.base, character: { ...p.base.character, characterLevel: n } },
+                      }))
                     }
                   />
                   <LabeledNumberInput
                     label="현재 HP%"
                     value={build.base.character.currentHpPct}
                     onChange={(n) =>
-                      setBuild((p) => ({ ...p, base: { ...p.base, character: { ...p.base.character, currentHpPct: n } } }))
+                      setBuild((p) => ({
+                        ...p,
+                        base: { ...p.base, character: { ...p.base.character, currentHpPct: n } },
+                      }))
                     }
                   />
                   <LabeledNumberInput
                     label="캐릭터 기본 공격력"
                     value={build.base.character.baseAttack}
                     onChange={(n) =>
-                      setBuild((p) => ({ ...p, base: { ...p.base, character: { ...p.base.character, baseAttack: n } } }))
+                      setBuild((p) => ({
+                        ...p,
+                        base: { ...p.base, character: { ...p.base.character, baseAttack: n } },
+                      }))
                     }
                   />
                   <LabeledNumberInput
                     label="독립 공격력"
                     value={build.base.character.independentAttack}
                     onChange={(n) =>
-                      setBuild((p) => ({ ...p, base: { ...p.base, character: { ...p.base.character, independentAttack: n } } }))
+                      setBuild((p) => ({
+                        ...p,
+                        base: { ...p.base, character: { ...p.base.character, independentAttack: n } },
+                      }))
                     }
                   />
                   <LabeledNumberInput
                     label="스킬 배율(%)"
                     value={build.base.character.skillMultiplierPct}
                     onChange={(n) =>
-                      setBuild((p) => ({ ...p, base: { ...p.base, character: { ...p.base.character, skillMultiplierPct: n } } }))
+                      setBuild((p) => ({
+                        ...p,
+                        base: { ...p.base, character: { ...p.base.character, skillMultiplierPct: n } },
+                      }))
                     }
                   />
                   {isHpBased && (
@@ -1310,7 +1348,10 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
                     label="필사(%)"
                     value={build.base.character.resolvePct}
                     onChange={(n) =>
-                      setBuild((p) => ({ ...p, base: { ...p.base, character: { ...p.base.character, resolvePct: n } } }))
+                      setBuild((p) => ({
+                        ...p,
+                        base: { ...p.base, character: { ...p.base.character, resolvePct: n } },
+                      }))
                     }
                   />
                   <LabeledNumberInput
@@ -1324,14 +1365,20 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
                     label="방어 무시(%)"
                     value={build.base.character.defPenetrationPct}
                     onChange={(n) =>
-                      setBuild((p) => ({ ...p, base: { ...p.base, character: { ...p.base.character, defPenetrationPct: n } } }))
+                      setBuild((p) => ({
+                        ...p,
+                        base: { ...p.base, character: { ...p.base.character, defPenetrationPct: n } },
+                      }))
                     }
                   />
                   <LabeledNumberInput
                     label="속성 관통(%)"
                     value={build.base.character.elementPenetrationPct}
                     onChange={(n) =>
-                      setBuild((p) => ({ ...p, base: { ...p.base, character: { ...p.base.character, elementPenetrationPct: n } } }))
+                      setBuild((p) => ({
+                        ...p,
+                        base: { ...p.base, character: { ...p.base.character, elementPenetrationPct: n } },
+                      }))
                     }
                   />
                 </div>
@@ -1386,6 +1433,37 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
         reductions={build.enemy.enemyDmgReductions}
         onClose={() => setDmgReductionModalOpen(false)}
         onChange={(reductions) => setBuild((p) => ({ ...p, enemy: { ...p.enemy, enemyDmgReductions: reductions } }))}
+      />
+
+      <WedgeCopyConfirmModal
+        confirm={wedgeCopyConfirm}
+        onClose={() => setWedgeCopyConfirm(null)}
+        onConfirm={(code) => {
+          navigator.clipboard.writeText(code).then(() => setToast("코드가 복사되었습니다"));
+          setWedgeCopyConfirm(null);
+        }}
+      />
+
+      <WedgeCodeModal
+        open={wedgeCodeModal}
+        entityCode={
+          wedgeCodeModal === "character"
+            ? (selectedMain?.itemCode ?? null)
+            : wedgeCodeModal === "meleeWeapon"
+              ? (selectedMeleeWeapon?.itemCode ?? null)
+              : wedgeCodeModal === "rangedWeapon"
+                ? (selectedRangedWeapon?.itemCode ?? null)
+                : build.consonanceItemCode
+        }
+        wedges={wedges}
+        onClose={() => setWedgeCodeModal(null)}
+        onApply={(slotSlugs) => {
+          if (!wedgeCodeModal) return;
+          const tab = wedgeCodeModal;
+          setBuild((prev) => ({ ...prev, wedgeSlots: { ...prev.wedgeSlots, [tab]: slotSlugs } }));
+          syncWedgeBuff(tab, slotSlugs);
+          setWedgeCodeModal(null);
+        }}
       />
 
       {/* 5) Buff 섹션 */}
@@ -1446,7 +1524,6 @@ export default function CalculatorClient({ characters, weapons, wedges }: Props)
   );
 }
 
-
 function LabeledNumberInput({
   label,
   value,
@@ -1497,6 +1574,42 @@ function BaseWeaponForm({
   );
 }
 
+function WedgeCopyConfirmModal({
+  confirm,
+  onClose,
+  onConfirm,
+}: {
+  confirm: { code: string } | null;
+  onClose: () => void;
+  onConfirm: (code: string) => void;
+}) {
+  if (!confirm) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div className="w-full max-w-sm rounded-2xl border border-white/15 bg-[#0b1020] p-6 shadow-xl">
+        <div className="mb-3 text-base font-semibold text-white/90">쐐기 코드 복사</div>
+        <p className="mb-4 text-xs text-white/50">아래 코드를 클립보드에 복사하시겠습니까?</p>
+        <div className="mb-5 rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-xs font-mono text-white/70 break-all select-all">
+          {confirm.code}
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={onClose}
+            className="flex-1 py-2 rounded-lg border border-white/15 bg-white/5 text-sm text-white/60 hover:bg-white/10 transition text-center"
+          >
+            취소
+          </button>
+          <button
+            onClick={() => onConfirm(confirm.code)}
+            className="flex-1 py-2 rounded-lg border border-cyan-300/40 bg-cyan-400/10 text-sm text-cyan-200 hover:bg-cyan-400/20 transition text-center"
+          >
+            복사
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function BuffSectionForm({
   title,
@@ -1519,6 +1632,89 @@ function BuffSectionForm({
             onChange={(n) => onChange({ ...value, [f.key]: n })}
           />
         ))}
+      </div>
+    </div>
+  );
+}
+
+function WedgeCodeModal({
+  open,
+  entityCode,
+  wedges,
+  onClose,
+  onApply,
+}: {
+  open: ActiveTab | null;
+  entityCode: string | null | undefined;
+  wedges: DemonWedgeListItem[];
+  onClose: () => void;
+  onApply: (slotSlugs: string[]) => void;
+}) {
+  if (!open) return null;
+  return (
+    <WedgeCodeModalContent tab={open} entityCode={entityCode} wedges={wedges} onClose={onClose} onApply={onApply} />
+  );
+}
+
+function WedgeCodeModalContent({
+  tab,
+  entityCode,
+  wedges,
+  onClose,
+  onApply,
+}: {
+  tab: ActiveTab;
+  entityCode: string | null | undefined;
+  wedges: DemonWedgeListItem[];
+  onClose: () => void;
+  onApply: (slotSlugs: string[]) => void;
+}) {
+  const [input, setInput] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
+  const handleConfirm = () => {
+    const result = parseWedgeCode(tab, input.trim(), wedges);
+    if (!result) {
+      setError("코드 형식이 올바르지 않습니다");
+      return;
+    }
+    if (entityCode && result.entityCode !== entityCode) {
+      setError("캐릭터/무기 코드가 일치하지 않습니다");
+      return;
+    }
+    onApply(result.slotSlugs);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div className="w-full max-w-sm rounded-2xl border border-white/15 bg-[#0b1020] p-6 shadow-xl">
+        <div className="mb-4 text-base font-semibold text-white/90">쐐기 세팅 코드 적용</div>
+        <p className="mb-4 text-xs text-white/40">복사한 쐐기 코드를 붙여넣으세요.</p>
+        <input
+          type="text"
+          value={input}
+          onChange={(e) => {
+            setInput(e.target.value);
+            setError(null);
+          }}
+          placeholder="코드를 입력하세요"
+          className="mb-2 w-full h-10 rounded-lg border border-white/10 bg-white/5 px-3 text-sm text-white/80"
+        />
+        {error && <p className="mb-3 text-xs text-red-400">{error}</p>}
+        <div className="flex gap-2 mt-4">
+          <button
+            onClick={onClose}
+            className="flex-1 py-2 rounded-lg border border-white/15 bg-white/5 text-sm text-white/60 hover:bg-white/10 transition text-center"
+          >
+            취소
+          </button>
+          <button
+            onClick={handleConfirm}
+            className="flex-1 py-2 rounded-lg border border-cyan-300/40 bg-cyan-400/10 text-sm text-cyan-200 hover:bg-cyan-400/20 transition text-center"
+          >
+            확인
+          </button>
+        </div>
       </div>
     </div>
   );

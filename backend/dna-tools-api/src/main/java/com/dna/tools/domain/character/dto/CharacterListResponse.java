@@ -18,12 +18,13 @@ public class CharacterListResponse {
     private final String meleeProficiencyLabel;
     private final String rangedProficiency;
     private final String rangedProficiencyLabel;
+    private final String itemCode;
     private final List<CharacterFeatureResponse> features;
 
     public CharacterListResponse(Long id, String slug, String name, String elementCode, String elementName,
             String listImage,
             String elementImage, String meleeProficiency, String meleeProficiencyLabel, String rangedProficiency,
-            String rangedProficiencyLabel,
+            String rangedProficiencyLabel, String itemCode,
             List<CharacterFeatureResponse> features) {
         this.id = id;
         this.slug = slug;
@@ -36,6 +37,7 @@ public class CharacterListResponse {
         this.meleeProficiencyLabel = meleeProficiencyLabel;
         this.rangedProficiency = rangedProficiency;
         this.rangedProficiencyLabel = rangedProficiencyLabel;
+        this.itemCode = itemCode;
         this.features = features;
     }
 

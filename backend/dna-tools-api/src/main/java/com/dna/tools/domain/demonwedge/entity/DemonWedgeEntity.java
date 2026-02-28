@@ -49,6 +49,9 @@ public class DemonWedgeEntity {
     @Column(name = "is_kukulkan", nullable = false)
     private Boolean isKukulkan;
 
+    @Column(name = "item_code", insertable = false, updatable = false, length = 4)
+    private String itemCode;
+
     @Column(name = "effect_description", columnDefinition = "TEXT")
     private String effectDescription;
 

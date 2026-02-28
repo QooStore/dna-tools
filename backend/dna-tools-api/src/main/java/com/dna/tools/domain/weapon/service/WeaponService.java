@@ -107,6 +107,7 @@ public class WeaponService {
                                 .passiveStatLabel(labels.label("STAT", w.getPassiveStat()))
                                 .passiveValue(w.getPassiveValue())
                                 .activeSkillDescription(w.getActiveSkillDescription())
+                                .itemCode(w.getItemCode())
                                 .conditionalEffects(toConditionalEffects(w))
                                 .build();
         }

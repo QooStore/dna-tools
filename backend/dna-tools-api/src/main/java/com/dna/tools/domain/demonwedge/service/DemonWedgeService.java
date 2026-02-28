@@ -84,6 +84,7 @@ public class DemonWedgeService {
                 .elementLabel(labels.label("ELEMENT", e.getElement()))
                 .isKukulkan(e.getIsKukulkan())
                 .effectDescription(e.getEffectDescription())
+                .itemCode(e.getItemCode())
                 .stats(e.getStats().stream()
                         .map(s -> DemonWedgeListResponse.StatResponse.builder()
                                 .statType(s.getStatType())

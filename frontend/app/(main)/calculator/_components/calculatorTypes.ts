@@ -101,6 +101,7 @@ export type BuildState = {
   resistanceLimits: Record<ActiveTab, number>;
   phaseShiftSlots: Record<ActiveTab, boolean[]>; // 페이즈 시프트 모듈 적용 슬롯
   consonanceCategory: ConsonanceCategory;
+  consonanceItemCode: string | null;
   resonanceLevel: number; // 수련 레벨 (0~65)
   enemy: EnemyInputs;
 
@@ -190,6 +191,7 @@ export const emptyBuildState = (): BuildState => ({
     rangedWeapon: Array(8).fill(false),
   },
   consonanceCategory: null,
+  consonanceItemCode: null,
   resonanceLevel: 65,
   enemy: {
     enemyType: "boss",

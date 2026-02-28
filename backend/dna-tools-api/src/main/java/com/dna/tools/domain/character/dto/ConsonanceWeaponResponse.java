@@ -19,11 +19,12 @@ public class ConsonanceWeaponResponse {
     private final BigDecimal attackSpeed;
     private final BigDecimal triggerProbability;
     private final BigDecimal multishot;
+    private final String itemCode;
 
     public ConsonanceWeaponResponse(String category, String categoryLabel, String weaponType, String weaponTypeLabel,
             String attackType, String attackTypeLabel, BigDecimal attack,
             BigDecimal critRate, BigDecimal critDamage, BigDecimal attackSpeed, BigDecimal triggerProbability,
-            BigDecimal multishot) {
+            BigDecimal multishot, String itemCode) {
         this.category = category;
         this.categoryLabel = categoryLabel;
         this.weaponType = weaponType;
@@ -36,5 +37,6 @@ public class ConsonanceWeaponResponse {
         this.attackSpeed = attackSpeed;
         this.triggerProbability = triggerProbability;
         this.multishot = multishot;
+        this.itemCode = itemCode;
     }
 }

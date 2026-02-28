@@ -51,6 +51,9 @@ public class CharacterEntity {
     @Column(name = "ranged_proficiency", length = 20)
     private String rangedProficiency;
 
+    @Column(name = "item_code", insertable = false, updatable = false, length = 5)
+    private String itemCode;
+
     @Column(name = "created_at", updatable = false, insertable = false)
     private LocalDateTime createdAt;
 

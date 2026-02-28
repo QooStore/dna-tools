@@ -65,6 +65,7 @@ public class CharacterService {
                                 labels.label("MELEEWEAPON", character.getMeleeProficiency()),
                                 character.getRangedProficiency(),
                                 labels.label("RANGEDWEAPON", character.getRangedProficiency()),
+                                character.getItemCode(),
                                 character.getFeatures().stream()
                                                 .map(feature -> new CharacterFeatureResponse(feature.getFeature(),
                                                                 labels.label("FEATURE",

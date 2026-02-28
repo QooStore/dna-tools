@@ -26,6 +26,7 @@ public class DemonWedgeListResponse {
     private final String elementLabel;
     private final Boolean isKukulkan;
     private final String effectDescription;
+    private final String itemCode;
     private final List<StatResponse> stats;
     private final List<ConditionalEffectResponse> conditionalEffects;
 

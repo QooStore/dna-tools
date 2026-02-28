@@ -27,6 +27,7 @@ export interface DemonWedgeListItem {
   elementLabel: string | null;
   isKukulkan: boolean;
   effectDescription: string | null;
+  itemCode: string | null;
   stats: DemonWedgeStat[];
   conditionalEffects: DemonWedgeConditionalEffect[];
 }

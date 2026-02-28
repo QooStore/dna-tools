@@ -33,6 +33,7 @@ public class CharacterDetailMapper {
                                 labels.label("MELEEWEAPON", character.getMeleeProficiency()),
                                 character.getRangedProficiency(),
                                 labels.label("RANGEDWEAPON", character.getRangedProficiency()),
+                                character.getItemCode(),
                                 toStats(character.getStats()),
                                 toConsonanceWeapon(character.getConsonanceWeapon(), labels),
                                 toFeatures(character.getFeatures(), labels),
@@ -71,7 +72,8 @@ public class CharacterDetailMapper {
                                 weapon.getCritDamage(),
                                 weapon.getAttackSpeed(),
                                 weapon.getTriggerProbability(),
-                                weapon.getMultishot());
+                                weapon.getMultishot(),
+                                weapon.getItemCode());
         }
 
         private static List<CharacterFeatureResponse> toFeatures(

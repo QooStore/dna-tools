@@ -18,6 +18,7 @@ export type ConsonanceWeaponStats =
       critDamage: number;
       attackSpeed: number;
       triggerProbability: number;
+      itemCode: string | null;
     }
   | {
       category: "ranged";
@@ -34,6 +35,7 @@ export type ConsonanceWeaponStats =
       triggerProbability: number;
       multishot: number;
       magCapacity: number;
+      itemCode: string | null;
     };
 
 export interface WeaponConditionalEffect {
@@ -83,6 +85,9 @@ export interface WeaponListItem {
 
   // 액티브
   activeSkillDescription: string | null;
+
+  // 아이템 코드
+  itemCode: string | null;
 
   // 조건부 효과
   conditionalEffects: WeaponConditionalEffect[];

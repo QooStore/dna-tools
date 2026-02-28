@@ -53,6 +53,9 @@ public class WeaponListResponse {
     // 액티브 스킬
     private final String activeSkillDescription;
 
+    // 아이템 코드
+    private final String itemCode;
+
     // 조건부 효과
     private final List<ConditionalEffectResponse> conditionalEffects;
 }

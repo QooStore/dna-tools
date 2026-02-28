@@ -92,6 +92,9 @@ public class WeaponEntity {
     @Column(name = "active_skill_description", columnDefinition = "TEXT")
     private String activeSkillDescription;
 
+    @Column(name = "item_code", insertable = false, updatable = false, length = 5)
+    private String itemCode;
+
     @Column(name = "created_at", updatable = false, insertable = false)
     private LocalDateTime createdAt;
 

@@ -111,6 +111,66 @@ const STAT_TO_BUFF_FIELD: Record<string, keyof BuffFields> = {
   defense_per: "defensePct",
 };
 
+// ── 쐐기 코드 슬롯 순서 ──
+export const SLOT_ORDER_CHARACTER  = [0, 3, 1, 2, 4, 7, 5, 6, 8];
+export const SLOT_ORDER_WEAPON     = [0, 3, 1, 2, 4, 7, 5, 6];
+export const SLOT_ORDER_CONSONANCE = [0, 3, 1, 2];
+
+export function getSlotOrder(tab: ActiveTab): number[] {
+  if (tab === "character") return SLOT_ORDER_CHARACTER;
+  if (tab === "meleeConsonanceWeapon" || tab === "rangedConsonanceWeapon") return SLOT_ORDER_CONSONANCE;
+  return SLOT_ORDER_WEAPON;
+}
+
+/** 쐐기 코드 생성: entityCode(5) + 슬롯순서대로 wedge itemCode(4) 또는 "0000" */
+export function generateWedgeCode(
+  tab: ActiveTab,
+  slotSlugs: string[],
+  wedgeList: DemonWedgeListItem[],
+  entityCode: string,
+): string {
+  const order = getSlotOrder(tab);
+  const wedgeMap = new Map(wedgeList.map((w) => [w.slug, w]));
+  const slots = order.map((idx) => {
+    const slug = slotSlugs[idx];
+    if (!slug) return "0000";
+    return wedgeMap.get(slug)?.itemCode ?? "0000";
+  });
+  return entityCode + slots.join("");
+}
+
+/** 쐐기 코드 파싱: 성공 시 { entityCode, slotSlugs } 반환, 실패 시 null */
+export function parseWedgeCode(
+  tab: ActiveTab,
+  codeStr: string,
+  wedgeList: DemonWedgeListItem[],
+): { entityCode: string; slotSlugs: string[] } | null {
+  const order = getSlotOrder(tab);
+  const expectedLen = 5 + order.length * 4;
+  if (codeStr.length !== expectedLen) return null;
+
+  const entityCode = codeStr.slice(0, 5);
+  const slotSlugs = Array(order.length).fill("") as string[];
+
+  // itemCode → slug 역매핑
+  const codeToSlug = new Map(
+    wedgeList.filter((w) => w.itemCode).map((w) => [w.itemCode!, w.slug]),
+  );
+
+  for (let i = 0; i < order.length; i++) {
+    const chunk = codeStr.slice(5 + i * 4, 5 + (i + 1) * 4);
+    if (chunk === "0000") {
+      slotSlugs[order[i]] = "";
+    } else {
+      const slug = codeToSlug.get(chunk);
+      if (!slug) return null; // 알 수 없는 코드
+      slotSlugs[order[i]] = slug;
+    }
+  }
+
+  return { entityCode, slotSlugs };
+}
+
 export function applyWedgesToBuff(
   allWedges: DemonWedgeListItem[],
   wedgeSlugs: string[],

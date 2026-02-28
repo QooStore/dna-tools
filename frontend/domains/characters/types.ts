@@ -65,6 +65,7 @@ export interface CharacterDetail {
   image: string;
   elementImage: string;
   listImage: string;
+  itemCode?: string | null;
 
   /** 무기 숙련 */
   meleeProficiency: MeleeWeaponType;
@@ -98,6 +99,7 @@ export interface CharacterListItem {
   id: number;
   slug: string;
   name: string;
+  itemCode: string | null;
 
   elementCode: ElementType;
   elementName: string;
